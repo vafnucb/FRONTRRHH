@@ -41,6 +41,7 @@ locale.use(lang)
 // Agregando dirección para el servidor de desarrollo
 // El servidor de desarrollo apunta directamente al backend local
 // Para hacer los cambios localmente sin afectar a producción
+// Luego se debe hacer el merge, revisar documentación!
 
 axios.defaults.baseURL = 'http://localhost:60749/api'
 

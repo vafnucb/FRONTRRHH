@@ -50,7 +50,11 @@
           <input type="checkbox" class="form-control" v-model.lazy="porHora">
         </div>
         <div class="form-group col-md-2">
-          <label >Extranjero</label>
+          <label >Extranjero1</label>
+          <input type="checkbox" class="form-control" v-model.lazy="porHora">
+        </div>
+        <div class="form-group col-md-2">
+          <label >Extranjero2</label>
           <input type="checkbox" class="form-control" v-model.lazy="porHora">
         </div>
       </div>
