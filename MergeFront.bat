@@ -1,7 +1,8 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 # Archivo específico a excluir durante el merge (con ruta relativa)
-EXCLUDED_FILE="src/router/index.js"
+EXCLUDED_FILE="src/main.js"
+>>>>>>> dev
 
 # Realizar un stash de los cambios locales en la rama de destino (main)
 git stash
