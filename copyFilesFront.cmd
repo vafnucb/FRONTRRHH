@@ -1,7 +1,9 @@
 @ECHO OFF
 
 set rootpath=%~dp0
-set destination="C:\Users\Juanpi\Desktop\PruebScripts"
+set destination="C:\inetpub\wwwroot\RRHH2"
+
+git pull origin main
 
 mkdir "%destination%\Static"
 robocopy "%rootpath%\dist\static" "%destination%\Static" /E /COPYALL /is
