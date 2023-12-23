@@ -53,6 +53,10 @@
           <label >Prueba???????????</label>
           <input type="checkbox" class="form-control" v-model.lazy="porHora">
         </div>
+        <div class="form-group col-md-2">
+          <label >Prueba222222222222222222???????????</label>
+          <input type="checkbox" class="form-control" v-model.lazy="porHora">
+        </div>
       </div>
       <!--Modalidad-->
       <div class="row">
