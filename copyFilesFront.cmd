@@ -1,5 +1,10 @@
 @ECHO OFF
 
+:: Solicitar elevación de privilegios
+NET FILE 1>NUL 2>NUL
+if '%errorlevel%' == '0' ( goto gotPrivileges ) else ( powershell -Command "Start-Process '%0' -Verb RunAs"; exit )
+:gotPrivileges
+
 set rootpath=%~dp0
 set destination="C:\inetpub\wwwroot\RRHH2"
 
