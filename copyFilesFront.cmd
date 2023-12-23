@@ -5,13 +5,10 @@ NET FILE 1>NUL 2>NUL
 if '%errorlevel%' == '0' ( goto gotPrivileges ) else ( powershell -Command "Start-Process '%0' -Verb RunAs"; exit )
 :gotPrivileges
 
-:: Ejecuta el script .cmd con cmd.exe al principio
-cmd.exe /c copyFilesFront.cmd
+git pull origin main
 
 set rootpath=%~dp0
 set destination="C:\inetpub\wwwroot\RRHH2"
-
-git pull origin main
 
 mkdir "%destination%\Static"
 robocopy "%rootpath%\dist\static" "%destination%\Static" /E /COPYALL /is
