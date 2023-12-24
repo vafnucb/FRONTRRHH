@@ -28,26 +28,29 @@
           >
           </model-select>
         </div>
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-1">
           <label>Categoría</label>
           <model-select class="select-info"
                         v-bind:class="{fixI : action==='PUT'}"
                         :options="tipoDoc"
-                        v-model="tutoria.Categoría"
-                        placeholder="Categoría">
+                        v-model="tutoria.Categoría">
           </model-select>
         </div>
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-1">
           <label >Dependiente?</label>
-          <input type="checkbox" class="form-control" v-model.lazy="dependiente" @click="filterTeachers()">
+          <input type="checkbox" class="form-control" v-model.lazy="dependiente" :disabled="extranjero" @click="filterTeachers()">
         </div>
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-1">
           <label >Otra Regional?</label>
           <input type="checkbox" class="form-control" v-model.lazy="or" @click="ChangeButton()">
         </div>
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-1">
           <label >Por Hora?</label>
           <input type="checkbox" class="form-control" v-model.lazy="porHora">
+        </div>
+        <div class="form-group col-md-1">
+          <label >Extranjero?</label>
+          <input type="checkbox" class="form-control" v-model.lazy="extranjero" :disabled="dependiente" @click="lockExtranjero()">
         </div>
       </div>
       <!--Modalidad-->
@@ -71,6 +74,17 @@
                           :options="tipoTarea"
                           v-model.lazy="tutoria.TipoTareaId"
                           placeholder="Tipo de tarea">
+            </model-select>
+          </div>
+        </div>
+        <div class="form-group col-md-3">
+          <label>Tipo Pago</label>
+          <div>
+            <model-select class="select-info"
+                          v-bind:class="{fixI : action==='PUT'}"
+                          :options="tipoPago"
+                          v-model.lazy="tutoria.TipoPago"
+                          placeholder="Tipo Pago">
             </model-select>
           </div>
         </div>
@@ -135,17 +149,22 @@
           <label >Total Bruto</label>
           <input type="text" placeholder="TB" class="form-control textBox" :readonly="porHora" v-model.lazy="totalBruto">
         </div>
-        <div v-show="dependiente" class="form-group col-md-2">
+        <div v-show="dependiente && !extranjero" class="form-group col-md-2">
           <label >Deduccion(%)</label>
           <input type="text" placeholder="%" class="form-control textBox" v-model.lazy="Deduccion">
         </div>
-        <div v-show="!dependiente" class="form-group col-md-2">
+        <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
           <label >RC-IVA(%)</label>
           <input type="text" placeholder="%" class="form-control textBox" v-model.lazy="IUE" :readonly="ridy">
         </div>
-        <div v-show="!dependiente" class="form-group col-md-2">
+        <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
           <label >IT(%)</label>
           <input type="text" placeholder="%" class="form-control textBox" v-model.lazy="IT" :readonly="ridy">
+        </div>
+
+        <div v-show="extranjero" class="form-group col-md-2">
+          <label >IUE Exterior(%)</label>
+          <input type="text" placeholder="IUE en %" class="form-control textBox" v-model.lazy="IUEExterior">
         </div>
         <div class="form-group col-md-2">
           <label >Total Neto</label>
@@ -202,6 +221,8 @@
     },
     data: function () {
       return {
+        initialTotalBruto: 0,
+        extranjero: false,
         ridy: false,
         Regional: '',
         format: 'DD/MM/YYYY',
@@ -215,12 +236,15 @@
         branches: [],
         modalidades: [],
         tipoTarea: [],
+        alumnos: [],
+        tipoPago: [],
         dependiente: true,
         or: false,
         Deduccion: 0,
         teacherIdentifier: '',
         teacherArray: [],
         IUE: 0,
+        IUEExterior: 0,
         IT: 0,
         acta: true,
         porHora: true,
@@ -259,10 +283,12 @@
           Origen: 'DEPEN',
           ModalidadId: null,
           TipoTareaId: null,
+          TipoPago: null,
           Ignore: false,
           Factura: false,
           IUE: null,
-          IT: null
+          IT: null,
+          IUEExterior: null
         },
         formError: {
           Acta: {
@@ -279,18 +305,24 @@
     computed: {
       // --------------------------Para el cálculo de los montos----------------------------
       totalNeto: function () {
-        // Los calculos cambian si es DEPENDIENTE O INDEPENDIENTE
-        if (this.dependiente) {
-          this.tutoria.TotalNeto = (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
-          this.tutoria.Deduccion = this.tutoria.TotalBruto - this.tutoria.TotalNeto
-          return (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
+        if (this.extranjero) {
+          // Lógica específica para extranjeros
+          this.tutoria.IUEExterior = (this.totalBruto * (this.IUEExterior / 100)).toFixed(2)
+          this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
+          return (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
         } else {
-          // Cuando es independiente se calculan nuevos tipos de descuentos que no aplican para los independientes
-          this.tutoria.IUE = (this.totalBruto * (this.IUE / 100)).toFixed(2)
-          this.tutoria.IT = (this.totalBruto * (this.IT / 100)).toFixed(2)
-          this.tutoria.TotalNeto = (this.totalBruto - (this.tutoria.IUE) - (this.tutoria.IT)).toFixed(2)
-          this.tutoria.Deduccion = (this.tutoria.TotalBruto - this.tutoria.TotalNeto)
-          return (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
+          // Lógica para Dependientes o Independientes que no son extranjeros
+          if (this.dependiente) {
+            this.tutoria.TotalNeto = (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
+            this.tutoria.Deduccion = this.tutoria.TotalBruto - this.tutoria.TotalNeto
+            return (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
+          } else {
+            this.tutoria.IUE = (this.totalBruto * (this.IUE / 100)).toFixed(2)
+            this.tutoria.IT = (this.totalBruto * (this.IT / 100)).toFixed(2)
+            this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
+            this.tutoria.Deduccion = (this.tutoria.TotalBruto - this.tutoria.TotalNeto)
+            return (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
+          }
         }
       },
       brutoCalculado: function () {
@@ -303,6 +335,32 @@
       }
     },
     methods: {
+      resetValues: function () {
+        console.log('Resetting values...')
+        this.MontoHora = ''
+        this.Horas = ''
+        this.Deduccion = ''
+        this.IUE = ''
+        this.IT = ''
+        this.IUEExterior = ''
+        this.TotalNeto = ''
+      },
+      loadTipoPago () {
+        let tipop = this.tipoPago
+        axios.get('TipoPago')
+          .then(response => {
+            response.data.forEach(function (element) {
+              tipop.push({value: element.Id, text: element.Nombre})
+            })
+          })
+          .catch(error => console.log(error + 'Im here cause I messed up'))
+      },
+      lockExtranjero () {
+        this.resetValues()
+        if (!this.extranjero) {
+          this.dependiente = false
+        }
+      },
       // --------------------------Para la validación antes del POST/PUT----------------------------
       valid: function () {
         if (this.acta) {
@@ -318,6 +376,7 @@
       // --------------------------Para el cálculo de los montos-----------------------------------------
       // --------------------------Para encontrar y asignar datos del docente----------------------------
       filterTeachers: function () {
+        console.log('Filtering teachers...')
         let boolean
         if (this.dependiente) {
           boolean = '0'
@@ -340,6 +399,8 @@
         axios.get('AsesoriaDocente/' + this.tutoriaId)
           .then(response => {
             this.tutoria = response.data
+            this.initialTotalBruto = this.tutoria.TotalBruto
+            this.TipoPago = this.tutoria.TipoPago
             // Dependiendo dl origen del docente se carga el CUNI o el BP
             if (this.tutoria.Origen === 'DEPEN' || this.tutoria.Origen === 'OR') {
               // para mostrar al docente del registro
@@ -366,7 +427,15 @@
               // para igualar costos
               this.IUE = ((100 * this.tutoria.IUE) / this.tutoria.TotalBruto).toFixed(2)
               this.IT = ((100 * this.tutoria.IT) / this.tutoria.TotalBruto).toFixed(2)
+            } else if (this.tutoria.Origen === 'EXT') { // Nueva funcionalidad para extranjeros
+              this.origin = 'EXT'
+              this.dependiente = false
+              this.extranjero = true
+              this.teacherIdentifier = this.tutoria.TeacherBP
+              // para igualar costos en caso de ser independiente extranjero
+              this.IUEExterior = ((100 * this.tutoria.IUEExterior) / this.tutoria.TotalBruto).toFixed(2)
             }
+            this.totalBruto = this.initialTotalBruto
             if (this.tutoria.Horas <= 0) {
               // para que no oculte el valor de la edición
               this.porHora = false
@@ -395,6 +464,7 @@
         return [date.getFullYear(), mnth, day].join('-')
       },
       ChangeButton () {
+        this.resetValues()
         if (this.but) {
           this.but = false
         }
@@ -451,6 +521,8 @@
               this.tutoria.Categoría = ''
               this.tutoria.MontoHora = 0
             }
+            // console.log('TeacherAntesde Enviar' + this.infoTeacher[0].FullName) Esto sirve para enviar al método loadAlumno el docente seleccionado
+            // this.loadAlumno(this.infoTeacher[0].FullName)
           })
           .catch(error => console.log(error))
       },
@@ -546,6 +618,25 @@
           })
           .catch(error => console.log(error + 'Im here cause I messed up'))
       },
+      // Método de Alumno que deberá conectarse posteriormente con la tabla maestra alumnos.
+      // loadAlumno (infoTeacher) {
+      //   let alumnos = this.alumnos
+      //   // Realiza la llamada a la API con los parámetros de paginación
+      //   axios.get(`AlumnosListBusqueda2/${infoTeacher}`)
+      //       .then(response => {
+      //         // console.log('Response Data:', response.data)
+      //             // Limpia la lista actual antes de agregar nuevos elementos
+      //         alumnos = []
+      //             // Itera sobre los elementos y agrégales a la lista
+      //         response.data.forEach(function (element) {
+      //           alumnos.push({ value: element, text: element })
+      //         })
+      //             // Actualiza la propiedad this.alumnos
+      //         this.alumnos = alumnos
+      //       })
+      //       .catch(error => console.error('El error es ', error.response || error))
+      //   this.IsFetching = false
+      // },
       // Envío de datos
       send () {
         if (!this.valid() && this.action === 'POST') {
@@ -583,16 +674,18 @@
         this.tutoria.TeacherCUNI = ''
         this.tutoria.ModalidadId = ModalidadId
         this.tutoria.TipoTareaId = null
+        this.tutoria.TipoPago = null
         // Variables del componente
         this.Deduccion = 0
         this.IUE = 0
         this.IT = 0
+        this.IUEExterior = 0
         // Variables de control de errores
         this.formError.Acta.active = false
         this.formError.Student.active = false
       },
       post () {
-        console.log('Aqui la info:')
+        console.log('Aqui la infoDDD:')
         console.log('DependencyCod' + this.tutoria.DependencyCod)
         console.log('Observaciones' + this.tutoria.Observaciones)
         console.log('MontoHora' + this.tutoria.MontoHora)
@@ -616,10 +709,12 @@
         console.log('Valid' + this.tutoria.Valid)
         console.log('Origen' + this.tutoria.Origen)
         console.log('Ignore' + this.tutoria.Ignore)
+        console.log('TipoPago' + this.tutoria.TipoPago)
         // Variables del componente
         console.log('Deduccion' + this.tutoria.Deduccion)
         console.log('IUE' + this.tutoria.IUE)
         console.log('IT' + this.tutoria.IT)
+        console.log('IUEExterior' + this.tutoria.IUEExterior)
         axios.post('AsesoriaDocente', this.tutoria)
           .then(response => {
             console.log('Tutoria aqui' + this.tutoria.TeacherFullName)
@@ -658,10 +753,12 @@
         console.log('Valid' + this.tutoria.Valid)
         console.log('Origen' + this.tutoria.Origen)
         console.log('Ignore' + this.tutoria.Ignore)
+        console.log('TipoPago' + this.tutoria.TipoPago)
         // Variables del componente
         console.log('Deduccion' + this.tutoria.Deduccion)
         console.log('IUE' + this.tutoria.IUE)
         console.log('IT' + this.tutoria.IT)
+        console.log('IUEExterior' + this.tutoria.IUEExterior)
         axios.put('AsesoriaDocente/' + this.tutoriaId, this.tutoria)
           .then(response => {
             this.successMessage()
@@ -746,26 +843,18 @@
             this.tutoria.Origen = 'DEPEN'
           }
         }
-        if (!this.dependiente) {
+        if (!this.dependiente && !this.extranjero) {
           this.tutoria.Origen = 'INDEP'
           // si no es dependiente no puede ser OR
           this.or = false
         }
-
-        console.log('dependeinetTeacherBP' + this.tutoria.TeacherBP)
-        console.log('dependeinetTeacherFullName' + this.tutoria.TeacherFullName)
-        // borrar la categoría actual
-        this.tutoria.Categoría = ''
-        // borramos los datos del docente
-        /*
-        this.tutoria.TeacherFullName = ''
-        this.tutoria.TeacherCUNI = ''
-        this.tutoria.TeacherBP = ''
-        this.tutoria.IUE = null
-        this.tutoria.IT = null
-        */
-        console.log('TeacherBP' + this.tutoria.TeacherBP)
-        console.log('TeacherFullName' + this.tutoria.TeacherFullName)
+      },
+      extranjero: function () {
+        if (!this.dependiente && this.extranjero) {
+          this.tutoria.Origen = 'EXT'
+          // si no es dependiente no puede ser OR
+          this.or = false
+        }
       }
     },
     created () {
@@ -777,11 +866,15 @@
         this.loadTipoTarea()
         this.loadTeachers()
         this.loadCareers()
+        this.loadTipoPago()
+        this.loadCategory()
       } else {
         this.loadCareers()
         this.loadTeachers()
         this.loadModalidades()
         this.loadTipoTarea()
+        this.loadTipoPago()
+        // Activar esto para cuando se conecte Alumnos a la tabla maestra: this.loadAlumno()
       }
     }
   }
