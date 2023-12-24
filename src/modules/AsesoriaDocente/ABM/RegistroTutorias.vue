@@ -53,6 +53,10 @@
           <label >PRUEBA SI FUNCIONA EL WEBHOOK!</label>
           <input type="checkbox" class="form-control" v-model.lazy="porHora">
         </div>
+        <div class="form-group col-md-2">
+          <label >Ahora si deberia funcionar!!!!!</label>
+          <input type="checkbox" class="form-control" v-model.lazy="porHora">
+        </div>
       </div>
       <!--Modalidad-->
       <div class="row">
