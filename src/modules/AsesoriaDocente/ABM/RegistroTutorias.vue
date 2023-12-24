@@ -57,6 +57,10 @@
           <label >Ahora si deberia funcionar!!!!!</label>
           <input type="checkbox" class="form-control" v-model.lazy="porHora">
         </div>
+        <div class="form-group col-md-2">
+          <label >PRUEBA CON BUILD</label>
+          <input type="checkbox" class="form-control" v-model.lazy="porHora">
+        </div>
       </div>
       <!--Modalidad-->
       <div class="row">
