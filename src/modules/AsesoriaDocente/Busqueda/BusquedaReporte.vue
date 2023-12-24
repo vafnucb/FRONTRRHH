@@ -3,7 +3,7 @@
     <div class="panel-body">
       <!--Carrera-->
       <div class="row">
-        <div class="form-group col-md-8 col-md-offset-2">
+        <div class="form-group col-md-6 col-md-offset-2">
           <label>Carrera</label>
           <div>
             <model-select class="select-info"
@@ -15,7 +15,7 @@
       </div>
       <!--Docente-->
       <div class="row">
-        <div class="form-group col-md-6 col-md-offset-2">
+        <div class="form-group col-md-4 col-md-offset-2">
           <label>Docente</label>
           <model-select class="select-info"
                         :options="teachers"
@@ -31,10 +31,18 @@
           >
           </model-select>
         </div>
+        <!-- <div class="form-group col-md-6 col-md-offset-2">
+          <label>Extranjero</label>
+          <model-select class="select-info"
+                        :options="extranjeros"
+                        v-model="busqExtranjero"
+          >
+          </model-select>
+        </div> -->
       </div>
       <!--Modalidad-->
       <div class="row">
-        <div class="form-group col-md-4 col-md-offset-2">
+        <div class="form-group col-md-2 col-md-offset-2">
           <label>Modalidad</label>
           <div>
             <model-select class="select-info"
@@ -43,12 +51,21 @@
             </model-select>
           </div>
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
           <label>Tipo Tarea</label>
           <div>
             <model-select class="select-info"
                           :options="tipoTarea"
                           v-model="busqTarea">
+            </model-select>
+          </div>
+        </div>
+        <div class="form-group col-md-2">
+          <label>Tipo Pago</label>
+          <div>
+            <model-select class="select-info"
+                          :options="tipoPago"
+                          v-model="busqTipoPago">
             </model-select>
           </div>
         </div>
@@ -59,13 +76,32 @@
           <label >Nombre del Alumno</label>
           <input type="text" style="text-transform: uppercase;" class="form-control textBox" v-model.lazy="busqStudent">
         </div> -->
-        <div class="form-group col-md-6 col-md-offset-2">
-          <label>Nombre del Alumno</label>
-          <model-select class="select-info"
-                        :options="alumnos"
-                        v-model="busqStudent"
-          >
-          </model-select>
+        <div>
+          <div class="form-group col-md-4 col-md-offset-2">
+          <label >Nombre del Alumno</label>
+          <input type="text" style="text-transform: uppercase;" class="form-control textBox" v-model.lazy="busqStudent">
+        </div>
+        <div class="form-group col-md-1">
+          <label>Mes</label>
+          <div>
+            <model-select class="select-info"
+                          :options="months"
+                          v-model="busqMes">
+            </model-select>
+          </div>
+        </div>
+        <div class="form-group col-md-1">
+          <label >Gestión</label>
+          <input type="text" style="text-transform: uppercase;" class="form-control textBox" v-model="busqGestion">
+        </div>             
+          <!-- <div class="form-group col-md-6 col-md-offset-2">
+            <label>Nombre del Alumno</label>
+            <model-select class="select-info"
+                          :options="alumnos"
+                          v-model="busqStudent"
+            >
+            </model-select>
+          </div> -->
         </div>
         <!--
         <div>
@@ -90,27 +126,68 @@
       </div>
       <!--Mes y Gestion-->
       <div class="row">
-        <div class="form-group col-md-4 col-md-offset-2">
-          <label>Mes</label>
-          <div>
-            <model-select class="select-info"
-                          :options="months"
-                          v-model="busqMes">
-            </model-select>
+        <div class="form-group col-md-3 col-md-offset-2">
+          <label>Importe Bruto</label>
+
+          <!-- Slider para rango -->
+          <vue-slider
+            v-model="importeRange"
+            :min="1"
+            :max="25000"
+            :interval="1"
+            @drag-end="updateInputs"
+          ></vue-slider>
+
+          <!-- Inputs para valores exactos -->
+          <div class="input-group mt-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Mínimo</span>
+            </div>
+            <input type="number" min="0" class="form-control" v-model="importeMinExacto" @input="updateSlider">
+          </div>
+
+          <div class="input-group mt-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Máximo</span>
+            </div>
+            <input type="number" min="0" class="form-control" v-model="importeMaxExacto" @input="updateSlider">
           </div>
         </div>
-        <div class="form-group col-md-4">
-          <label >Gestión</label>
-          <input type="text" style="text-transform: uppercase;" class="form-control textBox" v-model="busqGestion">
 
+        <div class="form-group col-md-3">
+          <label>Importe Neto</label>
+
+          <!-- Slider para rango -->
+          <vue-slider
+            v-model="importeRangeNeto"
+            :min="1"
+            :max="25000"
+            :interval="1"
+            @drag-end="updateInputsNeto"
+          ></vue-slider>
+
+          <!-- Inputs para valores exactos -->
+          <div class="input-group mt-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Mínimo</span>
+            </div>
+            <input type="number" min="0" class="form-control" v-model="importeMinExactoNeto" @input="updateSliderNeto">
+          </div>
+
+          <div class="input-group mt-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Máximo</span>
+            </div>
+            <input type="number" min="0" class="form-control" v-model="importeMaxExactoNeto" @input="updateSliderNeto">
+          </div>
         </div>
       </div>
       <!--Botón que envía la información del form-->
       <div class="row">
-        <div class="form-group col-md-2 col-md-offset-4">
-           <reporte :url="busqCarrera + '/' + busqTeacherCUNI + '/' + busqDependencyCod + '/' + busqModalidad + '/' + busqTarea + '/' + busqStudent + '/' + busqMes + '/' + busqGestion + '/' + busqOrigenQuery"></reporte>
+        <div class="col-md-4">
         </div>
-        <div class="col-md-2">
+        <reporte :url="busqCarrera + '/' + busqTeacherCUNI + '/' + busqModalidad + '/' + busqTarea + '/' + busqStudent + '/' + busqMes + '/' + busqGestion + '/' + busqOrigenQuery + '/' + importeMinExacto + '/' + importeMaxExacto + '/' + importeMinExactoNeto + '/' + importeMaxExactoNeto + '/' + busqTipoPago "></reporte>
+        <div class="col-md-1">
           <button class="btn btn-danger btn-fill" @click="cleanScreen()">Reset</button>
         </div>
       </div>
@@ -126,13 +203,18 @@
   import { ModelSelect } from 'vue-search-select'
   import 'vue-form-wizard/dist/vue-form-wizard.min.css'
   import Reporte from './ReporteBusquedaAvanzada'
+  import VueSlider from 'vue-slider-component'
+  import 'vue-slider-component/theme/default.css'
   export default {
     components: {
       ModelSelect,
-      Reporte
+      Reporte,
+      VueSlider
     },
     data: function () {
       return {
+        importeRange: [1, 15000],
+        importeRangeNeto: [1, 15000],
         months: [],
         origins: [],
         selectMes: [{Id: '01', Name: 'Enero'},
@@ -149,7 +231,10 @@
             {Id: '12', Name: 'Diciembre'}],
         selectOrigen: [{Id: '0', Name: 'TODOS'},
           {Id: '1', Name: 'DEPEN'},
-          {Id: '2', Name: 'INDEP'}],
+          {Id: '2', Name: 'INDEP'},
+          {Id: '3', Name: 'OR'},
+          {Id: '4', Name: 'FAC'},
+          {Id: '5', Name: 'EXT'}],
         dependencyOptions: [],
         but: false,
         IsFetching: true,
@@ -157,6 +242,7 @@
         careers: [],
         modalidades: [],
         tipoTarea: [],
+        tipoPago: [],
         dependiente: true,
         or: false,
         teacherIdentifier: '',
@@ -165,13 +251,18 @@
         busqCarrera: null,
         busqTeacherCUNI: null,
         busqDependencyCod: null,
-        busqStudent: null,
+        busqStudent: '',
         busqMes: null,
         busqGestion: null,
         busqOrigen: 'DEPEN',
         busqModalidad: null,
         busqTarea: null,
-        busqOrigenQuery: '0'
+        busqOrigenQuery: '0',
+        importeMinExacto: 1,
+        importeMaxExacto: 25000,
+        importeMinExactoNeto: 1,
+        importeMaxExactoNeto: 25000,
+        busqTipoPago: null
       }
     },
     computed: {
@@ -192,18 +283,79 @@
           this.$store.commit('crud/loadSetter', false)
         }, 500)
       },
-      loadAlumno () {
-        let alumnos = this.alumnos
-        axios.get('AlumnosListBusqueda')
+      updateSlider () {
+        // Actualiza el valor del slider cuando cambian los inputs
+        this.importeRange = [parseInt(this.importeMinExacto) || 0, parseInt(this.importeMaxExacto) || 0]
+      },
+      updateInputs () {
+        // Actualiza los valores de los inputs cuando cambia el slider
+        this.importeMinExacto = this.importeRange[0].toString()
+        this.importeMaxExacto = this.importeRange[1].toString()
+      },
+      updateSliderNeto () {
+        // Actualiza el valor del slider cuando cambian los inputs
+        this.importeRangeNeto = [parseInt(this.importeMinExactoNeto) || 0, parseInt(this.importeMaxExactoNeto) || 0]
+      },
+      updateInputsNeto () {
+        // Actualiza los valores de los inputs cuando cambia el slider
+        this.importeMinExactoNeto = this.importeRangeNeto[0].toString()
+        this.importeMaxExactoNeto = this.importeRangeNeto[1].toString()
+      },
+      // loadExtranjero () {
+      //   let extranjero = this.extranjeros
+      //   axios.get('Extranjero')
+      //     .then(response => {
+      //       response.data.forEach(function (element) {
+      //         extranjero.push({value: element.Id, text: element.Name})
+      //       })
+      //     })
+      //     .catch(error => console.log(error))
+      // },
+      // loadAlumno () {
+      //   let alumnos = this.alumnos
+
+      //   axios.get('AlumnosListBusqueda')
+      //     .then(response => {
+      //       console.log('Response Data:', response.data)
+
+      //       // Filtra elementos nulos de la respuesta
+      //       let cleanedAlumnos = response.data.filter(element => element !== null)
+
+      //       cleanedAlumnos.forEach(function (element) {
+      //         console.log('Adding Element:', element)
+      //         alumnos.push({ value: element.StudentFullName, text: element.StudentFullName })
+      //       })
+      //     })
+      //     .catch(error => console.error('El error es ', error.response || error))
+      //   this.IsFetching = false
+      // },
+      // loadAlumno (pagina = 1, tamanoPagina = 10) {
+      //   let alumnos = this.alumnos
+      //   // Realiza la llamada a la API con los parámetros de paginación
+      //   axios.get(`AlumnosListBusqueda2?pagina=${pagina}&tamanoPagina=${tamanoPagina}`)
+      //       .then(response => {
+      //         console.log('Response Data:', response.data)
+      //           // Limpia la lista actual antes de agregar nuevos elementos
+      //         alumnos = []
+      //           // Itera sobre los elementos y agrégales a la lista
+      //         response.data.forEach(function (element) {
+      //           alumnos.push({ value: element, text: element })
+      //         })
+      //           // Actualiza la propiedad this.alumnos
+      //         this.alumnos = alumnos
+      //       })
+      //       .catch(error => console.error('El error es ', error.response || error))
+      //   this.IsFetching = false
+      // },
+      loadTipoPago () {
+        let tipop = this.tipoPago
+        axios.get('TipoPago')
           .then(response => {
-            console.log('Response Data:', response.data)
             response.data.forEach(function (element) {
-              console.log('Adding Element:', element)
-              alumnos.push({value: element.StudentFullName, text: element.StudentFullName})
+              tipop.push({value: element.Id, text: element.Nombre})
             })
           })
-          .catch(error => console.error('El error es ', error.response || error))
-        this.IsFetching = false
+          .catch(error => console.log(error + 'Im here cause I messed up'))
       },
       loadCareers () {
         let carreras = this.careers
@@ -240,7 +392,7 @@
             .then(response => {
               response.data.forEach(function (element) {
                 // Se envío el BP como CUNI para que solo llegara un valor en el value, que se asignará después a teacherCUNI o teacherBP dependiendo de su origen
-                teachers.push({value: element.FullName, text: element.Regional + '-' + element.FullName, name: element.FullName})
+                teachers.push({value: element.FullName, text: element.Regional + '-' + element.FullName, name: element.FullName, extranjero: element.Extranjero, origen: element.Origen})
                 // console.log('Terachers' + element.CUNI + '-' + element.FullName)
                 // Creamos un array con los docentes dependientes
               })
@@ -294,6 +446,12 @@
         this.busqModalidad = null
         this.busqTarea = null
         this.busqOrigenQuery = '0'
+        this.busqExtranjero = '0'
+        this.importeMinExacto = 1
+        this.importeMaxExacto = 25000
+        this.importeMinExactoNeto = 1
+        this.importeMaxExactoNeto = 25000
+        this.busqTipoPago = null
         // Variables del componente
         // Variables de control de errores
       },
@@ -334,10 +492,11 @@
       this.loadTipoTarea()
       this.loadTeachers()
       this.loadCareers()
-      this.loadAlumno()
+      // this.loadAlumno()
       this.loadDependency()
       this.loadMonth()
       this.loadOrigin()
+      this.loadTipoPago()
     }
   }
 </script>
