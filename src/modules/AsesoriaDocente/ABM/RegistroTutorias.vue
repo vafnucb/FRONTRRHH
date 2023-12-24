@@ -55,7 +55,7 @@
       </div>
       <!--Modalidad-->
       <div class="row">
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
           <label>Modalidad</label>
           <div>
             <model-select class="select-info"
@@ -66,7 +66,7 @@
             </model-select>
           </div>
         </div>
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
           <label>Tipo Tarea</label>
           <div>
             <model-select class="select-info"
@@ -77,7 +77,7 @@
             </model-select>
           </div>
         </div>
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
           <label>Tipo Pago</label>
           <div>
             <model-select class="select-info"
@@ -87,6 +87,10 @@
                           placeholder="Tipo Pago">
             </model-select>
           </div>
+        </div>
+        <div class="form-group col-md-2">
+          <label >Número de Contrato</label>
+          <input type="text" placeholder="Número de Contrato" class="form-control textBox" v-model.lazy="tutoria.NumeroContrato">
         </div>
       </div>
       <!--Del Alumno y acta-->
@@ -260,6 +264,7 @@
           {value: 'EPC-U', text: 'EPC-U', pricing: 0},
           {value: 'SCZ-U', text: 'SCZ-U', pricing: 0}
         ],
+        numeroContrato: '',
         tutoria: {
           Id: null,
           Carrera: '',
@@ -288,7 +293,8 @@
           Factura: false,
           IUE: null,
           IT: null,
-          IUEExterior: null
+          IUEExterior: null,
+          NumeroContrato: ''
         },
         formError: {
           Acta: {
