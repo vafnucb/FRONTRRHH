@@ -3,6 +3,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card card-wizard" id="wizardCard">
+          
           <form-wizard
             shape="tab"
             title="Aprobación de Lote Pregrado"
@@ -32,9 +33,15 @@
 
               <!--<FirstStep v-if="actualTab == 2" v-bind:estado="'REGISTRADO'" v-bind:origen="'DEP'" v-bind:tipo="'dependientes'"></FirstStep>-->
             </tab-content>
+            <tab-content title="Validación Extranjeros"
+                         icon="fa fa-user-check">
+              <FirstStep v-if="actualTab == 4" v-bind:estado="'VERIFICADO'" :origen="'EXT'" v-bind:tipo="'extranjero'"></FirstStep>
+
+              <!--<FirstStep v-if="actualTab == 2" v-bind:estado="'REGISTRADO'" v-bind:origen="'DEP'" v-bind:tipo="'dependientes'"></FirstStep>-->
+            </tab-content>
             <tab-content title="Aprobación"
                          icon="fa fa-university">
-              <SecondStepAll v-if="actualTab == 4"></SecondStepAll>
+              <SecondStepAll v-if="actualTab == 5"></SecondStepAll>
             </tab-content>
 
             <button slot="prev" class="btn btn-info btn-fill btn-wd btn-back">Atras</button>
@@ -66,7 +73,9 @@
         // 0->Otras Regionales
         // 1->Independientes
         // 2->Dependientes
-        // 3->Pre-Pre-Aprobados
+        // 3 -> Factura
+        // 4 -> Extranjeros
+        // 5->Pre-Pre-Aprobados
         actualTab: 0
       }
     },
