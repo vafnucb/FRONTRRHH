@@ -59,27 +59,61 @@
       </div>
       </div>
       <!--DOCENTE Y TIPO TAREA-->
-      <div class="row">
-        <div class="form-group col-md-1" style="margin-right: 10px; margin-top: 20px">
-          <label >Dependiente?</label>
-          <input type="checkbox" class="form-control" v-model="dependiente" @click="filterTeachers()">
-        </div>
-        <div class="form-group col-md-1" style="margin-right: 10px; margin-left: 10px">
-          <label >Otra Regional?</label>
-          <input type="checkbox" class="form-control" v-model="or" @click="ChangeButton()">
-        </div>
-        <div class="form-group col-md-5" style="margin-top: 25px">
-          <label>Docente</label>
-          <model-select class="select-info"
-                        v-bind:class="{fixI : action==='PUT'}"
-                        :options="teacherArray"
-                        v-model="teacherIdentifier"
-                        placeholder="Seleccionar docente"
-                        @input="validateDocente()"
-                        :onchange="actualCat()"
-          >
-          </model-select>
-        </div>
+      <div class="container">
+  <div class="row">
+    <!-- Checkboxes -->
+    <div class="col-md-3">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Dependiente?</label>
+        <input type="checkbox" class="form-control" v-model="dependiente" :disabled="extranjero" @click="filterTeachers()">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Otra Regional?</label>
+        <input type="checkbox" class="form-control" v-model="or" @click="ChangeButton()">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Extranjero?</label>
+        <input type="checkbox" class="form-control" v-model.lazy="extranjero" :disabled="dependiente" @click="lockExtranjero()">
+      </div>
+    </div>
+    </div>
+    <div class="row">
+    <!-- Selects -->
+    <div class="col-md-3">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Docente</label>
+        <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
+                      :options="teacherArray" v-model="teacherIdentifier"
+                      placeholder="Seleccionar docente" @input="validateDocente()"
+                      :onchange="actualCat()">
+        </model-select>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Tipo Pago</label>
+        <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
+                      :options="tipoPago" v-model.lazy="tutoria.TipoPagoId"
+                      placeholder="Tipo Pago">
+        </model-select>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Tipo Tarea</label>
+        <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
+                      :options="tipoTarea" v-model="tutoria.TipoTareaId"
+                      placeholder="Tipo de tarea">
+        </model-select>
+      </div>
+    </div>
+  </div>
+</div>
+
         <!--
         <div class="form-group col-md-2">
           <label>Categoría</label>
@@ -90,17 +124,7 @@
                         placeholder="Categoría">
           </model-select>
         </div>-->
-        <div class="form-group col-md-3" style="margin-top: 25px">
-          <label>Tipo Tarea</label>
-          <div>
-            <model-select class="select-info"
-                          v-bind:class="{fixI : action==='PUT'}"
-                          :options="tipoTarea"
-                          v-model="tutoria.TipoTareaId"
-                          placeholder="Tipo de tarea">
-            </model-select>
-          </div>
-        </div>
+        
         <div class="form-group col-md-1">
           <label >Registrar estudiante?</label>
           <input type="checkbox" class="form-control" v-model="estudiante">
@@ -110,7 +134,7 @@
           <label >Otra Regional?</label>
           <input type="checkbox" class="form-control" v-model="or" @click="ChangeButton()">
         </div>-->
-      </div>
+      
       <!--ESTUDIANTE-->
       <div class="row" v-if="estudiante">
         <div class="form-group col-md-12">
@@ -154,17 +178,21 @@
           <label >Total Bruto</label>
           <input type="number" placeholder="TB" class="form-control" readonly v-model="brutoCalculado">
         </div>
-        <div v-if="dependiente" class="form-group col-md-2">
+        <div v-show="dependiente && !extranjero"  class="form-group col-md-2">
           <label >Deduccion(%)</label>
           <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="Deduccion">
         </div>
-        <div v-if="!dependiente" class="form-group col-md-2">
+        <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
           <label >RC-IVA(%)</label>
           <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IUE" :readonly="ridy">
         </div>
-        <div v-if="!dependiente" class="form-group col-md-2">
+        <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
           <label >IT(%)</label>
           <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IT" :readonly="ridy">
+        </div>
+        <div v-show="extranjero" class="form-group col-md-2">
+          <label >IUE Exterior(%)</label>
+          <input type="text" placeholder="IUE en %" class="form-control textBox" v-model.lazy="IUEExterior" :readonly="ridy">
         </div>
         <div class="form-group col-md-2">
           <label >Total Neto</label>
@@ -225,6 +253,8 @@
     },
     data: function () {
       return {
+        initialTotalBruto: 0,
+        extranjero: false,
         projectSelected: [],
         delay: 500,
         apareceObs: 'NO',
@@ -257,6 +287,7 @@
         branches: [],
         modalidades: [],
         tipoTarea: [],
+        tipoPago: [],
         dependiente: true,
         estudiante: false,
         or: false,
@@ -264,6 +295,7 @@
         teacherIdentifier: '',
         teacherArray: [],
         IUE: 0,
+        IUEExterior: 0,
         IT: 0,
         acta: true,
         porHora: true,
@@ -288,11 +320,13 @@
           Deduccion: 0,
           Origen: 'DEPEN',
           TipoTareaId: 0,
+          TipoPagoId: 0,
           Ignore: false,
           IUE: 0,
           IT: 0,
           StudentFullName: '',
-          Factura: false
+          Factura: false,
+          IUEExterior: null
         },
         formError: {
           Acta: {
@@ -312,18 +346,25 @@
       // --------------------------Para el cálculo de los montos----------------------------
       totalNeto: function () {
         this.totalBruto = this.tutoria.TotalBruto
-        // Los calculos cambian si es DEPENDIENTE O INDEPENDIENTE
-        if (this.dependiente) {
-          this.tutoria.TotalNeto = (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
-          this.tutoria.Deduccion = this.tutoria.TotalBruto - this.tutoria.TotalNeto
-          return (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
+        if (this.extranjero) {
+          // Lógica específica para extranjeros
+          this.tutoria.IUEExterior = (this.totalBruto * (this.IUEExterior / 100)).toFixed(2)
+          this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
+          return (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
         } else {
-          // Cuando es independiente se calculan nuevos tipos de descuentos que no aplican para los independientes
-          this.tutoria.IUE = (this.totalBruto * (this.IUE / 100)).toFixed(2)
-          this.tutoria.IT = (this.totalBruto * (this.IT / 100)).toFixed(2)
-          this.tutoria.Deduccion = (this.tutoria.IUE + this.tutoria.IT)
-          this.tutoria.TotalNeto = (this.totalBruto - (this.tutoria.IUE) - (this.tutoria.IT)).toFixed(2)
-          return (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
+            // Los calculos cambian si es DEPENDIENTE O INDEPENDIENTE
+          if (this.dependiente) {
+            this.tutoria.TotalNeto = (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
+            this.tutoria.Deduccion = this.tutoria.TotalBruto - this.tutoria.TotalNeto
+            return (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
+          } else {
+              // Cuando es independiente se calculan nuevos tipos de descuentos que no aplican para los independientes
+            this.tutoria.IUE = (this.totalBruto * (this.IUE / 100)).toFixed(2)
+            this.tutoria.IT = (this.totalBruto * (this.IT / 100)).toFixed(2)
+            this.tutoria.Deduccion = (this.tutoria.IUE + this.tutoria.IT)
+            this.tutoria.TotalNeto = (this.totalBruto - (this.tutoria.IUE) - (this.tutoria.IT)).toFixed(2)
+            return (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
+          }
         }
       },
       brutoCalculado: function () {
@@ -337,6 +378,32 @@
       }
     },
     methods: {
+      resetValues: function () {
+        console.log('Resetting values...')
+        this.MontoHora = ''
+        this.Horas = ''
+        this.Deduccion = ''
+        this.IUE = ''
+        this.IT = ''
+        this.IUEExterior = ''
+        this.TotalNeto = ''
+      },
+      loadTipoPago () {
+        let tipop = this.tipoPago
+        axios.get('TipoPago')
+          .then(response => {
+            response.data.forEach(function (element) {
+              tipop.push({value: element.Id, text: element.Nombre})
+            })
+          })
+          .catch(error => console.log(error + 'Im here cause I messed up'))
+      },
+      lockExtranjero () {
+        this.resetValues()
+        if (!this.extranjero) {
+          this.dependiente = false
+        }
+      },
       exit () {
         router.push('../HistorialPostgrado')
       },
@@ -347,11 +414,13 @@
       // --------------------------Para el cálculo de los montos-----------------------------------------
       // --------------------------Para encontrar y asignar datos del docente----------------------------
       filterTeachers: function () {
+        this.resetValues()
         let boolean
         if (this.dependiente) {
           boolean = '0'
         } else {
           boolean = '1'
+          this.extranjero = false
         }
         console.log('Si filtro' + this.dependiente + boolean)
         console.log('Boolean ' + boolean)
@@ -422,6 +491,7 @@
               // para igualar costos, es necesario hacer un cálculo inverso porque nosotros guardamos monto pero desplegamos porcentaje
               this.Deduccion = ((100 * this.tutoria.Deduccion) / this.tutoria.TotalBruto).toFixed(2)
             } else if (this.tutoria.Origen === 'INDEP') {
+              this.origin = 'INDEP'
               this.teacherIdentifier = this.tutoria.TeacherBP
               // console.log('aqui businees partner. ' + this.teacherIdentifier + '=' + this.tutoria.TeacherBP)
               // console.log('INDEP' + this.tutoria.TeacherFullName)
@@ -430,7 +500,15 @@
               // para igualar costos
               this.IUE = ((100 * this.tutoria.IUE) / this.tutoria.TotalBruto).toFixed(2)
               this.IT = ((100 * this.tutoria.IT) / this.tutoria.TotalBruto).toFixed(2)
+            } else if (this.tutoria.Origen === 'EXT') { // Nueva funcionalidad para extranjeros
+              this.origin = 'EXT'
+              this.dependiente = false
+              this.extranjero = true
+              this.teacherIdentifier = this.tutoria.TeacherBP
+              // para igualar costos en caso de ser independiente extranjero
+              this.IUEExterior = ((100 * this.tutoria.IUEExterior) / this.tutoria.TotalBruto).toFixed(2)
             }
+            this.totalBruto = this.initialTotalBruto
             if (this.tutoria.Horas <= 0) {
               // para que no oculte el valor de la edición
               this.porHora = false
@@ -497,6 +575,7 @@
         axios.get('/GetModule/' + this.tutoria.Proyecto)
           .then(response => {
             response.data.forEach(function (element) {
+              console.log('ESTO ES EN LOADMODULES', response.data)
               module.push({value: element.CodModule, text: element.CodModule + '-' + element.NameModule, BranchesId: element.BranchesId, Id: element.Id})
             })
           })
@@ -701,6 +780,7 @@
         this.Deduccion = 0
         this.IUE = 0
         this.IT = 0
+        this.IUEExterior = 0
         this.apareceObs = 'NO'
         this.teacherIdentifier = ''
         this.aux.CodModule = ''
@@ -924,11 +1004,13 @@
           if (!this.or) {
             this.tutoria.Origen = 'DEPEN'
           }
-        }
-        if (!this.dependiente) {
+        } else if (!this.dependiente) {
           this.tutoria.Origen = 'INDEP'
           // si no es dependiente no puede ser OR
           this.or = false
+          if (this.tutoria.Origen !== 'DEPEN') {
+            this.tutoria.Origen = 'EXT'
+          }
         }
         // borrar la categoría actual
         this.tutoria.Categoría = ''
@@ -949,11 +1031,13 @@
         this.loadTipoTarea()
         this.loadTeachers()
         this.loadProjects()
+        this.loadTipoPago()
       } else {
         this.loadProjects()
         this.loadModalidades()
         this.loadTipoTarea()
         this.loadTeachers()
+        this.loadTipoPago()
       }
     }
   }

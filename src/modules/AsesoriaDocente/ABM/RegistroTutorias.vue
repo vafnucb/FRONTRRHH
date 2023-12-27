@@ -22,9 +22,9 @@
           <model-select class="select-info"
                         v-bind:class="{fixI : action==='PUT'}"
                         :options="teacherArray"
+                        label="nombre"
                         v-model.lazy="teacherIdentifier"
                         placeholder="Seleccionar docente"
-                        @input="actualCat(teacherIdentifier)"
           >
           </model-select>
         </div>
@@ -520,7 +520,7 @@
               this.tutoria.Categoría = this.infoTeacher[0].Categoria
               this.tutoria.MontoHora = this.infoTeacher[0].Precio
             }
-            if (!this.dependiente) {
+            if (!this.dependiente || this.extranjero) {
               this.tutoria.TeacherCUNI = ''
               this.tutoria.TeacherBP = this.infoTeacher[0].CUNI
               this.tutoria.TeacherFullName = this.infoTeacher[0].FullName
@@ -735,36 +735,6 @@
       // Actualización de datos
       put () {
         // console.log('AsesoriaDocente/' + this.tutoriaId, this.tutoria)
-        console.log('Aqui la info:')
-        console.log('DependencyCod' + this.tutoria.DependencyCod)
-        console.log('Observaciones' + this.tutoria.Observaciones)
-        console.log('MontoHora' + this.tutoria.MontoHora)
-        console.log('Horas' + this.tutoria.Horas)
-        console.log('Categoría' + this.tutoria.Categoría)
-        console.log('TotalBruto' + this.tutoria.TotalBruto)
-        console.log('TotalNeto' + this.tutoria.TotalNeto)
-        console.log('Acta' + this.tutoria.Acta)
-        console.log('ActaFecha' + this.tutoria.ActaFecha)
-        console.log('TeacherFullName' + this.tutoria.TeacherFullName)
-        console.log('TeacherBP' + this.tutoria.TeacherBP)
-        console.log('TeacherCUNI' + this.tutoria.TeacherCUNI)
-        console.log('ModalidadId' + this.tutoria.ModalidadId)
-        console.log('TipoTareaId' + this.tutoria.TipoTareaId)
-        console.log('StudentFullName' + this.tutoria.StudentFullName)
-        console.log('Id' + this.tutoria.Id)
-        console.log('Carrera' + this.tutoria.Carrera)
-        console.log('BranchesId' + this.tutoria.BranchesId)
-        console.log('Mes' + this.tutoria.Mes)
-        console.log('Gestion' + this.tutoria.Gestion)
-        console.log('Valid' + this.tutoria.Valid)
-        console.log('Origen' + this.tutoria.Origen)
-        console.log('Ignore' + this.tutoria.Ignore)
-        console.log('TipoPago' + this.tutoria.TipoPago)
-        // Variables del componente
-        console.log('Deduccion' + this.tutoria.Deduccion)
-        console.log('IUE' + this.tutoria.IUE)
-        console.log('IT' + this.tutoria.IT)
-        console.log('IUEExterior' + this.tutoria.IUEExterior)
         axios.put('AsesoriaDocente/' + this.tutoriaId, this.tutoria)
           .then(response => {
             this.successMessage()
