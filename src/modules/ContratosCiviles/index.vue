@@ -76,6 +76,10 @@
               return 'EPC'
             case 22:
               return 'TEOLOGIA'
+            case 23:
+              return 'SUCRE'
+            case 24:
+              return 'ORURO'
             default:
               return ''
           }

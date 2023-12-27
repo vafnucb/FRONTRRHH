@@ -105,6 +105,18 @@
             field: 'MontoHora',
             label: 'Monto Hora',
             minWidth: 15
+          },
+          {
+            prop: 'Cod Uni Org',
+            field: 'Cod Uni Org',
+            label: 'Cod Uni Org',
+            minWidth: 15
+          },
+          {
+            prop: 'Uni Org',
+            field: 'Uni Org',
+            label: 'Uni Org',
+            minWidth: 15
           }
         ],
         pagination: {

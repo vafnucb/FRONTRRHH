@@ -44,7 +44,7 @@
             <span v-else>Desmarcar Todos</span>
           </button>
         </div>
-        <div class="col-md-2" v-if="origen === 'DEP' || origen === 'INDEP'">
+        <div class="col-md-2" v-if="origen === 'DEP' || origen === 'INDEP' || origen === 'EXT'">
           <button class="btn btn-info btn-wd" @click="UpdateState">Enviar a Aprobacion</button>
         </div>
         <div class="col-md-2" v-if="origen === 'OR' || origen === 'FAC'">
@@ -763,5 +763,6 @@
     margin: 20px;
   }
   input[type=radio] {
+    margin: 0 10px 0 10px;
   }
 </style>

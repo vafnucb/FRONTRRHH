@@ -30,9 +30,14 @@
               <FirstStep v-if="actualTab == 3" v-bind:estado="'REGISTRADO'" v-bind:origen="'FAC'" v-bind:tipo="'factura'"></FirstStep>
               <!--<FirstStep v-if="actualTab == 2" v-bind:estado="'REGISTRADO'" v-bind:origen="'DEP'" v-bind:tipo="'dependientes'"></FirstStep>-->
             </tab-content>
+            <tab-content title="Validación Extanjeros"
+                         icon="fa fa-user-check">
+              <FirstStep v-if="actualTab == 4" v-bind:estado="'REGISTRADO'" v-bind:origen="'EXT'" v-bind:tipo="'extranjero'"></FirstStep>
+              <!--<FirstStep v-if="actualTab == 2" v-bind:estado="'REGISTRADO'" v-bind:origen="'DEP'" v-bind:tipo="'dependientes'"></FirstStep>-->
+            </tab-content>
             <tab-content title="Aprobación"
                          icon="fa fa-university">
-              <SecondStepAll v-if="actualTab == 4"></SecondStepAll>
+              <SecondStepAll v-if="actualTab == 5"></SecondStepAll>
             </tab-content>
 
             <button slot="prev" class="btn btn-info btn-fill btn-wd btn-back">Atras</button>

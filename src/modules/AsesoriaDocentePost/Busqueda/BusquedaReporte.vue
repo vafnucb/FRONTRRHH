@@ -3,7 +3,7 @@
     <div class="panel-body">
       <!--Proyecto-->
       <div class="row">
-        <div class="form-group col-md-8 col-md-offset-2">
+        <div class="form-group col-md-9 col-md-offset-2">
           <label>Proyecto</label>
           <div>
             <model-select class="select-info"
@@ -16,7 +16,7 @@
       </div>
       <!--Modulo-->
       <div class="row">
-        <div class="form-group col-md-8 col-md-offset-2">
+        <div class="form-group col-md-9 col-md-offset-2">
           <label>Módulo</label>
           <div>
             <model-select class="select-info"
@@ -28,7 +28,7 @@
       </div>
       <!--Docente-->
       <div class="row">
-        <div class="form-group col-md-6 col-md-offset-2">
+        <div class="form-group col-md-7 col-md-offset-2">
           <label>Docente</label>
           <model-select class="select-info"
                         :options="teachers"
@@ -47,12 +47,21 @@
       </div>
       <!--Tarea Mes Gestion-->
       <div class="row">
-        <div class="form-group col-md-4 col-md-offset-2">
+        <div class="form-group col-md-3 col-md-offset-2">
           <label>Tipo Tarea</label>
           <div>
             <model-select class="select-info"
                           :options="tipoTarea"
                           v-model="busqTarea">
+            </model-select>
+          </div>
+        </div>
+        <div class="form-group col-md-2 col-md-2">
+          <label>Tipo Pago</label>
+          <div>
+            <model-select class="select-info"
+                          :options="tipoPago"
+                          v-model="busqTipoPago">
             </model-select>
           </div>
         </div>
@@ -71,10 +80,67 @@
 
         </div>
       </div>
+      <div class="row">
+        <div class="form-group col-md-4 col-md-offset-2">
+          <label>Importe Bruto</label>
+
+          <!-- Slider para rango -->
+          <vue-slider
+            v-model="importeRange"
+            :min="1"
+            :max="25000"
+            :interval="1"
+            @drag-end="updateInputs"
+          ></vue-slider>
+
+          <!-- Inputs para valores exactos -->
+          <div class="input-group mt-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Mínimo</span>
+            </div>
+            <input type="number" min="0" class="form-control" v-model="importeMinExacto" @input="updateSlider">
+          </div>
+
+          <div class="input-group mt-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Máximo</span>
+            </div>
+            <input type="number" min="0" class="form-control" v-model="importeMaxExacto" @input="updateSlider">
+          </div>
+        </div>
+
+        <div class="form-group col-md-4 col-md-offset-1">
+          <label>Importe Neto</label>
+
+          <!-- Slider para rango -->
+          <vue-slider
+            v-model="importeRangeNeto"
+            :min="1"
+            :max="25000"
+            :interval="1"
+            @drag-end="updateInputsNeto"
+          ></vue-slider>
+
+          <!-- Inputs para valores exactos -->
+          <div class="input-group mt-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Mínimo</span>
+            </div>
+            <input type="number" min="0" class="form-control" v-model="importeMinExactoNeto" @input="updateSliderNeto">
+          </div>
+
+          <div class="input-group mt-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Máximo</span>
+            </div>
+            <input type="number" min="0" class="form-control" v-model="importeMaxExactoNeto" @input="updateSliderNeto">
+          </div>
+        </div>
+      </div>
       <!--Botón que envía la información del form-->
       <div class="row">
         <div class="form-group col-md-2 col-md-offset-4">
-           <reporte :url="busqProjects + '/' + busqModules + '/' + busqTeacherCUNI + '/' + busqOrigenQuery + '/' + busqTarea + '/' + busqMes + '/' + busqGestion"></reporte>
+           <reporte :url="busqProjects + '/' + busqModules + '/' + busqTeacherCUNI + '/' + busqOrigenQuery + '/' + busqTarea + '/' + busqMes + '/' + busqGestion + '/' + importeMinExacto + '/' + importeMaxExacto + '/' + importeMinExactoNeto + '/' + importeMaxExactoNeto + '/' + busqTipoPago "></reporte>
         </div>
         <div class="col-md-2">
           <button class="btn btn-danger btn-fill" @click="cleanScreen()">Reset</button>
@@ -92,13 +158,18 @@
   import { ModelSelect } from 'vue-search-select'
   import 'vue-form-wizard/dist/vue-form-wizard.min.css'
   import Reporte from './ReporteBusquedaAvanzada'
+  import VueSlider from 'vue-slider-component'
+  import 'vue-slider-component/theme/default.css'
   export default {
     components: {
       ModelSelect,
-      Reporte
+      Reporte,
+      VueSlider
     },
     data: function () {
       return {
+        importeRange: [1, 15000],
+        importeRangeNeto: [1, 15000],
         months: [],
         origins: [],
         selectMes: [{Id: '01', Name: 'ENERO'},
@@ -115,13 +186,18 @@
             {Id: '12', Name: 'DICIEMBRE'}],
         selectOrigen: [{Id: '0', Name: 'TODOS'},
           {Id: '1', Name: 'DEPEN'},
-          {Id: '2', Name: 'INDEP'}],
+          {Id: '2', Name: 'INDEP'},
+          {Id: '3', Name: 'OR'},
+          {Id: '4', Name: 'FAC'},
+          {Id: '5', Name: 'EXT'}
+        ],
         dependencyOptions: [],
         but: false,
         IsFetching: true,
         projects: [],
         modulos: [],
         tipoTarea: [],
+        tipoPago: [],
         dependiente: true,
         or: false,
         teacherIdentifier: '',
@@ -137,7 +213,12 @@
         busqOrigen: 'DEPEN',
         busqModalidad: null,
         busqTarea: null,
-        busqOrigenQuery: '0'
+        busqOrigenQuery: '0',
+        importeMinExacto: 1,
+        importeMaxExacto: 25000,
+        importeMinExactoNeto: 1,
+        importeMaxExactoNeto: 25000,
+        busqTipoPago: null
       }
     },
     methods: {
@@ -150,6 +231,34 @@
         setTimeout(() => {
           this.$store.commit('crud/loadSetter', false)
         }, 500)
+      },
+      updateSlider () {
+        // Actualiza el valor del slider cuando cambian los inputs
+        this.importeRange = [parseInt(this.importeMinExacto) || 0, parseInt(this.importeMaxExacto) || 0]
+      },
+      updateInputs () {
+        // Actualiza los valores de los inputs cuando cambia el slider
+        this.importeMinExacto = this.importeRange[0].toString()
+        this.importeMaxExacto = this.importeRange[1].toString()
+      },
+      updateSliderNeto () {
+        // Actualiza el valor del slider cuando cambian los inputs
+        this.importeRangeNeto = [parseInt(this.importeMinExactoNeto) || 0, parseInt(this.importeMaxExactoNeto) || 0]
+      },
+      updateInputsNeto () {
+        // Actualiza los valores de los inputs cuando cambia el slider
+        this.importeMinExactoNeto = this.importeRangeNeto[0].toString()
+        this.importeMaxExactoNeto = this.importeRangeNeto[1].toString()
+      },
+      loadTipoPago () {
+        let tipop = this.tipoPago
+        axios.get('TipoPago')
+          .then(response => {
+            response.data.forEach(function (element) {
+              tipop.push({value: element.Id, text: element.Nombre})
+            })
+          })
+          .catch(error => console.log(error + 'Im here cause I messed up'))
       },
       loadProjects () {
         let proyectos = this.projects
@@ -245,6 +354,11 @@
         this.busqGestion = null
         this.busqTarea = null
         this.busqOrigenQuery = '0'
+        this.importeMinExacto = 1
+        this.importeMaxExacto = 25000
+        this.importeMinExactoNeto = 1
+        this.importeMaxExactoNeto = 25000
+        this.busqTipoPago = null
       },
       onClose () {
         // emit para cerrar el componente
@@ -285,6 +399,7 @@
       this.loadOrigin()
       this.loadTipoTarea()
       this.loadMonth()
+      this.loadTipoPago()
     }
   }
 </script>

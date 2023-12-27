@@ -11,10 +11,10 @@
             subtitle="Seleccionar el tipo de vinculación"
             @on-change="handleValidation"
           >
-            <tab-content title="Verificación Dependientes"
+            <tab-content title="Verificación Dependientes" 
                          icon="fa fa-user-check">
               <!--<FirstStep v-if="actualTab == 0" v-bind:estado="'REGISTRADO'" v-bind:origen="'OR'" v-bind:tipo="'otras regionales'"></FirstStep>-->
-              <FirstStep v-if="actualTab == 0" v-bind:estado="'REGISTRADO'" v-bind:origen="'DEP'" v-bind:tipo="'dependientes'"></FirstStep>
+              <FirstStep v-if="actualTab == 0" v-bind:estado="'REGISTRADO'" v-bind:origen="'DEP'" v-bind:tipo="'dependientes'" />
             </tab-content>
             <tab-content title="Verificación Independientes"
                          icon="fa fa-user-check">
@@ -29,6 +29,10 @@
                          icon="fa fa-user-check">
               <FirstStep v-if="actualTab == 3" v-bind:estado="'REGISTRADO'" v-bind:origen="'FAC'" v-bind:tipo="'factura'"></FirstStep>
               <!--<FirstStep v-if="actualTab == 2" v-bind:estado="'REGISTRADO'" v-bind:origen="'DEP'" v-bind:tipo="'dependientes'"></FirstStep>-->
+            </tab-content>
+            <tab-content title="Verificación Extranjeros"
+                         icon="fa fa-user-check">
+              <FirstStep v-if="actualTab == 4" v-bind:estado="'REGISTRADO'" :origen="'EXT'" v-bind:tipo="'extranjero'"></FirstStep>
             </tab-content>
             <!--
             <tab-content title="Aprobación"
@@ -66,6 +70,7 @@
         // 1->Independientes
         // 2->Dependientes
         // 3->Pre-Pre-Aprobados
+        // 4->Extranjeros
         actualTab: 0
       }
     },
@@ -83,13 +88,14 @@
 </script>
 
 <style>
+
   .vue-form-wizard .wizard-icon-circle.tab_shape {
     width: 100%;
     min-width: 100px;
     height: 40px;
     border: none;
     background-color: #1c3b6c;
-    color: #fff;
+    color: #ffffff;
     border-radius: 0;
   }
 </style>
