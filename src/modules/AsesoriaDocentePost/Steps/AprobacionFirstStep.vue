@@ -611,7 +611,7 @@
           let tableBody = []
           for (var tableIndex = index; tableIndex < index + tableLength; tableIndex++) {
             // Crear un array de arrays con los elementos que correspondan
-            tableBody.push([files[tableIndex].TeacherFullName, files[tableIndex].TipoTarea, files[tableIndex].Modulo, files[tableIndex].Horas, files[tableIndex].MontoHora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
+            tableBody.push([files[tableIndex].TeacherFullName, files[tableIndex].Alumno, files[tableIndex].TipoTarea, files[tableIndex].Modulo, files[tableIndex].Horas, files[tableIndex].MontoHora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
           }
           // console.log('this is the body with results: ')
           // console.log(tableBody)
@@ -620,7 +620,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'IUE', 'IT', 'Total Neto', 'Observaciones', 'Dup']],
+            head: [['Docente', 'Alumno', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'IUE', 'IT', 'IUEExt', 'Total Neto', 'Observaciones', 'Dup']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},
@@ -632,7 +632,7 @@
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
               0: {cellWidth: 60},
-              1: {cellWidth: 10},
+              1: {cellWidth: 60},
               2: {cellWidth: 54},
               3: {cellWidth: 10},
               4: {cellWidth: 10},
@@ -642,7 +642,9 @@
               8: {cellWidth: 12},
               9: {cellWidth: 14.5},
               10: {cellWidth: 50},
-              11: {cellWidth: 10}
+              11: {cellWidth: 10},
+              12: {cellWidth: 10},
+              13: {cellWidth: 10}
             }
           })
           // -------------------------------------Tabla con totales por carrera-----------------------------------------
@@ -650,14 +652,14 @@
             return result.Proyecto === careerName
           })
           let resultBody = []
-          resultBody.push([careerResults[0].Total_Bruto, careerResults[0].Deduccion, careerResults[0].IUE, careerResults[0].IT, careerResults[0].Total_Neto])
+          resultBody.push([careerResults[0].Total_Bruto, careerResults[0].Deduccion, careerResults[0].IUE, careerResults[0].IT, careerResults[0].IUEExt, careerResults[0].Total_Neto])
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos
             margin: {left: 158.2},
             theme: 'grid',
             body: resultBody,
-            columnStyles: {0: {cellWidth: 14}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 14.5}},
+            columnStyles: {0: {cellWidth: 14}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 14.5}, 5: {cellWidth: 14.5}},
             styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
           })
           // Reset del cuerpo para otras carreras y sus resultados
@@ -672,13 +674,13 @@
           theme: 'grid',
           body: this.finalResult,
           margin: {left: 158.2},
-          columnStyles: {0: {cellWidth: 14}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 14.5}},
+          columnStyles: {0: {cellWidth: 14}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 14.5}, 5: {cellWidth: 14.5}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })
         doc.setFontSize(8)
         doc.setFontStyle('normal')
         doc.text('Reporte generado por: ' + this.username, 14, y + (205 - y) - 10)
-        doc.save('ReporteAgrupado.pdf')
+        doc.save('ReporteAgrupadoPostgrado.pdf')
         return doc
       },
       // Metodos para el cuerpo del PDF

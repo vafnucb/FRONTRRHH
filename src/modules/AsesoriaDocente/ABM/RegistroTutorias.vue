@@ -89,8 +89,13 @@
           </div>
         </div>
         <div class="form-group col-md-2">
-          <label >Número de Contrato</label>
-          <input type="text" placeholder="Número de Contrato" class="form-control textBox" v-model.lazy="tutoria.NumeroContrato">
+          <label >N° de Contrato?</label>
+          <input type="checkbox" class="form-control" v-model.lazy="contrato">
+        </div>
+        <div v-show="contrato" class="form-group col-md-2">
+          <label >N° de Contrato</label>
+          <input type="text" placeholder="N° de Contrato" class="form-control textBox" v-model.lazy="tutoria.NumeroContrato">
+          <small v-show="formError.NumeroContrato.active" class="form-text text-muted text-danger">{{formError.NumeroContrato.message}}</small>
         </div>
       </div>
       <!--Del Alumno y acta-->
@@ -225,6 +230,8 @@
     },
     data: function () {
       return {
+        NumeroContrato: '',
+        contrato: false,
         initialTotalBruto: 0,
         extranjero: false,
         ridy: false,
@@ -302,6 +309,10 @@
             message: '*Este valor no puede ser vacio.'
           },
           Student: {
+            active: false,
+            message: '*Este valor no puede ser vacio.'
+          },
+          NumeroContrato: {
             active: false,
             message: '*Este valor no puede ser vacio.'
           }
