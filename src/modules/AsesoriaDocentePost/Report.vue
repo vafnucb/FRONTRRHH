@@ -86,7 +86,7 @@
           let tableBody = []
           for (var tableIndex = index; tableIndex < index + tableLength; tableIndex++) {
             // Crear un array de arrays con los elementos que correspondan
-            tableBody.push([files[tableIndex].TeacherFullName, files[tableIndex].TipoTarea, files[tableIndex].Modulo, files[tableIndex].Horas, files[tableIndex].MontoHora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
+            tableBody.push([files[tableIndex].TeacherFullName, files[tableIndex].TipoTarea, files[tableIndex].Modulo, files[tableIndex].Horas, files[tableIndex].MontoHora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
           }
           // console.log('this is the body with results: ')
           // console.log(tableBody)
@@ -95,7 +95,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'IUE', 'IT', 'Total Neto', 'Observaciones', 'Dup']],
+            head: [['Docente', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'IUE', 'IT', 'IUEExt', 'Total Neto', 'Observaciones', 'Dup']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},
@@ -125,7 +125,7 @@
             return result.Proyecto === careerName
           })
           let resultBody = []
-          resultBody.push([careerResults[0].Total_Bruto, careerResults[0].Deduccion, careerResults[0].IUE, careerResults[0].IT, careerResults[0].Total_Neto])
+          resultBody.push([careerResults[0].Total_Bruto, careerResults[0].Deduccion, careerResults[0].IUE, careerResults[0].IT, careerResults[0].IUEExt, careerResults[0].Total_Neto])
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos

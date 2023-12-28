@@ -77,7 +77,7 @@
     <div class="col-md-3">
       <div class="form-group" style="margin-bottom: 20px;">
         <label>Extranjero?</label>
-        <input type="checkbox" class="form-control" v-model.lazy="extranjero" :disabled="dependiente" @click="lockExtranjero()">
+        <input type="checkbox" class="form-control" v-model="extranjero" :disabled="dependiente" @click="lockExtranjero()">
       </div>
     </div>
     </div>
@@ -93,7 +93,7 @@
         </model-select>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="form-group" style="margin-bottom: 20px;">
         <label>Tipo Pago</label>
         <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
@@ -102,7 +102,7 @@
         </model-select>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="form-group" style="margin-bottom: 20px;">
         <label>Tipo Tarea</label>
         <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
@@ -111,6 +111,14 @@
         </model-select>
       </div>
     </div>
+      <div class="col-md-2">
+        <label >N° de Contrato?</label>
+        <input type="checkbox" class="form-control" v-model.lazy="contrato">
+      </div>
+      <div v-show="contrato" class="col-md-2">
+        <label >N° de Contrato</label>
+        <input type="text" placeholder="N° de Contrato" class="form-control textBox" v-model.lazy="tutoria.NumeroContrato">
+      </div>
   </div>
 </div>
 
@@ -253,6 +261,7 @@
     },
     data: function () {
       return {
+        contrato: false,
         initialTotalBruto: 0,
         extranjero: false,
         projectSelected: [],
@@ -326,7 +335,8 @@
           IT: 0,
           StudentFullName: '',
           Factura: false,
-          IUEExterior: null
+          IUEExterior: null,
+          NumeroContrato: ''
         },
         formError: {
           Acta: {
