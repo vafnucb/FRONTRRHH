@@ -266,53 +266,48 @@
       },
       toPregrado () {
         let data = this.segmento + ';' + this.mes + ';' + this.gestion
-        axios.get(this.fileUrl + data,
-          {
-            responseType: 'arraybuffer',
-            headers: {
-              'token': localStorage.getItem('token')
-            }
+        axios.get(this.fileUrl + data, {
+          responseType: 'arraybuffer',
+          headers: {
+            'token': localStorage.getItem('token')
           }
-        )
-          .then(response => {
-            const blob = new Blob([response.data], {
-              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            })
-            const url = window.URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.href = url
-            var filename = response.request.getResponseHeader('Content-Disposition')
-            link.setAttribute('download', filename.split('filename=')[1])
-            document.body.appendChild(link)
-            link.click()
+        })
+        .then(response => {
+          const blob = new Blob([response.data], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          })
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          // Proporciona directamente el nombre del archivo
+          const filename = this.segmento + '-CC_PREGRADO.xlsx'
+          link.setAttribute('download', filename)
+          document.body.appendChild(link)
+          link.click()
+          swal({
+            title: 'Buen trabajo!!',
+            text: 'Se enviaron los registros al historial',
+            type: 'success',
+            confirmButtonClass: 'btn btn-success btn-fill',
+            buttonsStyling: false
+          })
+        })
+        .catch(error => {
+          const blob = new Blob([error.response.data], { type: 'text/plain' })
+          const reader = new FileReader()
+          reader.addEventListener('loadend', (e) => {
+            const text = e.srcElement.result
+            console.log(text)
             swal({
-              title: 'Buen trabajo!!',
-              text: 'Se enviaron los registros al historial',
-              type: 'success',
+              title: `Ups!`,
+              text: text,
+              buttonsStyling: false,
               confirmButtonClass: 'btn btn-success btn-fill',
-              buttonsStyling: false
-            }).then(function () {
-              // la página se recarga con frescura :v
-              location.reload()
+              type: 'warning'
             })
           })
-          .catch(error => {
-            const blob = new Blob([error.response.data], {type: 'text/plain'})
-            const reader = new FileReader()
-            let text
-            reader.addEventListener('loadend', (e) => {
-              text = e.srcElement.result
-              console.log(text)
-              swal({
-                title: `Ups!`,
-                text: text,
-                buttonsStyling: false,
-                confirmButtonClass: 'btn btn-success btn-fill',
-                type: 'warning'
-              })
-            })
-            reader.readAsText(blob)
-          })
+          reader.readAsText(blob)
+        })
       },
       send () {
         if (!this.valid()) {

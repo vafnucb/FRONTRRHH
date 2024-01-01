@@ -33,7 +33,7 @@
             <span v-else>Desmarcar Todos</span>
           </button>
         </div>
-        <div class="col-md-2" v-if="origen==='DEP'|| origen==='INDEP'">
+        <div class="col-md-2" v-if="origen==='DEP'|| origen==='INDEP' || origen === 'EXT'">
           <button class="btn btn-info" @click="UpdateState">Enviar a Aprobacion</button>
         </div>
         <div class="col-md-2" v-if="origen==='OR' || origen==='FAC'">
@@ -930,8 +930,9 @@
       },
       // Metodos para el cuerpo del PDF
       loadCareerBody () {
-        if (this.origen === 'DEP') {
-          this.origen = 'DEPEN'
+        let tempOrigen = this.origen
+        if (tempOrigen === 'DEP') {
+          tempOrigen = 'DEPEN'
         }
         // Cargar el cuerpo, es decir datos por carrera
         let rec = this.records
@@ -943,15 +944,16 @@
             })
           })
           .catch(error => console.log(error))
-        if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+        if (tempOrigen === 'DEPEN') {
+          tempOrigen = 'DEP'
         }
       },
       loadCareerTotals () {
+        let tempOrigen = this.origen
         // Cargar el agrupado por carrera, montos Totales
         // Cargamos los nombres de las carreras
-        if (this.origen === 'DEP') {
-          this.origen = 'DEPEN'
+        if (tempOrigen === 'DEP') {
+          tempOrigen = 'DEPEN'
         }
         let uniqueCareers = this.careers
         let currentResults = this.careerResult
@@ -963,13 +965,14 @@
             })
           })
           .catch(error => console.log(error))
-        if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+        if (tempOrigen === 'DEPEN') {
+          tempOrigen = 'DEP'
         }
       },
       loadAllTotals () {
-        if (this.origen === 'DEP') {
-          this.origen = 'DEPEN'
+        let tempOrigen = this.origen
+        if (tempOrigen === 'DEP') {
+          tempOrigen = 'DEPEN'
         }
         // Cargar el total de todas las regionales que ve el usuario
         let final = this.finalResult
@@ -980,8 +983,8 @@
             })
           })
           .catch(error => console.log(error))
-        if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+        if (tempOrigen === 'DEPEN') {
+          tempOrigen = 'DEP'
         }
       },
       loadBranchData () {
