@@ -323,7 +323,7 @@ let Menu = {
     },
     {
       path: '/BusquedaAvanzada',
-      name: 'Búsqueda Avanzada',
+      name: 'Búsqueda Avanzada Pre',
       component: BusquedaAvanzada
     },
     {

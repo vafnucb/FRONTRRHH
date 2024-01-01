@@ -22,9 +22,9 @@
           <model-select class="select-info"
                         v-bind:class="{fixI : action==='PUT'}"
                         :options="teacherArray"
-                        label="nombre"
                         v-model.lazy="teacherIdentifier"
                         placeholder="Seleccionar docente"
+                        @input="actualCat(teacherIdentifier)"
           >
           </model-select>
         </div>
@@ -372,7 +372,7 @@
           })
           .catch(error => console.log(error + 'Im here cause I messed up'))
       },
-      lockExtranjero () {
+      lockExtranjero: function () {
         this.resetValues()
         if (!this.extranjero) {
           this.dependiente = false
@@ -434,6 +434,7 @@
             } else if (this.tutoria.Origen === 'INDEP') {
               this.origin = 'INDEP'
               this.dependiente = false
+              this.extranjero = false
               this.teacherIdentifier = this.tutoria.TeacherBP
               // console.log('aqui businees partner. ' + this.teacherIdentifier + '=' + this.tutoria.TeacherBP)
               // console.log('INDEP' + this.tutoria.TeacherFullName)
@@ -531,7 +532,7 @@
               this.tutoria.Categoría = this.infoTeacher[0].Categoria
               this.tutoria.MontoHora = this.infoTeacher[0].Precio
             }
-            if (!this.dependiente || this.extranjero) {
+            if (!this.dependiente) {
               this.tutoria.TeacherCUNI = ''
               this.tutoria.TeacherBP = this.infoTeacher[0].CUNI
               this.tutoria.TeacherFullName = this.infoTeacher[0].FullName
@@ -824,6 +825,14 @@
           }
         }
       },
+      extranjero: function () {
+        if (this.extranjero) {
+          this.tutoria.Origen = 'EXT'
+          // si no es dependiente no puede ser OR
+          this.or = false
+        }
+        this.tutoria.Categoría = ''
+      },
       dependiente: function () {
         if (this.dependiente) {
           if (!this.or) {
@@ -835,13 +844,7 @@
           // si no es dependiente no puede ser OR
           this.or = false
         }
-      },
-      extranjero: function () {
-        if (!this.dependiente && this.extranjero) {
-          this.tutoria.Origen = 'EXT'
-          // si no es dependiente no puede ser OR
-          this.or = false
-        }
+        this.tutoria.Categoría = ''
       }
     },
     created () {
