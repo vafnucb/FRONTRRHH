@@ -235,9 +235,7 @@
             MontoHora: null,
             FechaInicio: '',
             FechaFin: '',
-            Observaciones: '',
-            nameOrg: '',
-            codeOrg: ''
+            Observaciones: ''
           },
           moduleGral: {
             Id: null,
@@ -252,9 +250,7 @@
             MontoHora: null,
             FechaInicio: '',
             FechaFin: '',
-            Observaciones: '',
-            nameOrg: '',
-            codeOrg: ''
+            Observaciones: ''
           },
           formError: {
             Professor: {

@@ -27,14 +27,14 @@
             </span>
         </button>
         <div class=" col-md-12 card">
-          <EditModule :module-id="i" :action="'PUT'" v-on:back="Back"></EditModule>
+          <EditModule :module-id="i" :action="'PUT'" :codProject="this.Cod_Proyecto" v-on:back="Back"></EditModule>
         </div>
       </div>
     </template>
   </div>
 </template>
 <script>
-  import Datepicker from 'vuejs-datepicker'
+  import Datepicker, { data } from 'vuejs-datepicker'
   import {en, es} from 'vuejs-datepicker/dist/locale'
   import EditModule from './ABM/RegistroModulos'
   import { mapState } from 'vuex'
@@ -54,6 +54,7 @@
     },
     data () {
       return {
+        cp: null,
         i: null,
         actions: 'LIST',
         en: en,
@@ -62,7 +63,7 @@
         format: 'dd-MM-yyyy',
         opendate: new Date(1975, 5, 1),
         url: '/ProjectModules',
-        propsToSearch: ['Cod_Proyecto', 'Nombre_Proyecto', 'Cod_Modulo', 'Nombre_Modulo', 'Docente'],
+        propsToSearch: ['Cod_Proyecto', 'Nombre_Proyecto', 'Cod_Modulo', 'Nombre_Modulo', 'Docente', 'Name'],
         tableColumns: [
           {
             prop: 'Cod_Proyecto',
@@ -107,16 +108,16 @@
             minWidth: 15
           },
           {
-            prop: 'Cod Uni Org',
-            field: 'Cod Uni Org',
-            label: 'Cod Uni Org',
+            prop: 'Cod',
+            field: 'Cod',
+            label: 'Cod U-O',
             minWidth: 15
           },
           {
-            prop: 'Uni Org',
-            field: 'Uni Org',
-            label: 'Uni Org',
-            minWidth: 15
+            prop: 'Name',
+            field: 'Name',
+            label: 'U-O',
+            minWidth: 45
           }
         ],
         pagination: {
@@ -202,6 +203,8 @@
       }
     },
     created () {
+      this.loadUnitName()
+      this.loadUniteCode()
     }
   }
 </script>
