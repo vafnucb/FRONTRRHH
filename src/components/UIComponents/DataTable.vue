@@ -33,7 +33,7 @@
               <el-tooltip
                 content="Exportar en formato Excel"
                 placement="top-start">
-                <!--<vue-excel-xlsx
+                <vue-excel-xlsx
                   :data="items"
                   :columns="tableColumns"
                   :filename="'Export'"
@@ -42,8 +42,8 @@
                 ><a class="btn btn-icon btn-success pull-right btn-fill">
                   <i class="fa fa-file-excel fa-lg" style=""></i>
                 </a>
-                </vue-excel-xlsx>-->
-                <!--<download-excel :data="items" type="xlsx">
+                </vue-excel-xlsx>
+                <download-excel :data="items" type="xlsx">
                   <a class="btn btn-icon btn-success pull-right btn-fill">
                     <i class="fa fa-file-excel fa-lg" style=""></i>
                   </a>
