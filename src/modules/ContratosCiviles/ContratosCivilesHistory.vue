@@ -121,6 +121,31 @@
       }
     },
     methods: {
+      // guardoDatos () {
+      //   axios.get('ServContract/History/')
+      //     .then(response => {
+      //       response.data.forEach(objeto => {
+      //       // Accede al Id de cada objeto
+      //         const id = objeto.Id
+      //       // Haz algo con el valor del Id
+      //         axios.get('/ServContract/' + id)
+      //         .then(respuestaDetallada => {
+      //           // Haz algo con la respuesta detallada según tus necesidades
+      //           console.log('Respuesta detallada para el ID', id, ':', respuestaDetallada.data)
+      //         })
+      //         .catch(errorDetallado => {
+      //           console.error('Error al obtener detalles para el ID', id, ':', errorDetallado)
+      //         })
+      //       })
+      //     })
+      //   .catch(error => console.log(error))
+      // },
+      // infoExtra () {
+      //   console.log('DUPLICANDOOOO', id, this.formData)
+      //   axios.get('ServContract/' + id, this.formData)
+      //   console.log('VERIFICOOOOOO', response.data)
+      //   return response.data
+      // },
       successMessage: function () {
         swal({
           title: `Buen trabajo!`,
