@@ -46,8 +46,7 @@
     "vuejs-datepicker": "^1.5.3",
     "vuex": "^3.0.1",
     "webpack": "^2.7.0",
-    "xlsx": "^0.18.5",
-    "xlsx-style": "^0.8.13"
+    "xlsx": "^0.17.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
