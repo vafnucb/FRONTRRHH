@@ -420,13 +420,9 @@
             this.TipoPago = this.tutoria.TipoPago
             // Dependiendo dl origen del docente se carga el CUNI o el BP
             if (this.tutoria.Origen === 'DEPEN' || this.tutoria.Origen === 'OR') {
-              // para mostrar al docente del registro
-              // console.log('CUNI is loaded')
               this.teacherIdentifier = this.tutoria.TeacherCUNI
-              // console.log('aqui businees partner. ' + this.teacherIdentifier + '=' + this.tutoria.TeacherCUNI)
               console.log('DEPEN' + this.teacherIdentifier)
               if (this.tutoria.Origen === 'OR') {
-                // console.log('OR is set to true')
                 this.or = true
               }
               // para igualar costos, es necesario hacer un cálculo inverso porque nosotros guardamos monto pero desplegamos porcentaje
@@ -436,12 +432,6 @@
               this.dependiente = false
               this.extranjero = false
               this.teacherIdentifier = this.tutoria.TeacherBP
-              // console.log('aqui businees partner. ' + this.teacherIdentifier + '=' + this.tutoria.TeacherBP)
-              // console.log('INDEP' + this.tutoria.TeacherFullName)
-              console.log('CREO QUE AQUI ESTA EL PROBLEM: ' + this.origin)
-              console.log('INDEP' + this.teacherIdentifier)
-              console.log('TeacherBP' + this.tutoria.TeacherBP)
-              console.log('TeacherFullName' + this.tutoria.TeacherFullName)
               // para igualar costos
               this.IUE = ((100 * this.tutoria.IUE) / this.tutoria.TotalBruto).toFixed(2)
               this.IT = ((100 * this.tutoria.IT) / this.tutoria.TotalBruto).toFixed(2)
@@ -450,7 +440,7 @@
               this.dependiente = false
               this.extranjero = true
               this.teacherIdentifier = this.tutoria.TeacherBP
-              // para igualar costos en caso de ser independiente extranjero
+              // para igualar costos en caso de ser extranjero
               this.IUEExterior = ((100 * this.tutoria.IUEExterior) / this.tutoria.TotalBruto).toFixed(2)
             }
             this.totalBruto = this.initialTotalBruto
@@ -470,6 +460,9 @@
               var actaDay = this.tutoria.ActaFecha.substring(8, 10)
               var date = new Date(actaYear, actaMonth - 1, actaDay)
               this.tutoria.ActaFecha = date
+            }
+            if (this.tutoria.NumeroContrato != null) {
+              this.contrato = true
             }
             this.IsFetching = false
           })
@@ -564,7 +557,7 @@
           // Este array guarda la info de los profesores que se cargan la primera vez
           let firstTeachers = this.teacherArray
           let selectedOrigin = '1'
-          if (this.origin === 'INDEP') {
+          if (this.origin === 'INDEP' || this.origin === 'EXT') {
             // console.log('This is the PUT action and the selected origin is:' + selectedOrigin)
             selectedOrigin = '0'
           }
@@ -592,7 +585,7 @@
           // Este array guarda la info de los profesores que se cargan la primera vez
           let firstTeachers = this.teacherArray
           let selectedOrigin = '1'
-          if (this.origin === 'INDEP') {
+          if (this.origin === 'INDEP' || this.origin === 'EXT') {
             // console.log('This is the PUT action and the selected origin is:' + selectedOrigin)
             selectedOrigin = '0'
           }
@@ -794,6 +787,7 @@
           this.Deduccion = 0
           this.IUE = 0
           this.IT = 0
+          this.IUEExterior = 0
         } else {
           this.ridy = false
         }
@@ -828,6 +822,11 @@
       extranjero: function () {
         if (this.extranjero) {
           this.tutoria.Origen = 'EXT'
+          // si no es dependiente no puede ser OR
+          this.or = false
+        }
+        if (!this.extranjero && !this.dependiente) {
+          this.tutoria.Origen = 'INDEP'
           // si no es dependiente no puede ser OR
           this.or = false
         }
