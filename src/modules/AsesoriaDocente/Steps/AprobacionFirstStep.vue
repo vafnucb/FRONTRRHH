@@ -874,7 +874,7 @@
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
               0: {cellWidth: 40},
-              1: {cellWidth: 15},
+              1: {cellWidth: 5},
               2: {cellWidth: 10},
               3: {cellWidth: 10},
               4: {cellWidth: 40},

@@ -461,7 +461,9 @@
               var date = new Date(actaYear, actaMonth - 1, actaDay)
               this.tutoria.ActaFecha = date
             }
-            if (this.tutoria.NumeroContrato != null) {
+            if (this.tutoria.NumeroContrato === '' || this.tutoria.NumeroContrato === null) {
+              this.contrato = false
+            } else {
               this.contrato = true
             }
             this.IsFetching = false

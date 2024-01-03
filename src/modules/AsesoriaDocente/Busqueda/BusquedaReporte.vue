@@ -186,7 +186,7 @@
       <div class="row">
         <div class="col-md-4">
         </div>
-        <reporte :url="busqCarrera + '/' + busqTeacherCUNI + '/' + busqModalidad + '/' + busqTarea + '/' + busqStudent + '/' + busqMes + '/' + busqGestion + '/' + busqOrigenQuery + '/' + importeMinExacto + '/' + importeMaxExacto + '/' + importeMinExactoNeto + '/' + importeMaxExactoNeto + '/' + busqTipoPago "></reporte>
+        <reporte :url="busqCarrera + '/' + busqTeacherCUNI + '/' + busqModalidad + '/' + busqTarea + '/' + busqStudent + '/' + busqMes + '/' + busqGestion + '/' + busqOrigenQuery + '/' + busqTipoPago "></reporte>
         <div class="col-md-1">
           <button class="btn btn-danger btn-fill" @click="cleanScreen()">Reset</button>
         </div>
@@ -447,10 +447,10 @@
         this.busqTarea = null
         this.busqOrigenQuery = '0'
         this.busqExtranjero = '0'
-        this.importeMinExacto = 1
-        this.importeMaxExacto = 25000
-        this.importeMinExactoNeto = 1
-        this.importeMaxExactoNeto = 25000
+        // this.importeMinExacto = 1
+        // this.importeMaxExacto = 25000
+        // this.importeMinExactoNeto = 1
+        // this.importeMaxExactoNeto = 25000
         this.busqTipoPago = null
         // Variables del componente
         // Variables de control de errores

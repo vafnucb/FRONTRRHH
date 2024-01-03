@@ -86,7 +86,7 @@
           let tableBody = []
           for (var tableIndex = index; tableIndex < index + tableLength; tableIndex++) {
             // Crear un array de arrays con los elementos que correspondan
-            tableBody.push([files[tableIndex].Docente, files[tableIndex].Origen, files[tableIndex].Modal, files[tableIndex].Tarea, files[tableIndex].Alumno, files[tableIndex].Acta + ' ', (files[tableIndex].Fecha), files[tableIndex].Horas, files[tableIndex].Costo_Hora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
+            tableBody.push([files[tableIndex].Docente, files[tableIndex].Origen, files[tableIndex].Modal, files[tableIndex].Tarea, files[tableIndex].Alumno, files[tableIndex].Acta + ' ', (files[tableIndex].Fecha), files[tableIndex].TipoPago, files[tableIndex].NumeroContrato, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
           }
           // console.log('this is the body with results: ')
           // console.log(tableBody)
@@ -95,7 +95,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'Horas', 'Costo Hora', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'TotalNeto', 'Observaciones', 'Dup']],
+            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'Tipo Pago', 'N° Contrato', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'Total Neto', 'Observación', 'Dup']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},
@@ -106,23 +106,22 @@
             // Las posiciones de los nombres y las observaciones se mantienen estáticas
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
-              0: {cellWidth: 30},
-              1: {cellWidth: 15},
+              0: {cellWidth: 35},
+              1: {cellWidth: 12},
               2: {cellWidth: 10},
               3: {cellWidth: 10},
-              4: {cellWidth: 30},
-              5: {cellWidth: 20},
-              6: {cellWidth: 15},
-              7: {cellWidth: 15},
+              4: {cellWidth: 45},
+              5: {cellWidth: 15},
+              6: {cellWidth: 10},
+              7: {cellWidth: 20},
               8: {cellWidth: 15},
               9: {cellWidth: 15},
-              10: {cellWidth: 15},
-              11: {cellWidth: 15},
-              12: {cellWidth: 15},
-              13: {cellWidth: 15},
-              14: {cellWidth: 15},
-              15: {cellWidth: 8},
-              16: {cellWidth: 8}
+              10: {cellWidth: 12},
+              11: {cellWidth: 10},
+              12: {cellWidth: 10},
+              13: {cellWidth: 10},
+              14: {cellWidth: 10},
+              15: {cellWidth: 20}
             }
           })
           // -------------------------------------Tabla con totales por carrera-----------------------------------------
@@ -134,10 +133,10 @@
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos
-            margin: {left: 174.2},
+            margin: {left: 186.2},
             theme: 'grid',
             body: resultBody,
-            columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 15.3}, 2: {cellWidth: 14.8}, 3: {cellWidth: 15}, 4: {cellWidth: 15}, 5: {cellWidth: 15}},
+            columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 12.3}, 2: {cellWidth: 9.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 10}},
             styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
           })
           // Reset del cuerpo para otras carreras y sus resultados
@@ -151,8 +150,8 @@
           startY: y,
           theme: 'grid',
           body: this.finalResult,
-          margin: {left: 174.2},
-          columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 15.3}, 2: {cellWidth: 14.8}, 3: {cellWidth: 15}, 4: {cellWidth: 15}, 5: {cellWidth: 15}},
+          margin: {left: 186.2},
+          columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 12.3}, 2: {cellWidth: 9.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 10}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })
         doc.setFontSize(8)
