@@ -19,7 +19,7 @@
         // agregar imagen y todas las variables de la tabla
         selectBranches: [],
         // datos de la tabla
-        headers: ['CÓDIGO SOCIO', 'NOMBRE SOCIO', 'COD DEPENDENCIA', 'COD UO', 'PEI/PO', 'NOMBRE DEL SERVICIO', 'CÓDIGO CARRERA', 'DOCUMENTO BASE', 'POSTULANTE', 'TIPO TAREA ASIGNADA', 'CUENTA ASIGNADA', 'MONTO CONTRADO', 'MONTO IUE', 'MONTO IT', 'MONTO A PAGAR', 'OBSERVACIONES', 'DUP'],
+        headers: ['CÓDIGO SOCIO', 'NOMBRE SOCIO', 'COD DEPENDENCIA', 'COD UO', 'PEI/PO', 'NOMBRE DEL SERVICIO', 'CÓDIGO CARRERA', 'DOCUMENTO BASE', 'POSTULANTE', 'TIPO TAREA ASIGNADA', 'CUENTA ASIGNADA', 'MONTO CONTRADO', 'MONTO IUE', 'MONTO IT', 'MONTO A PAGAR', 'OBSERVACIONES', 'DUP', 'TIPO PAGO'],
         body: [],
         data: []
       }
