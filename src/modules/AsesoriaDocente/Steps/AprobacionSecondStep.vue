@@ -4,25 +4,29 @@
     <template class="col-md-12 card" v-if="action==='LIST'">
         <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'ISAAC', actions: false}">
         </data-tables>
-      <div class="row">
-        <div class="col-md-4 col-md-offset-2" align="center">
-          <Info></Info>
+        <div class="row">
+          <!-- Primera columna -->
+          <div class="col-md-6" align="center">
+            <Info></Info>
+            <br> <!-- Agrega un salto de línea para separar Info y el botón -->
+            <br>
+            <button class="btn btn-info" @click="PDFCareer">Generar PDF por Carrera</button>
+            <br>
+            <br>
+          </div>
+          
+          <!-- Segunda columna -->
+          <div class="col-md-6" align="center">
+            <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo PREGRADO SALOMÓN</button>
+            <br>
+            <br>
+            <button class="btn btn-info" @click="windowDateSARAI">Generar archivo CARRERA SARAI Independientes</button>
+            <br>
+            <br>
+            <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
+          </div>
         </div>
-        <div class="col-md-4"  align="center">
-          <button class="btn btn-info" @click="PDFCareer">Generar PDF por Carrera</button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4" align="center" style="margin-top: 10px">
-          <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo PREGRADO SALOMÓN</button>
-        </div>
-        <div class="col-md-4" align="center" style="margin-top: 10px">
-          <button class="btn btn-info" @click="windowDateSARAI">Generar archivo CARRERA SARAI Independientes</button>
-        </div>
-        <!-- <div class="col-md-4" align="center" style="margin-top: 10px">
-          <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
-        </div> -->
-      </div>
+
       <template v-if="PDFcarrera==='SI'">
         <div class="row">
           <div class="form-group col-md-6 el-col-md-offset-5">
@@ -269,7 +273,7 @@
       },
       windowDateEXT () {
         this.action = 'MODIFY'
-        this.fileUrl = 'ToCarreraFile?data='
+        this.fileUrl = 'ToCarreraFileExt?data='
         this.file = 'CARRERA'
       },
       toPregrado () {
