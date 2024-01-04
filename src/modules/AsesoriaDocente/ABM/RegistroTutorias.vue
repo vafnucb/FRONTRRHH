@@ -337,7 +337,8 @@
             this.tutoria.IUE = (this.totalBruto * (this.IUE / 100)).toFixed(2)
             this.tutoria.IT = (this.totalBruto * (this.IT / 100)).toFixed(2)
             this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
-            this.tutoria.Deduccion = (this.tutoria.TotalBruto - this.tutoria.TotalNeto)
+            // this.tutoria.Deduccion = (this.tutoria.TotalBruto - this.tutoria.TotalNeto)
+            // this.tutoria.Deduccion = 0
             return (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
           }
         }

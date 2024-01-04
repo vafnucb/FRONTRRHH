@@ -13,12 +13,15 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4 col-md-offset-2"  align="center" style="margin-top: 10px">
+        <div class="col-md-4" align="center" style="margin-top: 10px">
           <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo PREGRADO SALOMÓN</button>
         </div>
-        <div class="col-md-4"  align="center" style="margin-top: 10px">
-          <button class="btn btn-info" @click="windowDateSARAI">Generar archivo CARRERA SARAI</button>
+        <div class="col-md-4" align="center" style="margin-top: 10px">
+          <button class="btn btn-info" @click="windowDateSARAI">Generar archivo CARRERA SARAI Independientes</button>
         </div>
+        <!-- <div class="col-md-4" align="center" style="margin-top: 10px">
+          <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
+        </div> -->
       </div>
       <template v-if="PDFcarrera==='SI'">
         <div class="row">
@@ -264,50 +267,60 @@
         this.fileUrl = 'ToCarreraFile?data='
         this.file = 'CARRERA'
       },
+      windowDateEXT () {
+        this.action = 'MODIFY'
+        this.fileUrl = 'ToCarreraFile?data='
+        this.file = 'CARRERA'
+      },
       toPregrado () {
         let data = this.segmento + ';' + this.mes + ';' + this.gestion
-        axios.get(this.fileUrl + data, {
-          responseType: 'arraybuffer',
-          headers: {
-            'token': localStorage.getItem('token')
+        axios.get(this.fileUrl + data,
+          {
+            responseType: 'arraybuffer',
+            headers: {
+              'token': localStorage.getItem('token')
+            }
           }
-        })
-        .then(response => {
-          const blob = new Blob([response.data], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          })
-          const url = window.URL.createObjectURL(blob)
-          const link = document.createElement('a')
-          link.href = url
-          // Proporciona directamente el nombre del archivo
-          const filename = this.segmento + '-CC_PREGRADO.xlsx'
-          link.setAttribute('download', filename)
-          document.body.appendChild(link)
-          link.click()
-          swal({
-            title: 'Buen trabajo!!',
-            text: 'Se enviaron los registros al historial',
-            type: 'success',
-            confirmButtonClass: 'btn btn-success btn-fill',
-            buttonsStyling: false
-          })
-        })
-        .catch(error => {
-          const blob = new Blob([error.response.data], { type: 'text/plain' })
-          const reader = new FileReader()
-          reader.addEventListener('loadend', (e) => {
-            const text = e.srcElement.result
-            console.log(text)
+        )
+          .then(response => {
+            const blob = new Blob([response.data], {
+              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            })
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            var filename = response.request.getResponseHeader('Content-Disposition')
+            link.setAttribute('download', filename.split('filename=')[1])
+            document.body.appendChild(link)
+            link.click()
             swal({
-              title: `Ups!`,
-              text: text,
-              buttonsStyling: false,
+              title: 'Buen trabajo!!',
+              text: 'Se enviaron los registros al historial',
+              type: 'success',
               confirmButtonClass: 'btn btn-success btn-fill',
-              type: 'warning'
+              buttonsStyling: false
+            }).then(function () {
+              // la página se recarga con frescura :v
+              location.reload()
             })
           })
-          reader.readAsText(blob)
-        })
+          .catch(error => {
+            const blob = new Blob([error.response.data], {type: 'text/plain'})
+            const reader = new FileReader()
+            let text
+            reader.addEventListener('loadend', (e) => {
+              text = e.srcElement.result
+              console.log(text)
+              swal({
+                title: `Ups!`,
+                text: text,
+                buttonsStyling: false,
+                confirmButtonClass: 'btn btn-success btn-fill',
+                type: 'warning'
+              })
+            })
+            reader.readAsText(blob)
+          })
       },
       send () {
         if (!this.valid()) {
