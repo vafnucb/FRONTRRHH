@@ -273,7 +273,7 @@
       },
       windowDateEXT () {
         this.action = 'MODIFY'
-        this.fileUrl = 'ToCarreraFileExt?data='
+        this.fileUrl = 'FileExt?data='
         this.file = 'CARRERA'
       },
       toPregrado () {
