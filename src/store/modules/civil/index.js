@@ -9,7 +9,8 @@ const state = {
     array: [],
     state: 'STARTED',
     id: ''
-  }
+  },
+  TipoDocente: ''
 }
 
 export default {

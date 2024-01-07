@@ -242,8 +242,10 @@
         }
       },
       SendToApprove () {
+        console.log(this.$store.state.civ.uploadedFiles.id + 'es el serv que se manda')
         axios.get('/ServContractToApproval/' + this.$store.state.civ.uploadedFiles.id)
         .then(response => {
+          console.log('QUPE ENVÍO?:', response.data)
           this.$store.dispatch('civ/uploadedFiles')
           this.redirect('Se envió a aprobación')
         })

@@ -59,6 +59,11 @@
           return this.$store.state.civ.FileType
         }
       },
+      tipoDocente: {
+        get () {
+          return this.$store.state.civ.TipoDocente
+        }
+      },
       regional: {
         get () {
           switch (this.$store.state.civ.BranchesId) {
@@ -87,7 +92,7 @@
       },
       tittle: {
         get () {
-          return this.regional + ' - ' + this.tipoArchivo
+          return this.regional + ' - ' + this.tipoArchivo + ' ' + this.tipoDocente
         }
       }
     },

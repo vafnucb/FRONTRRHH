@@ -60,10 +60,10 @@
       async generateExcel () {
         const data = await this.getDataFromURL()
         // Crear una nueva hoja de trabajo
-        const ws = XLSX.utils.aoa_to_sheet([['Código Proyecto', 'Nombre Proyecto', 'Válido Desde', 'Válido Hasta', 'Tipo Unidad Organizacional']])
-        ws['!cols'] = [{ wch: 20 }, { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 25 }]
-        // Agregar datos a la hoja de trabajo
-        XLSX.utils.sheet_add_aoa(ws, data, { origin: 'A2' })
+        const ws = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
+        const excludedColumnsIndices = [2, 3]  // Índices de las columnas a excluir
+        const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+        XLSX.utils.sheet_add_aoa(ws, filteredData, { origin: 'A2' })
         // Crear un libro de trabajo y agregar la hoja de trabajo
         const wb = XLSX.utils.book_new()
         XLSX.utils.book_append_sheet(wb, ws, 'Hoja1')
@@ -88,8 +88,12 @@
         // Agrega la información de la tabla al PDF
         pdf.setFontSize(14)
         pdf.text('Información de Unidades Organizacionales', 20, 10)
-        const headers = ['Código Proyecto', 'Nombre Proyecto', 'Válido Desde', 'Válido Hasta', 'Tipo Unidad Organizacional']
-        pdf.autoTable({ head: [headers], body: data, startY: 40 }) // Ajusta la posición de inicio de la tabla
+        const headers = ['Código', 'Denominación', 'Válido Desde', 'Válido Hasta', 'Tipo Unidad Organizacional']
+        const excludedColumnsIndices = [2, 3] // Índices de las columnas a excluir
+        // Filtra las columnas que no están en la lista de excluidos
+        const filteredHeaders = headers.filter((_, index) => !excludedColumnsIndices.includes(index))
+        const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+        pdf.autoTable({ head: [filteredHeaders], body: filteredData, startY: 40 }) // Ajusta la posición de inicio de la tabla
         // Guarda el PDF o abre en una nueva ventana
         pdf.save('Unidad_Organizacional.pdf')
       },

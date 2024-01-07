@@ -353,6 +353,10 @@
       }
     },
     methods: {
+      reloadPage () {
+        // Recarga la página
+        window.location.reload()
+      },
       resetValues: function () {
         console.log('Resetting values...')
         this.MontoHora = ''
@@ -655,12 +659,31 @@
       send () {
         if (!this.valid() && this.action === 'POST') {
           console.log('Algo si entrá al POST')
+          if (this.acta && (!this.tutoria.Acta || !this.tutoria.ActaFecha)) {
+            swal({
+              title: `Error!`,
+              text: 'Debe llenar los campos de Acta y Fecha de Acta',
+              buttonsStyling: false,
+              confirmButtonClass: 'btn btn-danger btn-fill',
+              type: 'error'
+            })
+            return // No continuar con el guardado si la validación falla
+          }
           this.post()
+          this.reloadPage()
         } else if (!this.valid() && this.action === 'PUT') {
           console.log('Algo si entrá al PUT')
           console.log('TeacherBP' + this.tutoria.TeacherBP)
           console.log('TeacherFullName' + this.tutoria.TeacherFullName)
           this.put()
+          swal({
+            title: `Buen trabajo!`,
+            text: 'Se guardaron los cambios!',
+            buttonsStyling: false,
+            confirmButtonClass: 'btn btn-success btn-fill',
+            type: 'success'
+          })
+          this.reloadPage()
         } else {
           console.log('something was printed:' + this.action + ' ' + this.valid())
           // resetear variables de validación

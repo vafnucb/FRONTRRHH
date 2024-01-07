@@ -80,6 +80,7 @@
         formData.append('file', this.$refs.file.files[0])
         formData.append('BranchesId', this.$store.state.civ.BranchesId)
         formData.append('FileType', this.$store.state.civ.FileType)
+        formData.append('TipoDocente', this.$store.state.civ.TipoDocente)
         axios.post(this.url,
           formData,
           {

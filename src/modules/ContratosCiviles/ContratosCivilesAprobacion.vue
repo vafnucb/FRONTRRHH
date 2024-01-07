@@ -137,6 +137,7 @@
         })
       },
       send: function () {
+        console.log('FormDataaaaaaaaaaaaaaaaaaaDDD', this.formData)
         axios.post('civil/', this.formData)
           .then(response => {
             this.successMessage()
@@ -150,7 +151,7 @@
           })
       },
       initWizard: function (id) {
-        console.log('FormData')
+        console.log('FormDataaaaaaaaaaaaaaaaaaa')
         console.log(this.formData.Document)
         console.log(this.formData.FullName)
         console.log(this.formData.SAPId)

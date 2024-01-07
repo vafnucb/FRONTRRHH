@@ -4,8 +4,10 @@ const uploadedFiles = ({ commit, state }) => {
   const formData = {
     FileType: state.FileType,
     BranchesId: state.BranchesId,
-    ProcessId: state.uploadedFiles.id
+    ProcessId: state.uploadedFiles.id,
+    TipoDocente: state.TipoDocente
   }
+  console.log('Datos enviados:', formData)
   axios.post('/ServContract/checkupload', formData, {
     headers: {
       'token': localStorage.getItem('token')

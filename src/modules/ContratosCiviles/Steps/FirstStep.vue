@@ -49,7 +49,31 @@
             {{ getError('tipo') }}
           </small>
         </div>
-        </div>
+      </div>
+      <div class="col-md-3">
+  <label class="control-label">
+    Tipo Docente
+  </label>
+  <br>
+  <div class="form-group">
+    <el-select class="select-info"
+               name="tipoDocente"
+               v-validate="modelValidations.tipoDocente"
+               size="large"
+               placeholder="Tipo de Docente"
+               v-model="tipoDocente"> <!-- Utiliza tipoDocente como v-model -->
+      <el-option v-for="option in selectTipoDocente.values"
+                 class="select-danger"
+                 :value="option.Id"
+                 :label="option.Name"
+                 :key="option.Id">
+      </el-option>
+    </el-select>
+    <small class="text-danger" v-show="tipoDocente.invalid">
+      {{ getError('tipoDocente') }}
+    </small>
+  </div>
+</div>
     </div>
     <div class="row">
       <div class="col-md-offset-2">
@@ -90,7 +114,7 @@
 
   export default {
     computed: {
-      ...mapFields(['segmento', 'tipo']),
+      ...mapFields(['segmento', 'tipo', 'tipoDocente']),
       segmentoOrigen: {
         get () {
           return this.$store.state.civ.BranchesId
@@ -105,6 +129,14 @@
         },
         set (value) {
           this.$store.commit('civ/tipoArchivoSetter', value)
+        }
+      },
+      tipoDocente: {
+        get () {
+          return this.$store.state.civ.TipoDocente
+        },
+        set (value) {
+          this.$store.commit('civ/tipoDocenteSetter', value)
         }
       },
       url: {
@@ -180,11 +212,19 @@
             {Id: 'PARALELO', Name: 'Paralelo'},
             {Id: 'PROYECTOS', Name: 'Proyectos'}]
         },
+        selectTipoDocente: {
+          select: '',
+          values: [{Id: 'INDEP', Name: 'Independiente'},
+            {Id: 'EXT', Name: 'Extranjero'}]
+        },
         modelValidations: {
           segmento: {
             required: true
           },
           tipo: {
+            required: true
+          },
+          tipoDocente: {
             required: true
           }
         }
