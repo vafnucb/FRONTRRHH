@@ -6,6 +6,10 @@ const tipoArchivoSetter = (state, data) => {
   state.FileType = data
 }
 
+const tipoDocenteSetter = (state, data) => {
+  state.TipoDocente = data
+}
+
 const uploadedFilesSetter = (state, data) => {
   state.uploadedFiles = data
 }
@@ -24,5 +28,6 @@ export default {
   tipoArchivoSetter,
   uploadedFilesSetter,
   uploadedFilesCleaner,
-  uploadedFilesIdSetter
+  uploadedFilesIdSetter,
+  tipoDocenteSetter
 }

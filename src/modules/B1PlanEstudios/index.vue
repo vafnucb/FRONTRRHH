@@ -59,8 +59,8 @@
     methods: {
       async generateExcel () {
         const data = await this.getDataFromURL()
-        const ws = XLSX.utils.aoa_to_sheet([['Código', 'Nombre', 'Cód Unidad Organizacional', 'Cód Segmento']])
-        const excludedColumnsIndices = [2, 3, 4, 5, 8]
+        const ws = XLSX.utils.aoa_to_sheet([['Código', 'Descripción', 'Cód Unidad Organizacional']])
+        const excludedColumnsIndices = [2, 3, 4, 5, 7, 8]
         const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
         XLSX.utils.sheet_add_aoa(ws, filteredData, { origin: 'A2' })
         const wb = XLSX.utils.book_new()
@@ -85,8 +85,8 @@
         // Agrega la información de la tabla al PDF
         pdf.setFontSize(14)
         pdf.text('Información Programa Académico', 20, 10)
-        const headers = ['Código', 'Nombre', 'Válido Desde', 'Válido Hasta', 'Num Int Car', 'Cód Departamental', 'Cód Unidad Organizacional', 'Cód Segmento', 'Branches']
-        const excludedColumnsIndices = [2, 3, 4, 5, 8] // Índices de las columnas a excluir
+        const headers = ['Código', 'Descripción', 'Válido Desde', 'Válido Hasta', 'Num Int Car', 'Cód Departamental', 'Cód Unidad Organizacional', 'Cód Segmento', 'Branches']
+        const excludedColumnsIndices = [2, 3, 4, 5, 7, 8] // Índices de las columnas a excluir
         // Filtra las columnas que no están en la lista de excluidos
         const filteredHeaders = headers.filter((_, index) => !excludedColumnsIndices.includes(index))
         const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))

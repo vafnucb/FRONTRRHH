@@ -75,11 +75,11 @@
       async generateExcel () {
         const data = await this.getDataFromURL()
         // Crear una nueva hoja de trabajo
-        const ws = XLSX.utils.aoa_to_sheet([['Código Proyecto', 'Nombre Proyecto', 'Locked', 'Data Source', 'Activo', 'Modalidad', 'Sucursal', 'Tipo', 'Unidad Organizacional', 'PEI/PO']])
+        const ws = XLSX.utils.aoa_to_sheet([['Código', 'Descripción', 'Activo', 'Modalidad', 'Sede', 'Tipo', 'Unidad Organizacional', 'PEI/PO']])
         // Aplicar estilos a la primera fila
         const range = XLSX.utils.decode_range('A1:L1')
         // Excluir columnas (4 y 5 en este ejemplo)
-        const excludedColumnsIndices = [4, 5]
+        const excludedColumnsIndices = [2, 3, 4, 5]
         const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
         // Agregar datos a la hoja de trabajo
         XLSX.utils.sheet_add_aoa(ws, filteredData, { origin: 'A2' })
@@ -107,8 +107,8 @@
         // Agrega la información de la tabla al PDF
         pdf.setFontSize(14)
         pdf.text('Información Proyectos', 20, 10)
-        const headers = ['Código Proyecto', 'Nombre Proyecto', 'Locked', 'Data Source', 'Válido Desde', 'Válido Hasta', 'Activo', 'Modalidad', 'Sucursal', 'Tipo', 'Unidad Organizacional', 'PEI/PO']
-        const excludedColumnsIndices = [4, 5] // Índices de las columnas a excluir
+        const headers = ['Código', 'Descripción', 'Locked', 'Data Source', 'Válido Desde', 'Válido Hasta', 'Activo', 'Modalidad', 'Sede', 'Tipo', 'Unidad Organizacional', 'PEI/PO']
+        const excludedColumnsIndices = [2, 3, 4, 5] // Índices de las columnas a excluir
         // Filtra las columnas que no están en la lista de excluidos
         const filteredHeaders = headers.filter((_, index) => !excludedColumnsIndices.includes(index))
         const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))

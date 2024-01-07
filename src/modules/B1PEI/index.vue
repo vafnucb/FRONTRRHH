@@ -74,8 +74,8 @@
     methods: {
       async generateExcel () {
         const data = await this.getDataFromURL()
-        const ws = XLSX.utils.aoa_to_sheet([['Código Proyecto', 'Nombre Proyecto', 'Válido Desde', 'Válido Hasta', 'U_GestionCC', 'U_AmbitoPEI', 'U_DirectrizPEI', 'U_Indicador']])
-        const excludedColumnsIndices = [] // No se excluyen columnas en este caso
+        const ws = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Gestión', 'Ámbito', 'Directriz']])
+        const excludedColumnsIndices = [2, 3, 7] // No se excluyen columnas en este caso
         const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
         XLSX.utils.sheet_add_aoa(ws, filteredData, { origin: 'A2' })
         const wb = XLSX.utils.book_new()
@@ -100,8 +100,12 @@
         // Agrega la información de la tabla al PDF
         pdf.setFontSize(14)
         pdf.text('Información PEI', 20, 10)
-        const headers = ['Código Proyecto', 'Nombre Proyecto', 'Válido Desde', 'Válido Hasta', 'U_GestionCC', 'U_AmbitoPEI', 'U_DirectrizPEI', 'U_Indicador']
-        pdf.autoTable({ head: [headers], body: data, startY: 40 }) // Ajusta la posición de inicio de la tabla
+        const headers = ['Código', 'Denominación', 'Válido Desde', 'Válido Hasta', 'Gestión', 'Ámbito', 'Directriz', 'U_Indicador']
+        const excludedColumnsIndices = [2, 3, 7] // Índices de las columnas a excluir
+        // Filtra las columnas que no están en la lista de excluidos
+        const filteredHeaders = headers.filter((_, index) => !excludedColumnsIndices.includes(index))
+        const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+        pdf.autoTable({ head: [filteredHeaders], body: filteredData, startY: 40 }) // Ajusta la posición de inicio de la tabla
         // Guarda el PDF o abre en una nueva ventana
         pdf.save('PEI.pdf')
       },
