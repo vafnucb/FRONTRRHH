@@ -5,7 +5,7 @@
         <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'SARAI'}">
           <template slot="buttons" slot-scope="props">
             <el-tooltip class="item" effect="dark" content="Aprobar" placement="top-start">
-              <a class="btn btn-simple btn-xs btn-icon btn-info" @click="initWizard(props.queriedData[props.index].Id)"><i class="fa fa-edit"></i></a>
+              <a class="btn btn-simple btn-xs btn-icon btn-info" @click="initWizard(props.queriedData[props.index].Id)">APROBAR</a>
             </el-tooltip>
           </template>
         </data-tables>
@@ -151,11 +151,13 @@
           })
       },
       initWizard: function (id) {
-        console.log('FormDataaaaaaaaaaaaaaaaaaa')
-        console.log(this.formData.Document)
-        console.log(this.formData.FullName)
-        console.log(this.formData.SAPId)
-        console.log(this.formData.NIT)
+        console.log('FormDataaaaaaaaaaaaaaaaaaa', id)
+        // console.log(this.formData.Document)
+        // console.log(this.formData.FullName)
+        // console.log(this.formData.SAPId)
+        // console.log(this.formData.NIT)
+        // console.log(this.formData)
+        console.log('Que estoy enviando?????', this.formData)
         axios.get('ServContract/' + id, this.formData)
           .then(response => {
             console.log(response.data.State)
@@ -164,7 +166,7 @@
             this.ID = response.data.Id
             console.log(response.data.FileType)
             this.SERVICIO = response.data.FileType
-            console.log(response.data.BranchesId)
+            console.log('brrrraanches', response.data.BranchesId)
             if (response.data.BranchesId === 3) {
               this.REGIONAL = 'CBB'
             }
@@ -190,6 +192,8 @@
               this.$store.commit('civ/uploadedFilesIdSetter', id)
               this.$store.commit('civ/segmentoSetter', response.data.BranchesId)
               this.$store.commit('civ/tipoArchivoSetter', response.data.FileType)
+              this.$store.commit('civ/tipoDocenteSetter', response.data.TipoDocente)
+              console.log('DOCENTEEEE', response.data.TipoDocente)
               this.$store.dispatch('civ/uploadedFiles')
               this.showWizard = true
             } else {
