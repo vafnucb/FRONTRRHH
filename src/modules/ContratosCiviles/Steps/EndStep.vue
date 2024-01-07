@@ -243,6 +243,7 @@
       },
       SendToApprove () {
         console.log(this.$store.state.civ.uploadedFiles.id + 'es el serv que se manda')
+        console.log(this.$store.state.civ.TipoDocente + 'es el tipo de docente')
         axios.get('/ServContractToApproval/' + this.$store.state.civ.uploadedFiles.id)
         .then(response => {
           console.log('QUPE ENVÍO?:', response.data)
