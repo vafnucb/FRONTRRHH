@@ -230,7 +230,6 @@
     },
     data: function () {
       return {
-        NumeroContrato: '',
         contrato: false,
         initialTotalBruto: 0,
         extranjero: false,
@@ -271,7 +270,6 @@
           {value: 'EPC-U', text: 'EPC-U', pricing: 0},
           {value: 'SCZ-U', text: 'SCZ-U', pricing: 0}
         ],
-        numeroContrato: '',
         tutoria: {
           Id: null,
           Carrera: '',
@@ -326,19 +324,26 @@
           // Lógica específica para extranjeros
           this.tutoria.IUEExterior = (this.totalBruto * (this.IUEExterior / 100)).toFixed(2)
           this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
+          this.tutoria.Deduccion = 0
+          this.tutoria.IT = 0
+          this.tutoria.IUE = 0
           return (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
         } else {
           // Lógica para Dependientes o Independientes que no son extranjeros
           if (this.dependiente) {
             this.tutoria.TotalNeto = (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
             this.tutoria.Deduccion = this.tutoria.TotalBruto - this.tutoria.TotalNeto
+            this.tutoria.IUEExterior = 0
+            this.tutoria.IT = 0
+            this.tutoria.IUE = 0
             return (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
           } else {
             this.tutoria.IUE = (this.totalBruto * (this.IUE / 100)).toFixed(2)
             this.tutoria.IT = (this.totalBruto * (this.IT / 100)).toFixed(2)
             this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
             // this.tutoria.Deduccion = (this.tutoria.TotalBruto - this.tutoria.TotalNeto)
-            // this.tutoria.Deduccion = 0
+            this.tutoria.Deduccion = 0
+            this.tutoria.IUEExterior = 0
             return (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
           }
         }
@@ -658,7 +663,6 @@
       // Envío de datos
       send () {
         if (!this.valid() && this.action === 'POST') {
-          console.log('Algo si entrá al POST')
           if (this.acta && (!this.tutoria.Acta || !this.tutoria.ActaFecha)) {
             swal({
               title: `Error!`,
@@ -669,21 +673,55 @@
             })
             return // No continuar con el guardado si la validación falla
           }
+          if (!this.contrato) {
+            this.tutoria.NumeroContrato = ''
+          }
+          if (this.contrato && !this.tutoria.NumeroContrato) {
+            swal({
+              title: `Error!`,
+              text: 'Debe llenar el Número de Contrato',
+              buttonsStyling: false,
+              confirmButtonClass: 'btn btn-danger btn-fill',
+              type: 'error'
+            })
+            return
+          }
           this.post()
-          this.reloadPage()
         } else if (!this.valid() && this.action === 'PUT') {
-          console.log('Algo si entrá al PUT')
-          console.log('TeacherBP' + this.tutoria.TeacherBP)
-          console.log('TeacherFullName' + this.tutoria.TeacherFullName)
+          if (this.acta && (!this.tutoria.Acta || !this.tutoria.ActaFecha)) {
+            swal({
+              title: `Error!`,
+              text: 'Debe llenar los campos de Acta y Fecha de Acta',
+              buttonsStyling: false,
+              confirmButtonClass: 'btn btn-danger btn-fill',
+              type: 'error'
+            })
+            return // No continuar con el guardado si la validación falla
+          }
+          if (!this.contrato) {
+            this.tutoria.NumeroContrato = ''
+          }
+          if (this.contrato && !this.tutoria.NumeroContrato) {
+            swal({
+              title: `Error!`,
+              text: 'Debe llenar el Número de Contrato',
+              buttonsStyling: false,
+              confirmButtonClass: 'btn btn-danger btn-fill',
+              type: 'error'
+            })
+            return
+          }
           this.put()
-          swal({
-            title: `Buen trabajo!`,
-            text: 'Se guardaron los cambios!',
-            buttonsStyling: false,
-            confirmButtonClass: 'btn btn-success btn-fill',
-            type: 'success'
-          })
-          this.reloadPage()
+          // swal({
+          //   title: `Buen trabajo!`,
+          //   text: 'Se guardaron los cambios!',
+          //   buttonsStyling: false,
+          //   confirmButtonClass: 'btn btn-success btn-fill',
+          //   type: 'success'
+          // })
+          // setTimeout(() => {
+          //   window.location.reload() // Recargar la página
+          // }, 2000)
         } else {
           console.log('something was printed:' + this.action + ' ' + this.valid())
           // resetear variables de validación
@@ -712,6 +750,7 @@
         this.tutoria.ModalidadId = ModalidadId
         this.tutoria.TipoTareaId = null
         this.tutoria.TipoPago = null
+        this.tutoria.NumeroContrato = ''
         // Variables del componente
         this.Deduccion = 0
         this.IUE = 0
