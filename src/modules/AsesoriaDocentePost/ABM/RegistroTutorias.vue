@@ -184,11 +184,11 @@
       <div class="row">
         <div class="form-group col-md-2">
           <label >Horas</label>
-          <input type="number" placeholder="Horas" class="form-control" v-model.lazy="tutoria.Horas" @change="validateHoras" style="background-color: white">
+          <input min= 0 type="number" placeholder="Horas" class="form-control" v-model.lazy="tutoria.Horas" @change="validateHoras" style="background-color: white">
         </div>
         <div class="form-group col-md-2">
           <label >Costo Hora</label>
-          <input type="number" placeholder="C/H" class="form-control" v-model.lazy="tutoria.MontoHora" @change="validateMontoHoras" style="background-color: white">
+          <input min = 0 type="number" placeholder="C/H" class="form-control" v-model.lazy="tutoria.MontoHora" @change="validateMontoHoras" style="background-color: white">
         </div>
         <div class="form-group col-md-2">
           <label >Total Bruto</label>
@@ -370,19 +370,27 @@
           // Lógica específica para extranjeros
           this.tutoria.IUEExterior = (this.totalBruto * (this.IUEExterior / 100)).toFixed(2)
           this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
+          this.tutoria.Deduccion = 0
+          this.tutoria.IT = 0
+          this.tutoria.IUE = 0
           return (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
         } else {
             // Los calculos cambian si es DEPENDIENTE O INDEPENDIENTE
           if (this.dependiente) {
             this.tutoria.TotalNeto = (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
             this.tutoria.Deduccion = this.tutoria.TotalBruto - this.tutoria.TotalNeto
+            this.tutoria.IUE = 0
+            this.tutoria.IT = 0
+            this.tutoria.IUEExterior = 0
             return (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
           } else {
               // Cuando es independiente se calculan nuevos tipos de descuentos que no aplican para los independientes
             this.tutoria.IUE = (this.totalBruto * (this.IUE / 100)).toFixed(2)
             this.tutoria.IT = (this.totalBruto * (this.IT / 100)).toFixed(2)
-            this.tutoria.Deduccion = (this.tutoria.IUE + this.tutoria.IT)
+            // this.tutoria.Deduccion = (this.tutoria.IUE + this.tutoria.IT)
             this.tutoria.TotalNeto = (this.totalBruto - (this.tutoria.IUE) - (this.tutoria.IT)).toFixed(2)
+            this.tutoria.Deduccion = 0
+            this.tutoria.IUEExterior = 0
             return (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
           }
         }
@@ -501,6 +509,7 @@
         axios.get('AsesoriaPostgrado/' + this.tutoriaId)
           .then(response => {
             this.tutoria = response.data
+            this.TipoPago = this.tutoria.TipoPago
             console.log('Obs: ' + this.tutoria.Observaciones)
             // Dependiendo dl origen del docente se carga el CUNI o el BP
             if (this.tutoria.Origen === 'DEPEN' || this.tutoria.Origen === 'OR') {
@@ -517,11 +526,12 @@
               this.Deduccion = ((100 * this.tutoria.Deduccion) / this.tutoria.TotalBruto).toFixed(2)
             } else if (this.tutoria.Origen === 'INDEP') {
               this.origin = 'INDEP'
+              this.dependiente = false
+              this.extranjero = false
               this.teacherIdentifier = this.tutoria.TeacherBP
               // console.log('aqui businees partner. ' + this.teacherIdentifier + '=' + this.tutoria.TeacherBP)
               // console.log('INDEP' + this.tutoria.TeacherFullName)
               console.log('INDEP ' + this.teacherIdentifier)
-              this.dependiente = false
               // para igualar costos
               this.IUE = ((100 * this.tutoria.IUE) / this.tutoria.TotalBruto).toFixed(2)
               this.IT = ((100 * this.tutoria.IT) / this.tutoria.TotalBruto).toFixed(2)
@@ -539,6 +549,11 @@
               this.porHora = false
               // para que no cargue el total bruto ni el neto desde 0
               this.totalBruto = this.tutoria.TotalBruto
+            }
+            if (this.tutoria.NumeroContrato === '' || this.tutoria.NumeroContrato === null) {
+              this.contrato = false
+            } else {
+              this.contrato = true
             }
             this.loadModules()
             this.IsFetching = false
@@ -699,7 +714,7 @@
           // Este array guarda la info de los profesores que se cargan la primera vez
           let firstTeachers = this.teacherArray
           let selectedOrigin = '1'
-          if (this.origin === 'INDEP') {
+          if (this.origin === 'INDEP' || this.origin === 'EXT') {
             // console.log('This is the PUT action and the selected origin is:' + selectedOrigin)
             selectedOrigin = '0'
           }
@@ -727,7 +742,7 @@
           // Este array guarda la info de los profesores que se cargan la primera vez
           let firstTeachers = this.teacherArray
           let selectedOrigin = '1'
-          if (this.origin === 'INDEP') {
+          if (this.origin === 'INDEP' || this.origin === 'EXT') {
             // console.log('This is the PUT action and the selected origin is:' + selectedOrigin)
             selectedOrigin = '0'
           }
@@ -774,9 +789,35 @@
       // Envío de datos
       send () {
         if (this.action === 'POST') {
+          if (!this.contrato) {
+            this.tutoria.NumeroContrato = ''
+          }
+          if (this.contrato && !this.tutoria.NumeroContrato) {
+            swal({
+              title: `Error!`,
+              text: 'Debe llenar el Número de Contrato',
+              buttonsStyling: false,
+              confirmButtonClass: 'btn btn-danger btn-fill',
+              type: 'error'
+            })
+            return
+          }
           this.post()
         } else if (this.action === 'PUT') {
           console.log('Algo si entrá al PUT')
+          if (!this.contrato) {
+            this.tutoria.NumeroContrato = ''
+          }
+          if (this.contrato && !this.tutoria.NumeroContrato) {
+            swal({
+              title: `Error!`,
+              text: 'Debe llenar el Número de Contrato',
+              buttonsStyling: false,
+              confirmButtonClass: 'btn btn-danger btn-fill',
+              type: 'error'
+            })
+            return
+          }
           this.put()
         } else {
           console.log('something was printed:' + this.action + ' ')
@@ -1055,12 +1096,12 @@
           // si no es dependiente no puede ser OR
           this.or = false
         }
+        if (!this.extranjero && !this.dependiente) {
+          this.tutoria.Origen = 'INDEP'
+          // si no es dependiente no puede ser OR
+          this.or = false
+        }
         this.tutoria.Categoría = ''
-        this.tutoria.TeacherCUNI = ''
-        this.tutoria.TeacherBP = ''
-        this.tutoria.IUE = null
-        this.tutoria.IT = null
-        this.tutoria.IUEExterior = null
       },
       dependiente: function () {
         if (this.dependiente) {

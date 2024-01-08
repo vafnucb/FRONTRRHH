@@ -9,10 +9,13 @@
           <Info></Info>
         </div>
         <div class="col-md-4" align="center">
-          <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo POSGRADO SALOMÓN</button>
+          <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo POSTGRADO SALOMÓN</button>
         </div>
         <div class="col-md-4" align="center">
-          <button class="btn btn-info" @click="windowDateSARAI">Generar archivo PROYECTOS SARAI</button>
+          <button class="btn btn-info" @click="windowDateSARAI">Generar archivo PROYECTOS SARAI Independientes</button>
+          <br>
+          <br>
+          <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
         </div>
       </div>
     </template>
@@ -234,6 +237,11 @@
         this.fileUrl = 'ToProyectosFile?data='
         this.file = 'PROYECTOS'
         this.title = 'SARAI/'
+      },
+      windowDateEXT () {
+        this.action = 'MODIFY'
+        this.fileUrl = 'ProyectosExt?data='
+        this.file = 'CARRERA'
       },
       toPregrado () {
         if (this.file === 'POSGRADO') {
