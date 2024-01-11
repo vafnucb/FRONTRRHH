@@ -96,10 +96,10 @@
         pdf.setFontSize(8)
         pdf.setFontStyle('bold')
         pdf.setFontSize(18)
-        pdf.text('Universidad Católica Boliviana "San Pablo" ', 145, 25, null, null, 'center')
+        pdf.text('Información Paralelos', 145, 25, null, null, 'center')
         // Agrega la información de la tabla al PDF
-        pdf.setFontSize(14)
-        pdf.text('Información Paralelos', 20, 10)
+        pdf.setFontSize(10)
+        pdf.text('Universidad Católica Boliviana "San Pablo" ', 20, 10)
         const headers = ['Código', 'Nombre', 'Válido Desde', 'Válido Hasta', 'Periodo', 'Sigla', 'Materia', 'Paralelo', 'Opcion1', 'OPcion2', 'Nivel', 'Tipo']
         const excludedColumnsIndices = [2, 3, 8, 9] // Índices de las columnas a excluir
         // Filtra las columnas que no están en la lista de excluidos

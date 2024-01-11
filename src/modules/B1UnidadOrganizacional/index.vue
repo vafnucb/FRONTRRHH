@@ -1,82 +1,119 @@
 <template>
   <div class="row">
     <div class="card">
-      <data-tables v-bind="{url, propsToSearch, tableColumns,pagination,actions}">
-      </data-tables>
-      <button class="buttonPdf" @click="generatePDF">Generar PDF</button>
-      <button class="buttonExcel" @click="generateExcel">Generar Excel</button>
-    </div>  
+      <div class="search-bar">
+        <input v-model="searchTerm" @input="handleSearch" placeholder="Buscar por código, denominación, fechas y unidad organizacional" class="search-input" />
+        <button class="buttonPdf" @click="generatePDF">Generar PDF</button>
+        <button class="buttonExcel" @click="generateExcel">Generar Excel</button>
+      </div>
+
+      <!-- Tabla para mostrar los resultados -->
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th v-for="(column, index) in tableColumns" :key="index">{{ column.label }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, rowIndex) in paginatedData" :key="rowIndex">
+            <td v-for="(value, columnIndex) in row" :key="columnIndex">{{ value }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Paginación personalizada -->
+      <div class="custom-pagination">
+        <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
+        <span>{{ currentPage }} de {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="currentPage === totalPages">Siguiente</button>
+      </div>
+    </div>
   </div>
 </template>
+
 <script>
+  import axios from 'axios'
   import jsPDF from 'jspdf'
   import * as XLSX from 'xlsx'
-  import Vue from 'vue'
-  import {Tooltip} from 'element-ui'
-  import axios from 'axios'
-  Vue.use(Tooltip)
+
   export default {
     data () {
       return {
-        actions: false,
-        url: '/CostCenters/OrganizationalUnits/',
-        propsToSearch: ['PrcCode', 'PrcName', 'U_TipoUnidadO'],
+        searchTerm: '',
         tableColumns: [
-          {
-            prop: 'PrcCode',
-            label: '#',
-            minWidth: 50
-          },
-          {
-            prop: 'PrcName',
-            label: 'Nombre  ',
-            minWidth: 100
-          },
-          {
-            prop: 'ValidFrom',
-            label: 'Valido Desde',
-            minWidth: 120
-          },
-          {
-            prop: 'ValidTo',
-            label: 'Valido Hasta',
-            minWidth: 120
-          },
-          {
-            prop: 'U_TipoUnidadO',
-            label: 'Tipo',
-            minWidth: 100
-          }
+          { label: 'Código', prop: 'PrcCode' },
+          { label: 'Denominación', prop: 'PrcName' },
+          { label: 'Válido Desde', prop: 'ValidFrom' },
+          { label: 'Válido Hasta', prop: 'ValidTo' },
+          { label: 'Tipo Unidad Organizacional', prop: 'U_TipoUnidadO' }
         ],
-        pagination: {
-          perPage: 5,
-          currentPage: 1,
-          perPageOptions: [5, 10, 20],
-          total: 0
-        }
+        filteredData: [],
+        currentPage: 1,
+        pageSize: 10 // Cantidad de elementos por página
+      }
+    },
+    watch: {
+      searchTerm: 'handleSearch'
+    },
+    computed: {
+      totalPages () {
+        return Math.ceil(this.filteredData.length / this.pageSize)
+      },
+      paginatedData () {
+        const startIndex = (this.currentPage - 1) * this.pageSize
+        const endIndex = startIndex + this.pageSize
+        return this.filteredData.slice(startIndex, endIndex)
       }
     },
     methods: {
       async generateExcel () {
-        const data = await this.getDataFromURL()
-        // Crear una nueva hoja de trabajo
-        const ws = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
-        const excludedColumnsIndices = [2, 3]  // Índices de las columnas a excluir
-        const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
-        XLSX.utils.sheet_add_aoa(ws, filteredData, { origin: 'A2' })
-        // Crear un libro de trabajo y agregar la hoja de trabajo
-        const wb = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(wb, ws, 'Hoja1')
-        // Descargar el archivo Excel
-        XLSX.writeFile(wb, 'Unidad_Organizacional.xlsx')
+        // Obtener datos completos
+        const allData = await this.getDataFromURL()
+        // Generar Excel de toda la respuesta
+        const wbAll = XLSX.utils.book_new()
+        const wsAll = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
+        const excludedColumnsIndices = [2, 3]
+        const filteredDataAll = allData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+        XLSX.utils.sheet_add_aoa(wsAll, filteredDataAll, { origin: 'A2' })
+        XLSX.utils.book_append_sheet(wbAll, wsAll, 'Hoja1')
+        // Descargar el archivo Excel de toda la respuesta
+        XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
+        // Generar Excel de resultados de la búsqueda
+        if (this.filteredData.length > 0) {
+          const wbSearch = XLSX.utils.book_new()
+          const wsSearch = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
+          const filteredDataSearch = this.filteredData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+          XLSX.utils.sheet_add_aoa(wsSearch, filteredDataSearch, { origin: 'A2' })
+          XLSX.utils.book_append_sheet(wbSearch, wsSearch, 'Hoja1')
+          // Descargar el archivo Excel de resultados de la búsqueda
+          XLSX.writeFile(wbSearch, 'Unidad_Organizacional_Busqueda.xlsx')
+        }
       },
       async generatePDF () {
-        const data = await this.getDataFromURL()
-        const pdf = new jsPDF({
+        // Obtener datos completos
+        const allData = await this.getDataFromURL()
+        // Generar PDF de toda la respuesta
+        const pdfAll = new jsPDF({
           orientation: 'landscape',
           unit: 'mm',
           format: 'letter'
         })
+        this.generatePDFContent(pdfAll, allData)
+        // Guardar el PDF de toda la respuesta
+        pdfAll.save('Unidad_Organizacional_Completa.pdf')
+        // Generar PDF de resultados de la búsqueda
+        if (this.filteredData.length > 0) {
+          const pdfSearch = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: 'letter'
+          })
+          this.generatePDFContent(pdfSearch, this.filteredData)
+          // Guardar el PDF de resultados de la búsqueda
+          pdfSearch.save('Unidad_Organizacional_Busqueda.pdf')
+        }
+      },
+      generatePDFContent (pdf, data) {
         // Armando la cabecera para el reporte
         var img = new Image()
         img.src = './../static/img/logo_ucb3.png'
@@ -84,69 +121,164 @@
         pdf.setFontSize(8)
         pdf.setFontStyle('bold')
         pdf.setFontSize(18)
-        pdf.text('Universidad Católica Boliviana "San Pablo" ', 145, 25, null, null, 'center')
+        pdf.text('Información de Unidades Organizacionales', 145, 25, null, null, 'center')
         // Agrega la información de la tabla al PDF
         pdf.setFontSize(14)
-        pdf.text('Información de Unidades Organizacionales', 20, 10)
+        pdf.text('Universidad Católica Boliviana "San Pablo"', 20, 10)
         const headers = ['Código', 'Denominación', 'Válido Desde', 'Válido Hasta', 'Tipo Unidad Organizacional']
-        const excludedColumnsIndices = [2, 3] // Índices de las columnas a excluir
+        const excludedColumnsIndices = [2, 3]
         // Filtra las columnas que no están en la lista de excluidos
         const filteredHeaders = headers.filter((_, index) => !excludedColumnsIndices.includes(index))
         const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
-        pdf.autoTable({ head: [filteredHeaders], body: filteredData, startY: 40 }) // Ajusta la posición de inicio de la tabla
-        // Guarda el PDF o abre en una nueva ventana
-        pdf.save('Unidad_Organizacional.pdf')
+        pdf.autoTable({ head: [filteredHeaders], body: filteredData, startY: 40 })
       },
       async getDataFromURL () {
         try {
           const response = await axios.get('/CostCenters/OrganizationalUnits/')
           console.log('OBTENGOOOOOOOO TODOOOO', response.data)
           // Convierte la respuesta a una matriz bidimensional
-          const dataArray = response.data.map(item => Object.values(item))
-          return dataArray
+          this.allData = response.data.map((item) => Object.values(item))
+          return this.allData
         } catch (error) {
           console.error('Error al obtener datos:', error)
-          return [] // o manejar el error de alguna manera
+          return []
+        }
+      },
+      handleSearch () {
+        // Filtrar los datos basados en el término de búsqueda
+        this.filteredData = this.allData.filter((row) =>
+          row.some((value) =>
+            value.toString().toLowerCase().includes(this.searchTerm.toLowerCase())
+          )
+        )
+        // Actualizar la página actual al realizar una nueva búsqueda
+        this.currentPage = 1
+      },
+      prevPage () {
+        if (this.currentPage > 1) {
+          this.currentPage -= 1
+        }
+      },
+      nextPage () {
+        if (this.currentPage < this.totalPages) {
+          this.currentPage += 1
         }
       }
     },
-    created () {
-      this.getDataFromURL()
+    async created () {
+      await this.getDataFromURL()
+      this.handleSearch()
     }
   }
 </script>
 <style>
-  .card {
-    margin: 20px;
-    padding: 20px;
-    border-radius: 5px;
-    background-color: #fff;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-  }
-  .buttonPdf {
-    margin-left: 10px;
-    padding: 10px;
-    border-radius: 20px;
-    background-color: #2d5abd;
-    font-weight: bold;
-    color:#f8d94d;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-  }
-  .buttonPdf:hover {
-    background-color: #f8d94d;
-    color: #2d5abd;
-  }
-  .buttonExcel {
-    margin-left: 10px;
-    padding: 10px;
-    border-radius: 20px;
-    background-color: #2aa74f;
-    font-weight: bold;
-    color:#ffffff;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-  }
-  .buttonExcel:hover {
-    background-color: #98ffa0;
-    color: #21348b;
-  }
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px;
+  border: 3px solid #363636;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.buttonPdf,
+.buttonExcel {
+  padding: 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+.buttonPdf {
+  background-color: #2d5abd;
+  color: #fafafa;
+  margin: 10px;
+}
+
+.buttonPdf:hover {
+  background-color: #f74848;
+  color: #ffffff;
+}
+
+.buttonExcel {
+  background-color: #2d5abd;
+  color: #ffffff;
+}
+
+.buttonExcel:hover {
+  background-color: #37b642;
+  color: #ffffff;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.custom-table th,
+.custom-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.custom-table th {
+  background-color: #2d5abd;
+  color: #ffffff;
+}
+
+.custom-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.custom-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.custom-pagination button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 15px;
+  font-weight: bold;
+}
+
+.custom-pagination button:hover {
+  background-color: #45a049;
+}
+
+.custom-pagination button:disabled {
+  background-color: #dddddd;
+  color: #666666;
+  cursor: not-allowed;
+}
 </style>
+

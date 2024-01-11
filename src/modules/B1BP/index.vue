@@ -59,9 +59,9 @@
     methods: {
       async generateExcel () {
         const data = await this.getDataFromURL()
-        const ws = XLSX.utils.aoa_to_sheet([['Código', 'Nombre', 'NIT', 'Tipo']])
+        const ws = XLSX.utils.aoa_to_sheet([['Código', 'Nombre', 'NIT', 'Tipo', 'Ciudad']])
         ws['!cols'] = [{ wch: 12 }, { wch: 30 }, { wch: 15 }, { wch: 15 }]
-        const excludedColumnsIndices = [4, 5, 6, 7, 8] // Índices de las columnas a excluir
+        const excludedColumnsIndices = [4, 5, 6, 8] // Índices de las columnas a excluir
         const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
         XLSX.utils.sheet_add_aoa(ws, filteredData, { origin: 'A2' })
         const wb = XLSX.utils.book_new()
@@ -82,12 +82,12 @@
         pdf.setFontSize(8)
         pdf.setFontStyle('bold')
         pdf.setFontSize(18)
-        pdf.text('Universidad Católica Boliviana "San Pablo" ', 145, 25, null, null, 'center')
+        pdf.text('Información Socios de Negocio', 145, 25, null, null, 'center')
         // Agrega la información de la tabla al PDF
-        pdf.setFontSize(14)
-        pdf.text('Información Socios de Negocio', 20, 10)
+        pdf.setFontSize(10)
+        pdf.text('Universidad Católica Boliviana "San Pablo"', 20, 10)
         const headers = ['Código', 'Nombre', 'NIT', 'Tipo', 'Código de Grupo', 'Series', 'Divisa', 'Ciudad', 'País']
-        const excludedColumnsIndices = [4, 5, 6, 7, 8] // Índices de las columnas a excluir
+        const excludedColumnsIndices = [4, 5, 6, 8] // Índices de las columnas a excluir
         // Filtra las columnas que no están en la lista de excluidos
         const filteredHeaders = headers.filter((_, index) => !excludedColumnsIndices.includes(index))
         const filteredData = data.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
