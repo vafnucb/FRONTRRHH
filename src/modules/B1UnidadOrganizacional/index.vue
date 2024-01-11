@@ -84,10 +84,10 @@
         pdf.setFontSize(8)
         pdf.setFontStyle('bold')
         pdf.setFontSize(18)
-        pdf.text('Universidad Católica Boliviana "San Pablo" ', 145, 25, null, null, 'center')
+        pdf.text('Información de Unidades Organizacionales', 145, 25, null, null, 'center')
         // Agrega la información de la tabla al PDF
         pdf.setFontSize(14)
-        pdf.text('Información de Unidades Organizacionales', 20, 10)
+        pdf.text('Universidad Católica Boliviana "San Pablo"', 20, 10)
         const headers = ['Código', 'Denominación', 'Válido Desde', 'Válido Hasta', 'Tipo Unidad Organizacional']
         const excludedColumnsIndices = [2, 3] // Índices de las columnas a excluir
         // Filtra las columnas que no están en la lista de excluidos
