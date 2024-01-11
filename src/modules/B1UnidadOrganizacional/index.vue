@@ -1,14 +1,14 @@
 <template>
-  <div class="row">
-    <div class="card">
-      <div class="search-bar">
-        <input v-model="searchTerm" @input="handleSearch" placeholder="Buscar por código, denominación, fechas y unidad organizacional" class="search-input" />
-        <button class="buttonPdf" @click="generatePDF">Generar PDF</button>
-        <button class="buttonExcel" @click="generateExcel">Generar Excel</button>
+  <div class="row-UO">
+    <div class="card-UO">
+      <div class="search-bar-UO">
+        <input v-model="searchTerm" @input="handleSearch" placeholder="Buscar por código, denominación, fechas y unidad organizacional" class="search-input-UO" />
+        <button class="buttonPdf-UO" @click="generatePDF">Generar PDF</button>
+        <button class="buttonExcel-UO" @click="generateExcel">Generar Excel</button>
       </div>
 
       <!-- Tabla para mostrar los resultados -->
-      <table class="custom-table">
+      <table class="custom-table-UO">
         <thead>
           <tr>
             <th v-for="(column, index) in tableColumns" :key="index">{{ column.label }}</th>
@@ -22,7 +22,7 @@
       </table>
 
       <!-- Paginación personalizada -->
-      <div class="custom-pagination">
+      <div class="custom-pagination-UO">
         <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
         <span>{{ currentPage }} de {{ totalPages }}</span>
         <button @click="nextPage" :disabled="currentPage === totalPages">Siguiente</button>
@@ -172,13 +172,13 @@
   }
 </script>
 <style>
-.row {
+.row-UO {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.card {
+.card-UO {
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -186,7 +186,7 @@
   width: 100%;
 }
 
-.search-bar {
+.search-bar-UO {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -194,7 +194,7 @@
   margin: 0 auto;
 }
 
-.search-input {
+.search-input-UO {
   flex: 1;
   padding: 10px;
   border: 3px solid #363636;
@@ -202,65 +202,65 @@
   margin-right: 10px;
 }
 
-.buttonPdf,
-.buttonExcel {
+.buttonPdf-UO,
+.buttonExcel-UO {
   padding: 10px;
   border-radius: 20px;
   font-weight: bold;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
 
-.buttonPdf {
+.buttonPdf-UO {
   background-color: #2d5abd;
   color: #fafafa;
   margin: 10px;
 }
 
-.buttonPdf:hover {
+.buttonPdf-UO:hover {
   background-color: #f74848;
   color: #ffffff;
 }
 
-.buttonExcel {
+.buttonExcel-UO {
   background-color: #2d5abd;
   color: #ffffff;
 }
 
-.buttonExcel:hover {
+.buttonExcel-UO:hover {
   background-color: #37b642;
   color: #ffffff;
 }
 
-.custom-table {
+.custom-table-UO {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-.custom-table th,
-.custom-table td {
+.custom-table-UO th,
+.custom-table-UO td {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
 }
 
-.custom-table th {
+.custom-table-UO th {
   background-color: #2d5abd;
   color: #ffffff;
 }
 
-.custom-table tr:hover {
+.custom-table-UO tr:hover {
   background-color: #f5f5f5;
 }
 
-.custom-pagination {
+.custom-pagination-UO {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 20px;
 }
 
-.custom-pagination button {
+.custom-pagination-UO button {
   background-color: #4CAF50;
   color: white;
   padding: 10px 15px;
@@ -271,11 +271,11 @@
   font-weight: bold;
 }
 
-.custom-pagination button:hover {
+.custom-pagination-UO button:hover {
   background-color: #45a049;
 }
 
-.custom-pagination button:disabled {
+.custom-pagination-UO button:disabled {
   background-color: #dddddd;
   color: #666666;
   cursor: not-allowed;
