@@ -67,51 +67,62 @@
     },
     methods: {
       async generateExcel () {
-        // Obtener datos completos
-        const allData = await this.getDataFromURL()
-        // Generar Excel de toda la respuesta
-        const wbAll = XLSX.utils.book_new()
-        const wsAll = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
-        const excludedColumnsIndices = [2, 3]
-        const filteredDataAll = allData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
-        XLSX.utils.sheet_add_aoa(wsAll, filteredDataAll, { origin: 'A2' })
-        XLSX.utils.book_append_sheet(wbAll, wsAll, 'Hoja1')
-        // Descargar el archivo Excel de toda la respuesta
-        // Generar Excel de resultados de la búsqueda
-        if (this.filteredData.length > 0) {
-          const wbSearch = XLSX.utils.book_new()
-          const wsSearch = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
-          const filteredDataSearch = this.filteredData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
-          XLSX.utils.sheet_add_aoa(wsSearch, filteredDataSearch, { origin: 'A2' })
-          XLSX.utils.book_append_sheet(wbSearch, wsSearch, 'Hoja1')
-          // Descargar el archivo Excel de resultados de la búsqueda
-          XLSX.writeFile(wbSearch, 'Unidad_Organizacional_Busqueda.xlsx')
+        try {
+          // Obtener datos completos
+          const allData = await this.getDataFromURL()
+          // Generar Excel de resultados de la búsqueda si existen
+          if (this.filteredData.length > 0) {
+            const wbSearch = XLSX.utils.book_new()
+            const wsSearch = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
+            const excludedColumnsIndices = [2, 3]
+            const filteredDataSearch = this.filteredData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+            XLSX.utils.sheet_add_aoa(wsSearch, filteredDataSearch, { origin: 'A2' })
+            XLSX.utils.book_append_sheet(wbSearch, wsSearch, 'Hoja1')
+            // Descargar el archivo Excel de resultados de la búsqueda
+            XLSX.writeFile(wbSearch, 'Unidad_Organizacional_Busqueda.xlsx')
+          } else {
+            // Generar Excel de toda la respuesta
+            const wbAll = XLSX.utils.book_new()
+            const wsAll = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
+            const excludedColumnsIndices = [2, 3]
+            const filteredDataAll = allData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+            XLSX.utils.sheet_add_aoa(wsAll, filteredDataAll, { origin: 'A2' })
+            XLSX.utils.book_append_sheet(wbAll, wsAll, 'Hoja1')
+            // Descargar el archivo Excel de toda la respuesta
+            XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
+          }
+        } catch (error) {
+          console.error('Error al obtener datos:', error)
         }
-        XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
       },
       async generatePDF () {
-        // Obtener datos completos
-        const allData = await this.getDataFromURL()
-        // Generar PDF de toda la respuesta
-        const pdfAll = new jsPDF({
-          orientation: 'landscape',
-          unit: 'mm',
-          format: 'letter'
-        })
-        this.generatePDFContent(pdfAll, allData)
-        // Guardar el PDF de toda la respuesta
-        // Generar PDF de resultados de la búsqueda
-        if (this.filteredData.length > 0) {
-          const pdfSearch = new jsPDF({
-            orientation: 'landscape',
-            unit: 'mm',
-            format: 'letter'
-          })
-          this.generatePDFContent(pdfSearch, this.filteredData)
-          // Guardar el PDF de resultados de la búsqueda
-          pdfSearch.save('Unidad_Organizacional_Busqueda.pdf')
+        try {
+          // Obtener datos completos
+          const allData = await this.getDataFromURL()
+          // Generar PDF de resultados de la búsqueda si existen
+          if (this.filteredData.length > 0) {
+            const pdfSearch = new jsPDF({
+              orientation: 'landscape',
+              unit: 'mm',
+              format: 'letter'
+            })
+            this.generatePDFContent(pdfSearch, this.filteredData)
+            // Guardar el PDF de resultados de la búsqueda
+            pdfSearch.save('Unidad_Organizacional_Busqueda.pdf')
+          } else {
+            // Generar PDF de toda la respuesta
+            const pdfAll = new jsPDF({
+              orientation: 'landscape',
+              unit: 'mm',
+              format: 'letter'
+            })
+            this.generatePDFContent(pdfAll, allData)
+            // Guardar el PDF de toda la respuesta
+            pdfAll.save('Unidad_Organizacional_Completa.pdf')
+          }
+        } catch (error) {
+          console.error('Error al obtener datos:', error)
         }
-        pdfAll.save('Unidad_Organizacional_Completa.pdf')
       },
       generatePDFContent (pdf, data) {
         // Armando la cabecera para el reporte
@@ -135,7 +146,7 @@
       async getDataFromURL () {
         try {
           const response = await axios.get('/CostCenters/OrganizationalUnits/')
-          console.log('OBTENGOOOOOOOO TODOOOO', response.data)
+          // console.log('OBTENGOOOOOOOO TODOOOO', response.data)
           // Convierte la respuesta a una matriz bidimensional
           this.allData = response.data.map((item) => Object.values(item))
           return this.allData
@@ -281,4 +292,3 @@
   cursor: not-allowed;
 }
 </style>
-
