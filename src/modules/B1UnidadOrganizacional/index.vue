@@ -77,7 +77,6 @@
         XLSX.utils.sheet_add_aoa(wsAll, filteredDataAll, { origin: 'A2' })
         XLSX.utils.book_append_sheet(wbAll, wsAll, 'Hoja1')
         // Descargar el archivo Excel de toda la respuesta
-        XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
         // Generar Excel de resultados de la búsqueda
         if (this.filteredData.length > 0) {
           const wbSearch = XLSX.utils.book_new()
@@ -88,6 +87,7 @@
           // Descargar el archivo Excel de resultados de la búsqueda
           XLSX.writeFile(wbSearch, 'Unidad_Organizacional_Busqueda.xlsx')
         }
+        XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
       },
       async generatePDF () {
         // Obtener datos completos
@@ -100,7 +100,6 @@
         })
         this.generatePDFContent(pdfAll, allData)
         // Guardar el PDF de toda la respuesta
-        pdfAll.save('Unidad_Organizacional_Completa.pdf')
         // Generar PDF de resultados de la búsqueda
         if (this.filteredData.length > 0) {
           const pdfSearch = new jsPDF({
@@ -112,6 +111,7 @@
           // Guardar el PDF de resultados de la búsqueda
           pdfSearch.save('Unidad_Organizacional_Busqueda.pdf')
         }
+        pdfAll.save('Unidad_Organizacional_Completa.pdf')
       },
       generatePDFContent (pdf, data) {
         // Armando la cabecera para el reporte
