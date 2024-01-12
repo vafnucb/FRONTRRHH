@@ -67,27 +67,32 @@
     },
     methods: {
       async generateExcel () {
-        // Obtener datos completos
-        const allData = await this.getDataFromURL()
-        // Generar Excel de toda la respuesta
-        const wbAll = XLSX.utils.book_new()
-        const wsAll = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
-        const excludedColumnsIndices = [2, 3]
-        const filteredDataAll = allData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
-        XLSX.utils.sheet_add_aoa(wsAll, filteredDataAll, { origin: 'A2' })
-        XLSX.utils.book_append_sheet(wbAll, wsAll, 'Hoja1')
-        // Descargar el archivo Excel de toda la respuesta
-        // Generar Excel de resultados de la búsqueda
-        if (this.filteredData.length > 0) {
-          const wbSearch = XLSX.utils.book_new()
-          const wsSearch = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
-          const filteredDataSearch = this.filteredData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
-          XLSX.utils.sheet_add_aoa(wsSearch, filteredDataSearch, { origin: 'A2' })
-          XLSX.utils.book_append_sheet(wbSearch, wsSearch, 'Hoja1')
-          // Descargar el archivo Excel de resultados de la búsqueda
-          XLSX.writeFile(wbSearch, 'Unidad_Organizacional_Busqueda.xlsx')
+        try {
+          // Obtener datos completos
+          const allData = await this.getDataFromURL()
+          // Generar Excel de resultados de la búsqueda si existen
+          if (this.filteredData.length > 0) {
+            const wbSearch = XLSX.utils.book_new()
+            const wsSearch = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
+            const excludedColumnsIndices = [2, 3]
+            const filteredDataSearch = this.filteredData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+            XLSX.utils.sheet_add_aoa(wsSearch, filteredDataSearch, { origin: 'A2' })
+            XLSX.utils.book_append_sheet(wbSearch, wsSearch, 'Hoja1')
+            // Descargar el archivo Excel de resultados de la búsqueda
+            XLSX.writeFile(wbSearch, 'Unidad_Organizacional_Busqueda.xlsx')
+          }
+          // Generar Excel de toda la respuesta
+          const wbAll = XLSX.utils.book_new()
+          const wsAll = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
+          const excludedColumnsIndices = [2, 3]
+          const filteredDataAll = allData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+          XLSX.utils.sheet_add_aoa(wsAll, filteredDataAll, { origin: 'A2' })
+          XLSX.utils.book_append_sheet(wbAll, wsAll, 'Hoja1')
+          // Descargar el archivo Excel de toda la respuesta
+          XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
+        } catch (error) {
+          console.error('Error al obtener datos:', error)
         }
-        XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
       },
       async generatePDF () {
         try {
@@ -227,7 +232,7 @@
 }
 
 .buttonExcel-UO {
-  background-color: #363e50;
+  background-color: #2d5abd;
   color: #ffffff;
 }
 
