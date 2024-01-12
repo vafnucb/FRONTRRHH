@@ -80,16 +80,17 @@
             XLSX.utils.book_append_sheet(wbSearch, wsSearch, 'Hoja1')
             // Descargar el archivo Excel de resultados de la búsqueda
             XLSX.writeFile(wbSearch, 'Unidad_Organizacional_Busqueda.xlsx')
+          } else {
+            // Generar Excel de toda la respuesta
+            const wbAll = XLSX.utils.book_new()
+            const wsAll = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
+            const excludedColumnsIndices = [2, 3]
+            const filteredDataAll = allData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
+            XLSX.utils.sheet_add_aoa(wsAll, filteredDataAll, { origin: 'A2' })
+            XLSX.utils.book_append_sheet(wbAll, wsAll, 'Hoja1')
+            // Descargar el archivo Excel de toda la respuesta
+            XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
           }
-          // Generar Excel de toda la respuesta
-          const wbAll = XLSX.utils.book_new()
-          const wsAll = XLSX.utils.aoa_to_sheet([['Código', 'Denominación', 'Tipo Unidad Organizacional']])
-          const excludedColumnsIndices = [2, 3]
-          const filteredDataAll = allData.map(row => row.filter((_, index) => !excludedColumnsIndices.includes(index)))
-          XLSX.utils.sheet_add_aoa(wsAll, filteredDataAll, { origin: 'A2' })
-          XLSX.utils.book_append_sheet(wbAll, wsAll, 'Hoja1')
-          // Descargar el archivo Excel de toda la respuesta
-          XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
         } catch (error) {
           console.error('Error al obtener datos:', error)
         }
