@@ -90,28 +90,33 @@
         XLSX.writeFile(wbAll, 'Unidad_Organizacional_Completa.xlsx')
       },
       async generatePDF () {
-        // Obtener datos completos
-        const allData = await this.getDataFromURL()
-        // Generar PDF de toda la respuesta
-        const pdfAll = new jsPDF({
-          orientation: 'landscape',
-          unit: 'mm',
-          format: 'letter'
-        })
-        this.generatePDFContent(pdfAll, allData)
-        // Guardar el PDF de toda la respuesta
-        // Generar PDF de resultados de la búsqueda
-        if (this.filteredData.length > 0) {
-          const pdfSearch = new jsPDF({
-            orientation: 'landscape',
-            unit: 'mm',
-            format: 'letter'
-          })
-          this.generatePDFContent(pdfSearch, this.filteredData)
-          // Guardar el PDF de resultados de la búsqueda
-          pdfSearch.save('Unidad_Organizacional_Busqueda.pdf')
+        try {
+            // Obtener datos completos
+            const allData = await this.getDataFromURL()
+            // Generar PDF de resultados de la búsqueda si existen
+            if (this.filteredData.length > 0) {
+                const pdfSearch = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'letter'
+                })
+                this.generatePDFContent(pdfSearch, this.filteredData)
+                // Guardar el PDF de resultados de la búsqueda
+                pdfSearch.save('Unidad_Organizacional_Busqueda.pdf')
+            } else {
+                // Generar PDF de toda la respuesta
+                const pdfAll = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'letter'
+                })
+                this.generatePDFContent(pdfAll, allData)
+                // Guardar el PDF de toda la respuesta
+                pdfAll.save('Unidad_Organizacional_Completa.pdf')
+            }
+        } catch (error) {
+            console.error('Error al obtener datos:', error)
         }
-        pdfAll.save('Unidad_Organizacional_Completa.pdf')
       },
       generatePDFContent (pdf, data) {
         // Armando la cabecera para el reporte
