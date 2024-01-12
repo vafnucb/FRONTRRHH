@@ -222,7 +222,7 @@
 }
 
 .buttonExcel-UO {
-  background-color: #2d5abd;
+  background-color: #9bbaff;
   color: #ffffff;
 }
 
