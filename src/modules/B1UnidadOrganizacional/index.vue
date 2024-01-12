@@ -146,7 +146,7 @@
       async getDataFromURL () {
         try {
           const response = await axios.get('/CostCenters/OrganizationalUnits/')
-          console.log('OBTENGOOOOOOOO TODOOOO', response.data)
+          // console.log('OBTENGOOOOOOOO TODOOOO', response.data)
           // Convierte la respuesta a una matriz bidimensional
           this.allData = response.data.map((item) => Object.values(item))
           return this.allData
@@ -292,4 +292,3 @@
   cursor: not-allowed;
 }
 </style>
-
