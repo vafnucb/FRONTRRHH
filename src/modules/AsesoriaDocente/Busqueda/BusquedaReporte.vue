@@ -186,7 +186,7 @@
       <div class="row">
         <div class="col-md-4">
         </div>
-        <reporte :url="busqCarrera + '/' + busqTeacherCUNI + '/' + busqModalidad + '/' + busqTarea + '/' + busqStudent + '/' + busqMes + '/' + busqGestion + '/' + busqOrigenQuery + '/' + busqTipoPago "></reporte>
+        <reporte :url="busqCarrera + '/' + busqTeacherCUNI + '/' + busqModalidad + '/' + busqTarea + '/' + busqStudent + '/' + busqMes + '/' + busqGestion + '/' + busqOrigenQuery + '/' + busqTipoPago + '/' + importeMinExacto + '/' + importeMaxExacto + '/' + importeMinExactoNeto + '/' + importeMaxExactoNeto "></reporte>
         <div class="col-md-1">
           <button class="btn btn-danger btn-fill" @click="cleanScreen()">Reset</button>
         </div>
@@ -251,7 +251,7 @@
         busqCarrera: null,
         busqTeacherCUNI: null,
         busqDependencyCod: null,
-        busqStudent: '',
+        busqStudent: null,
         busqMes: null,
         busqGestion: null,
         busqOrigen: 'DEPEN',
@@ -392,7 +392,7 @@
             .then(response => {
               response.data.forEach(function (element) {
                 // Se envío el BP como CUNI para que solo llegara un valor en el value, que se asignará después a teacherCUNI o teacherBP dependiendo de su origen
-                teachers.push({value: element.FullName, text: element.Regional + '-' + element.FullName, name: element.FullName, extranjero: element.Extranjero, origen: element.Origen})
+                teachers.push({value: element.FullName, text: element.Regional + '-' + element.FullName, name: element.FullName, origen: element.Origen})
                 // console.log('Terachers' + element.CUNI + '-' + element.FullName)
                 // Creamos un array con los docentes dependientes
               })
@@ -447,11 +447,14 @@
         this.busqTarea = null
         this.busqOrigenQuery = '0'
         this.busqExtranjero = '0'
-        // this.importeMinExacto = 1
-        // this.importeMaxExacto = 25000
-        // this.importeMinExactoNeto = 1
-        // this.importeMaxExactoNeto = 25000
+        this.importeMinExacto = 1
+        this.importeMaxExacto = 25000
+        this.importeMinExactoNeto = 1
+        this.importeMaxExactoNeto = 25000
         this.busqTipoPago = null
+        this.updateSlider()
+        this.updateSliderNeto()
+
         // Variables del componente
         // Variables de control de errores
       },
