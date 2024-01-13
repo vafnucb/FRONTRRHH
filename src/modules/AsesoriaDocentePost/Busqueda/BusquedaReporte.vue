@@ -359,6 +359,8 @@
         this.importeMinExactoNeto = 1
         this.importeMaxExactoNeto = 25000
         this.busqTipoPago = null
+        this.updateSlider()
+        this.updateSliderNeto()
       },
       onClose () {
         // emit para cerrar el componente

@@ -44,7 +44,7 @@
           },
           {
             prop: 'CardName',
-            label: 'Nombre Socio',
+            label: 'Docente',
             minWidth: 150
           },
           {

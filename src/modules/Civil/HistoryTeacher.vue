@@ -65,8 +65,8 @@
             minWidth: 40
           },
           {
-            prop: 'IUE',
-            label: 'IUE',
+            prop: 'RCIVA',
+            label: 'RCIVA',
             minWidth: 30
           },
           {
