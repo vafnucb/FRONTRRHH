@@ -18,3 +18,18 @@ git commit -m "Merge de dev en main, excluyendo cambios en %EXCLUDED_FILE%"
 
 REM Aplicar los cambios locales nuevamente (sin aplicar los cambios del archivo específico)
 git stash apply --index
+
+REM Eliminar la carpeta 'dist'
+rmdir /s /q dist
+
+REM Ejecutar el comando npm run build
+npm run build
+
+REM Añadir todos los cambios generados por npm run build
+git add .
+
+REM Hacer el commit
+git commit -m "Build Automático después de npm run build"
+
+REM Realizar el push solo si el merge y el build fueron exitosos
+git push
