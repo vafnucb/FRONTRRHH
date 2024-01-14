@@ -47,6 +47,11 @@ axios.defaults.baseURL = 'http://192.168.18.75:8020/api'
 axios.defaults.headers.common['id'] = localStorage.getItem('userId')
 axios.defaults.headers.common['token'] = localStorage.getItem('token')
 
+
+/***
+ * PUREBA!!!!
+ */
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
