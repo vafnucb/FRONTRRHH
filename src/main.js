@@ -35,14 +35,15 @@ Vue.use(VeeValidate)
 Vue.use(VueWorker)
 locale.use(lang)
 
-// Prod server
-axios.defaults.baseURL = 'http://192.168.18.75:8020/api'
-// Server Dev IP
-// axios.defaults.baseURL = 'http://192.168.18.88:8010/api'
+// Prod server, usar este para probar el servidor de producción
+// axios.defaults.baseURL = 'http://192.168.18.75:8002/api'
 
-// Dev Server Actual
-// axios.defaults.baseURL = 'http://192.168.18.88:8003/api'
+// Agregando dirección para el servidor de desarrollo
+// El servidor de desarrollo apunta directamente al backend local
+// Para hacer los cambios localmente sin afectar a producción
+// Luego se debe hacer el merge, revisar documentación!
 
+axios.defaults.baseURL = 'http://localhost:60749/api'
 
 axios.defaults.headers.common['id'] = localStorage.getItem('userId')
 axios.defaults.headers.common['token'] = localStorage.getItem('token')
@@ -55,3 +56,7 @@ new Vue({
   store,
   render: h => h(App)
 })
+
+/**
+ * PRUEBA!!!!
+ */
