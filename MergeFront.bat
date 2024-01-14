@@ -1,4 +1,4 @@
-﻿﻿@echo off
+﻿@echo off
 
 REM Archivo específico a excluir durante el merge (con ruta relativa)
 set EXCLUDED_FILE=src\main.js
@@ -10,7 +10,7 @@ REM Realizar el merge (aceptar todos los cambios, excepto en src\main.js)
 git checkout dev -- .
 
 REM Deshacer los cambios específicos en el archivo excluido
-git checkout -- "%EXCLUDED_FILE%"
+git checkout HEAD -- "%EXCLUDED_FILE%"
 
 REM Añadir todos los cambios al staging area
 git add .

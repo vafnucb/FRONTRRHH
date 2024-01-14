@@ -35,6 +35,16 @@ Vue.use(VeeValidate)
 Vue.use(VueWorker)
 locale.use(lang)
 
+/**
+ * PRUEBA3!!!!
+ */
+/**
+ * PRUEBA3!!!!
+ */
+/**
+ * PRUEBA3!!!!
+ */
+
 // Prod server, usar este para probar el servidor de producción
 // axios.defaults.baseURL = 'http://192.168.18.75:8002/api'
 
@@ -56,13 +66,3 @@ new Vue({
   store,
   render: h => h(App)
 })
-
-/**
- * PRUEBA!!!!
- */
-/**
- * PRUEBA!!!!
- */
-/**
- * PRUEBA!!!!
- */
