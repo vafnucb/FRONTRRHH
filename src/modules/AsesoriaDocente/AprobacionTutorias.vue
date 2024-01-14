@@ -32,7 +32,7 @@
 
 <script>
 /**
- * PRUEBA3333!!!!!
+ * PRUEBA4!!!!!
  */
 import { FormWizard, TabContent } from 'vue-form-wizard'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
