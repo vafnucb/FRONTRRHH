@@ -24,7 +24,49 @@ import './assets/sass/demo.scss'
 
 // import Vee validate
 import VeeValidate from 'vee-validate'
+/**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO
+ */
 
+ /**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO
+ */
+/**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO*//**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO
+ */
+
+ /**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO
+ */
+/**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO*//**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO
+ */
+
+ /**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO
+ */
+/**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO*/
 // plugin setup
 Vue.use(VueRouter)
 Vue.use(GlobalDirectives)
@@ -56,18 +98,3 @@ new Vue({
   store,
   render: h => h(App)
 })
-/**
- * EJEMPLO
- * EJEMPLO
- * EJEMPLO
- */
-/**
- * EJEMPLO
- * EJEMPLO
- * EJEMPLO
- */
-/**
- * EJEMPLO
- * EJEMPLO
- * EJEMPLO
- */

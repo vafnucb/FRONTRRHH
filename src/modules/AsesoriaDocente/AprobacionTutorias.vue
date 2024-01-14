@@ -31,22 +31,6 @@
 </template>
 
 <script>
-/**
- * EJEMPLO
- * EJEMPLO
- * EJEMPLO
- */
-
- /**
- * EJEMPLO
- * EJEMPLO
- * EJEMPLO
- */
-/**
- * EJEMPLO
- * EJEMPLO
- * EJEMPLO
- */
 
 import { FormWizard, TabContent } from 'vue-form-wizard'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
@@ -97,6 +81,21 @@ export default {
     }
   }
 }
+/**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO
+ */
+
+ /**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO
+ */
+/**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO*/
 </script>
 
 <style scoped>
