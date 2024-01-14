@@ -1,4 +1,4 @@
-﻿@echo off
+﻿﻿@echo off
 
 REM Archivo específico a excluir durante el merge (con ruta relativa)
 set EXCLUDED_FILE=src\main.js
