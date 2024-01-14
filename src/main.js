@@ -34,23 +34,6 @@ Vue.use(SideBar)
 Vue.use(VeeValidate)
 Vue.use(VueWorker)
 locale.use(lang)
-/**
- * EJEMPLO!!!!!!!!!!!!!!!!!!!!!!
- *//**
- * EJEMPLO!!!!!!!!!!!!!!!!!!!!!!
- *//**
- * EJEMPLO!!!!!!!!!!!!!!!!!!!!!!
- *//**
- * EJEMPLO!!!!!!!!!!!!!!!!!!!!!!
- *//**
- * EJEMPLO!!!!!!!!!!!!!!!!!!!!!!
- *//**
- * EJEMPLO!!!!!!!!!!!!!!!!!!!!!!
- *//**
- * EJEMPLO!!!!!!!!!!!!!!!!!!!!!!
- *//**
- * EJEMPLO!!!!!!!!!!!!!!!!!!!!!!
- */
 
 // Prod server
 axios.defaults.baseURL = 'http://192.168.18.75:8020/api'
