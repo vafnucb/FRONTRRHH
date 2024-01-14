@@ -6,8 +6,16 @@ set EXCLUDED_FILE=src\main.js
 REM Realizar un stash de los cambios locales en la rama de destino (main)
 git stash
 
-REM Realizar el merge
-git checkout dev -- "%EXCLUDED_FILE%"
+REM Realizar el merge (aceptar todos los cambios, excepto en src\main.js)
+git checkout dev -- .
+
+REM Deshacer los cambios específicos en el archivo excluido
+git checkout -- "%EXCLUDED_FILE%"
+
+REM Añadir todos los cambios al staging area
+git add .
+
+REM Hacer el commit del merge
 git commit -m "Merge de dev en main, excluyendo cambios en %EXCLUDED_FILE%"
 
 REM Aplicar los cambios locales nuevamente (sin aplicar los cambios del archivo específico)
