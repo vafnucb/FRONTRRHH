@@ -81,21 +81,7 @@ export default {
     }
   }
 }
-/**
- * EJEMPLO
- * EJEMPLO
- * EJEMPLO
- */
 
- /**
- * EJEMPLO
- * EJEMPLO
- * EJEMPLO
- */
-/**
- * EJEMPLO
- * EJEMPLO
- * EJEMPLO*/
 </script>
 
 <style scoped>
