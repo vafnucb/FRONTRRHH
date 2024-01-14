@@ -31,18 +31,3 @@ git commit -m "Build Automático después de npm run build"
 
 REM Realizar el push solo si el merge y el build fueron exitosos
 git push
-
-@REM REM Eliminar la carpeta 'dist'
-@REM rmdir /s /q dist
-
-@REM REM Ejecutar el comando npm run build
-@REM npm run build
-
-@REM REM Añadir todos los cambios
-@REM git add .
-
-@REM REM Hacer el commit
-@REM git commit -m "Build Automático"
-
-@REM REM Realizar el push
-@REM git push
