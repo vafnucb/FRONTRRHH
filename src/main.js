@@ -48,9 +48,6 @@ axios.defaults.headers.common['id'] = localStorage.getItem('userId')
 axios.defaults.headers.common['token'] = localStorage.getItem('token')
 
 
-/***
- * PUREBA!!!!
- */
 
 /* eslint-disable no-new */
 new Vue({
