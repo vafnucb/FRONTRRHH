@@ -23,9 +23,9 @@
 
       <!-- Paginación personalizada -->
       <div class="custom-pagination-UO">
-        <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
-        <span>{{ currentPage }} de {{ totalPages }}</span>
-        <button @click="nextPage" :disabled="currentPage === totalPages">Siguiente</button>
+        <button class="anterior" @click="prevPage" :disabled="currentPage === 1">Anterior</button>
+        <span class="spanPage">{{ currentPage }} de {{ totalPages }}</span>
+        <button class= "siguiente" @click="nextPage" :disabled="currentPage === totalPages">Siguiente</button>
       </div>
     </div>
   </div>
@@ -272,7 +272,7 @@
   margin-top: 20px;
 }
 
-.custom-pagination-UO button {
+.siguiente {
   background-color: #4CAF50;
   color: white;
   padding: 10px 15px;
@@ -283,13 +283,38 @@
   font-weight: bold;
 }
 
-.custom-pagination-UO button:hover {
+.siguiente:hover {
   background-color: #45a049;
 }
 
-.custom-pagination-UO button:disabled {
+.siguiente:disabled {
   background-color: #dddddd;
   color: #666666;
   cursor: not-allowed;
+}
+.anterior {
+  background-color: #f59619;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 15px;
+  font-weight: bold;
+}
+
+.anterior:hover {
+  background-color: #e48101;
+}
+
+.anterior:disabled {
+  background-color: #dddddd;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.spanPage {
+font-weight: bold;
+font-size: 15px;
 }
 </style>

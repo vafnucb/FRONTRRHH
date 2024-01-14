@@ -7,13 +7,13 @@
       <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'ISAAC'}" id="datatable">
         <template slot="buttons" slot-scope="props">
           <!--Botones para modificar o hacer otras acciones-->
-          <el-tooltip class="item" effect="dark" content="Editar" placement="top">
+          <el-tooltip class="itemAct" effect="dark" content="Editar" placement="top">
             <a class="btn btn-simple btn-xs btn-icon btn-info" @click="Modify(props.queriedData[props.index].Id)"><i class="fa fa-edit"></i></a>
           </el-tooltip>
-          <el-tooltip class="item" effect="dark" content="Eliminar" placement="top">
+          <el-tooltip class="itemDel" effect="dark" content="Eliminar" placement="top">
             <a class="btn btn-simple btn-xs btn-danger btn-icon"  @click="removeAccess(props.queriedData[props.index].Id)"><i class="fa fa-trash-alt"></i></a>
           </el-tooltip>
-          <el-tooltip class="item" effect="light" content="Aprobar" placement="top">
+          <el-tooltip class="itemApr" effect="light" content="Aprobar" placement="top">
             <input type="checkbox"
                    :value="props.queriedData[props.index].Id"
                    v-model="SelectedIds"
@@ -969,4 +969,23 @@
   input[type=radio] {
     margin: 0 10px 0 10px;
   }
+  /* Estilo para los botones de acción */
+.itemAct{
+  margin-right: 10px; /* Añade un pequeño margen entre los botones */
+  color: #568da7;
+  font-size: 15px;
+}
+.itemDel{
+  margin-right: 10px; /* Añade un pequeño margen entre los botones */
+  color: #ff3029;
+  font-size: 15px;
+}
+
+.itemApr{
+  margin-left: 8px; /* Añade un margen a la izquierda del checkbox */
+  width: 15px; /* Ancho del checkbox */
+  height: 15px; /* Altura del checkbox */
+}
+
+
 </style>
