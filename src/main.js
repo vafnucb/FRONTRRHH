@@ -56,3 +56,8 @@ new Vue({
   store,
   render: h => h(App)
 })
+/**
+ * EJEMPLO
+ * EJEMPLO
+ * EJEMPLO
+ */
