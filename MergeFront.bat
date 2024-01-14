@@ -3,30 +3,31 @@
 REM Archivo específico a excluir durante el merge (con ruta relativa)
 set EXCLUDED_FILE=src\main.js
 
-REM Deshabilitar la apertura de VIM durante el merge
-set GIT_MERGE_AUTOEDIT=no
+REM Realizar un stash de los cambios locales en la rama de destino (main)
+git stash
 
-REM Realizar el merge, aceptando automáticamente los cambios locales excepto en src\main.js
-git merge -X ours dev
+REM Realizar el merge con estrategia "ours" para rechazar los cambios de dev en src\main.js
+git merge -s ours dev --no-commit
+git checkout -- "%EXCLUDED_FILE%"
 
-REM Deshacer los cambios específicos en la rama de destino (main) si hay conflictos
-git checkout --ours -- "%EXCLUDED_FILE%"
-
-REM Commit de los cambios en la rama de destino (main)
+REM Commit del merge
 git add .
 git commit -m "Merge de dev en main, excluyendo cambios en %EXCLUDED_FILE%"
 
-REM Eliminar la carpeta 'dist'
-rmdir /s /q dist
+REM Aplicar los cambios locales nuevamente (sin aplicar los cambios del archivo específico)
+git stash apply --index
 
-REM Ejecutar el comando npm run build
-npm run build
+@REM REM Eliminar la carpeta 'dist'
+@REM rmdir /s /q dist
 
-REM Añadir todos los cambios
-git add .
+@REM REM Ejecutar el comando npm run build
+@REM npm run build
 
-REM Hacer el commit
-git commit -m "Build Automático"
+@REM REM Añadir todos los cambios
+@REM git add .
 
-REM Realizar el push
-git push
+@REM REM Hacer el commit
+@REM git commit -m "Build Automático"
+
+@REM REM Realizar el push
+@REM git push
