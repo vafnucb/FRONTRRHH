@@ -5,18 +5,27 @@
         <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'ISAAC II', actions: false}">
         </data-tables>
       <div class="row">
-        <div class="col-md-2 el-col-md-offset-2">
-          <Info></Info>
-        </div>
-        <div class="col-md-4" align="center">
-          <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo POSTGRADO SALOMÓN</button>
-        </div>
-        <div class="col-md-4" align="center">
-          <button class="btn btn-info" @click="windowDateSARAI">Generar archivo PROYECTOS SARAI Independientes</button>
+         <!-- Primera columna -->
+         <div class="col-md-3" align="center">
           <br>
-          <br>
-          <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
-        </div>
+        <Info></Info>
+        <br>
+    </div>
+
+    <!-- Segunda columna -->
+    <div class="col-md-4" align="center">
+      <br>
+        <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo PREGRADO SALOMÓN</button>
+    </div>
+
+    <!-- Tercera columna -->
+    <div class="col-md-4" align="center">
+        <br>
+        <button class="btn btn-info" @click="windowDateSARAI">Generar archivo CARRERA SARAI Independientes</button>
+        <br>
+        <br>
+        <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
+    </div>
       </div>
     </template>
     <br>

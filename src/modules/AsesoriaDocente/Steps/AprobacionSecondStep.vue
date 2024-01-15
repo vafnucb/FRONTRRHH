@@ -6,25 +6,28 @@
         </data-tables>
         <div class="row">
           <!-- Primera columna -->
-          <div class="col-md-6" align="center">
-            <Info></Info>
-            <br> <!-- Agrega un salto de línea para separar Info y el botón -->
-            <br>
-            <button class="btn btn-info" @click="PDFCareer">Generar PDF por Carrera</button>
-            <br>
-            <br>
-          </div>
-          
-          <!-- Segunda columna -->
-          <div class="col-md-6" align="center">
-            <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo PREGRADO SALOMÓN</button>
-            <br>
-            <br>
-            <button class="btn btn-info" @click="windowDateSARAI">Generar archivo CARRERA SARAI Independientes</button>
-            <br>
-            <br>
-            <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
-          </div>
+          <div class="col-md-4" align="center">
+        <Info></Info>
+        <br>
+        <br>
+        <button class="btn btn-info" @click="PDFCareer">Generar PDF por Carrera</button>
+        <br>
+    </div>
+
+    <!-- Segunda columna -->
+    <div class="col-md-4" align="center">
+      <br>
+        <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo PREGRADO SALOMÓN</button>
+    </div>
+
+    <!-- Tercera columna -->
+    <div class="col-md-4" align="center">
+        <br>
+        <button class="btn btn-info" @click="windowDateSARAI">Generar archivo CARRERA SARAI Independientes</button>
+        <br>
+        <br>
+        <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
+    </div>
         </div>
 
       <template v-if="PDFcarrera==='SI'">

@@ -49,7 +49,8 @@
           { label: 'Materia', prop: 'U_Materia' },
           { label: 'Paralelo', prop: 'U_PeriodoPARALELO' },
           { label: 'Nivel', prop: 'U_NivelParalelo' },
-          { label: 'Tipo', prop: 'U_TipoParalelo' }
+          { label: 'Tipo', prop: 'U_TipoParalelo' },
+          { label: 'UO', prop: 'U_Unidad_Organizacional' }
         ],
         filteredData: [],
         currentPage: 1,
@@ -151,7 +152,7 @@
       async getDataFromURL () {
         try {
           const response = await axios.get('/CostCenters/Paralelo')
-          // console.log('estoy en el get de paralelos', response.data)
+          console.log('estoy en el get de paralelos', response.data)
           // Convierte la respuesta a una matriz bidimensional
           this.allData = response.data.map((item) => Object.values(item))
           return this.allData
@@ -164,6 +165,7 @@
         // Filtrar los datos basados en el término de búsqueda
         this.filteredData = this.allData.filter((row) =>
           row.some((value) =>
+            (value !== null && value !== undefined) &&
             value.toString().toLowerCase().includes(this.searchTerm.toLowerCase())
           )
         )

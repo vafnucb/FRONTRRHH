@@ -163,6 +163,7 @@
         // Filtrar los datos basados en el término de búsqueda
         this.filteredData = this.allData.filter((row) =>
           row.some((value) =>
+            (value !== null && value !== undefined) &&
             value.toString().toLowerCase().includes(this.searchTerm.toLowerCase())
           )
         )
