@@ -819,6 +819,10 @@
             return
           }
           this.put()
+          setTimeout(() => {
+            // Código a ejecutar después de la actualización exitosa
+            location.reload()
+          }, 2000)
         } else {
           console.log('something was printed:' + this.action + ' ')
           // resetear variables de validación

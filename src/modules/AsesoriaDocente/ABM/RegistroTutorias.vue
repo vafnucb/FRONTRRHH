@@ -554,6 +554,7 @@
         axios.get('CostCenters/Careers')
           .then(response => {
             response.data.forEach(function (element) {
+              // console.log('RESPONSE DATA DE CARRERA PARA ACT: ', response.data)
               carreras.push({value: element.PrcCode, text: element.PrcCode + '-' + element.PrcName, BranchesId: element.BranchesId, Id: element.Id})
             })
           })
@@ -712,16 +713,10 @@
             return
           }
           this.put()
-          // swal({
-          //   title: `Buen trabajo!`,
-          //   text: 'Se guardaron los cambios!',
-          //   buttonsStyling: false,
-          //   confirmButtonClass: 'btn btn-success btn-fill',
-          //   type: 'success'
-          // })
-          // setTimeout(() => {
-          //   window.location.reload() // Recargar la página
-          // }, 2000)
+          setTimeout(() => {
+            // Código a ejecutar después de la actualización exitosa
+            location.reload()
+          }, 2000)
         } else {
           console.log('something was printed:' + this.action + ' ' + this.valid())
           // resetear variables de validación
@@ -762,30 +757,7 @@
       },
       post () {
         console.log('Aqui la infoDDD:')
-        console.log('DependencyCod' + this.tutoria.DependencyCod)
-        console.log('Observaciones' + this.tutoria.Observaciones)
-        console.log('MontoHora' + this.tutoria.MontoHora)
-        console.log('Horas' + this.tutoria.Horas)
-        console.log('Categoría' + this.tutoria.Categoría)
-        console.log('TotalBruto' + this.tutoria.TotalBruto)
-        console.log('TotalNeto' + this.tutoria.TotalNeto)
-        console.log('Acta' + this.tutoria.Acta)
-        console.log('ActaFecha' + this.tutoria.ActaFecha)
-        console.log('TeacherFullName' + this.tutoria.TeacherFullName)
-        console.log('TeacherBP' + this.tutoria.TeacherBP)
-        console.log('TeacherCUNI' + this.tutoria.TeacherCUNI)
-        console.log('ModalidadId' + this.tutoria.ModalidadId)
-        console.log('TipoTareaId' + this.tutoria.TipoTareaId)
-        console.log('StudentFullName' + this.tutoria.StudentFullName)
-        console.log('Id' + this.tutoria.Id)
         console.log('Carrera' + this.tutoria.Carrera)
-        console.log('BranchesId' + this.tutoria.BranchesId)
-        console.log('Mes' + this.tutoria.Mes)
-        console.log('Gestion' + this.tutoria.Gestion)
-        console.log('Valid' + this.tutoria.Valid)
-        console.log('Origen' + this.tutoria.Origen)
-        console.log('Ignore' + this.tutoria.Ignore)
-        console.log('TipoPago' + this.tutoria.TipoPago)
         // Variables del componente
         console.log('Deduccion' + this.tutoria.Deduccion)
         console.log('IUE' + this.tutoria.IUE)
@@ -805,6 +777,9 @@
       // Actualización de datos
       put () {
         // console.log('AsesoriaDocente/' + this.tutoriaId, this.tutoria)
+        console.log('Aqui la actualización:')
+        console.log('Carrera' + this.tutoria.Carrera)
+        console.log('Código de dependencia: ' + this.tutoria.DependencyCod)
         axios.put('AsesoriaDocente/' + this.tutoriaId, this.tutoria)
           .then(response => {
             this.successMessage()
