@@ -2,14 +2,50 @@
   <div class="row">
     <div class="col-md-12 card">
       <template v-if="!showWizard">
+
+    <div class="card mb-4 custom-card">
+      <div class="card-body text-center">
+        <h3>Búsqueda Detallada</h3>
+        <!-- Barra de búsqueda -->
+        <input v-model="busqueda" class="form-control input-search" placeholder="Buscar por código, docente, tarea asignada, postulante o nombre del servicio">
+        
+        <!-- Resultados de la búsqueda -->
+        <div v-if="resultados.length > 0" class="mt-3">
+  <p class="result-message">
+    Tus criterios de búsqueda coinciden con
+    <template v-if="resultados.length === 1">
+      el lote: {{ resultados[0] }}
+    </template>
+    <template v-else>
+      los lotes: {{ resultados.join(', ') }}
+    </template>
+  </p>
+</div>
+
+
+        <!-- Mensaje inicial -->
+        <div v-else-if="busqueda && resultados.length === 0" class="mt-3">
+          <p class="no-results-message">No se encontraron resultados para la búsqueda.</p>
+        </div>
+        <div v-else class="mt-3">
+          <p class="initial-message">Realiza la búsqueda detallada para localizar un número de lote.</p>
+        </div>
+      </div>
+    </div>
         <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'SARAI'}">
+          
           <template slot="buttons" slot-scope="props">
+            
             <el-tooltip class="item" effect="dark" content="Aprobar" placement="top-start">
               <a class="btn btn-simple btn-xs btn-icon btn-info" @click="initWizard(props.queriedData[props.index].Id)">APROBAR</a>
             </el-tooltip>
           </template>
         </data-tables>
+        
+    <div>
+  </div>
       </template>
+      
       <template v-else>
         <div class="row">
           <div class="form-group col-md-8 col-md-offset-1" style="margin-top: 15px">
@@ -114,10 +150,69 @@
         ID: '',
         REGIONAL: '',
         SERVICIO: '',
-        ESTADO: ''
+        ESTADO: '',
+        respuestasServContract: [],
+        todosLosCampos: [],
+        busqueda: '',
+        resultados: []
+      }
+    },
+    watch: {
+      busqueda () {
+        this.buscar()
       }
     },
     methods: {
+      buscar () {
+        // Mantener un conjunto de IDs únicos
+        const idsUnicos = new Set()
+        // Realizar la búsqueda en todosLosCampos si hay algo en el campo de búsqueda
+        if (this.busqueda.trim() !== '') {
+          for (const elemento of this.todosLosCampos) {
+            // Verificar si la búsqueda coincide en cualquier campo
+            const coincidencias = Object.values(elemento)
+              .map(valor => String(valor).toLowerCase())
+              .filter(valor => valor.includes(this.busqueda.toLowerCase()))
+            // Si hay coincidencias, agregar el ID al conjunto de IDs únicos
+            if (coincidencias.length > 0) {
+              idsUnicos.add(elemento.Id)
+            }
+          }
+        }
+        // Convertir el conjunto de IDs únicos a un array y asignarlo a resultados
+        this.resultados = Array.from(idsUnicos)
+      },
+      obtenerTodo: async function () {
+        try {
+          const responsePending = await axios.get('ServContract/PendingApproval')
+          const ids = responsePending.data.map(item => item.Id)
+          for (const id of ids) {
+            const responseServContract = await axios.get('ServContract/getdistributionPDF/' + id)
+            // Iterar sobre cada objeto en la respuesta y extraer los campos específicos
+            responseServContract.data.forEach(item => {
+              const {
+                Codigo_Carrera,
+                Docente,
+                Tarea_Asignada,
+                Postulante,
+                Nombre_del_Servicio
+              } = item
+              // Guardar los campos en un solo array
+              this.todosLosCampos.push({
+                Id: id,
+                Codigo_Carrera,
+                Docente,
+                Tarea_Asignada,
+                Postulante,
+                Nombre_del_Servicio
+              })
+            })
+          }
+          console.log('Todos los campos:', this.todosLosCampos)
+        } catch (error) {
+          console.error(error)
+        }
+      },
       successMessage: function () {
         swal({
           title: `Buen trabajo!`,
@@ -212,6 +307,9 @@
       TabContent,
       BeforeEndStep,
       EndStep
+    },
+    created () {
+      this.obtenerTodo()
     }
   }
 </script>
@@ -361,4 +459,41 @@
       transform: rotate(-405deg);
     }
   }
+  .custom-card {
+  background-color: #f8f9fa;
+  padding: 20px;
+
+}
+
+.input-search {
+  width: 50%;
+  margin: 0 auto 10px;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  font-size: 18px;
+}
+
+
+.result-container {
+  margin-top: 15px;
+}
+
+.result-message, .no-results-message, .initial-message {
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+font-weight: bold;
+}
+
+.result-message {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.no-results-message {
+  color: #dc3545;
+  font-weight: bold;
+}
+
 </style>
