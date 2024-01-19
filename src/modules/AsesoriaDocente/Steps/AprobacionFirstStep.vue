@@ -33,7 +33,7 @@
             <span v-else>Desmarcar Todos</span>
           </button>
         </div>
-        <div class="col-md-2" v-if="origen==='DEP'|| origen==='INDEP' || origen === 'EXT'">
+        <div class="col-md-2" v-if="origen==='DEPEN'|| origen==='INDEP' || origen === 'EXT'">
           <button class="btn btn-info" @click="UpdateState">Enviar a Aprobacion</button>
         </div>
         <div class="col-md-2" v-if="origen==='OR' || origen==='FAC'">
@@ -874,13 +874,13 @@
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
               0: {cellWidth: 40},
-              1: {cellWidth: 5},
+              1: {cellWidth: 13},
               2: {cellWidth: 10},
               3: {cellWidth: 10},
               4: {cellWidth: 40},
               5: {cellWidth: 20},
               6: {cellWidth: 10},
-              7: {cellWidth: 15},
+              7: {cellWidth: 7},
               8: {cellWidth: 15},
               9: {cellWidth: 15},
               10: {cellWidth: 15},
@@ -888,7 +888,7 @@
               12: {cellWidth: 10},
               13: {cellWidth: 10},
               14: {cellWidth: 15},
-              15: {cellWidth: 8},
+              15: {cellWidth: 21},
               16: {cellWidth: 8}
             }
           })
@@ -901,7 +901,7 @@
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos
-            margin: {left: 189},
+            margin: {left: 179},
             theme: 'grid',
             body: resultBody,
             columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 15}, 2: {cellWidth: 10.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 15}},
@@ -918,7 +918,7 @@
           startY: y,
           theme: 'grid',
           body: this.finalResult,
-          margin: {left: 189},
+          margin: {left: 179},
           columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 15.3}, 2: {cellWidth: 14.8}, 3: {cellWidth: 15}, 4: {cellWidth: 15}, 5: {cellWidth: 15}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })
@@ -931,7 +931,7 @@
       // Metodos para el cuerpo del PDF
       loadCareerBody () {
         let tempOrigen = this.origen
-        if (tempOrigen === 'DEP') {
+        if (tempOrigen === 'DEPEN') {
           tempOrigen = 'DEPEN'
         }
         // Cargar el cuerpo, es decir datos por carrera
@@ -945,14 +945,14 @@
           })
           .catch(error => console.log(error))
         if (tempOrigen === 'DEPEN') {
-          tempOrigen = 'DEP'
+          tempOrigen = 'DEPEN'
         }
       },
       loadCareerTotals () {
         let tempOrigen = this.origen
         // Cargar el agrupado por carrera, montos Totales
         // Cargamos los nombres de las carreras
-        if (tempOrigen === 'DEP') {
+        if (tempOrigen === 'DEPEN') {
           tempOrigen = 'DEPEN'
         }
         let uniqueCareers = this.careers
@@ -966,12 +966,12 @@
           })
           .catch(error => console.log(error))
         if (tempOrigen === 'DEPEN') {
-          tempOrigen = 'DEP'
+          tempOrigen = 'DEPEN'
         }
       },
       loadAllTotals () {
         let tempOrigen = this.origen
-        if (tempOrigen === 'DEP') {
+        if (tempOrigen === 'DEPEN') {
           tempOrigen = 'DEPEN'
         }
         // Cargar el total de todas las regionales que ve el usuario
@@ -984,7 +984,7 @@
           })
           .catch(error => console.log(error))
         if (tempOrigen === 'DEPEN') {
-          tempOrigen = 'DEP'
+          tempOrigen = 'DEPEN'
         }
       },
       loadBranchData () {
@@ -1030,7 +1030,7 @@
       PDFCareer () {
         this.PDFcarrera = 'SI'
         this.loadCareers()
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
       },

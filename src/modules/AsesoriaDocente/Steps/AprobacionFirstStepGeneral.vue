@@ -811,9 +811,6 @@
       },
       // Metodos para el cuerpo del PDF
       loadCareerBody () {
-        if (this.origen === 'DEP') {
-          this.origen = 'DEPEN'
-        }
         // Cargar el cuerpo, es decir datos por carrera
         let rec = this.records
         axios.get('PDFReportBody?part=Body;' + this.estado + ';' + this.origen)
@@ -823,16 +820,10 @@
             })
           })
           .catch(error => console.log(error))
-        if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
-        }
       },
       loadCareerTotals () {
         // Cargar el agrupado por carrera, montos Totales
         // Cargamos los nombres de las carreras
-        if (this.origen === 'DEP') {
-          this.origen = 'DEPEN'
-        }
         let uniqueCareers = this.careers
         let currentResults = this.careerResult
         axios.get('PDFReportBody?part=Results;' + this.estado + ';' + this.origen)
@@ -843,14 +834,8 @@
             })
           })
           .catch(error => console.log(error))
-        if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
-        }
       },
       loadAllTotals () {
-        if (this.origen === 'DEP') {
-          this.origen = 'DEPEN'
-        }
         // Cargar el total de todas las regionales que ve el usuario
         let final = this.finalResult
         axios.get('PDFReportBody?part=FinalResult;' + this.estado + ';' + this.origen)
@@ -860,9 +845,6 @@
             })
           })
           .catch(error => console.log(error))
-        if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
-        }
       },
       loadBranchData () {
         let regionals = this.selectBranches
@@ -907,9 +889,6 @@
       PDFCareer () {
         this.PDFcarrera = 'SI'
         this.loadCareers()
-        if (this.origen === 'DEP') {
-          this.origen = 'DEPEN'
-        }
       },
       actualCarrera () {
         this.fakeLoad()

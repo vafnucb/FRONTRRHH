@@ -44,7 +44,7 @@
             <span v-else>Desmarcar Todos</span>
           </button>
         </div>
-        <div class="col-md-2" v-if="origen === 'DEP' || origen === 'INDEP' || origen === 'EXT'">
+        <div class="col-md-2" v-if="origen === 'DEPEN' || origen === 'INDEP' || origen === 'EXT'">
           <button class="btn btn-info btn-wd" @click="UpdateState">Enviar a Aprobacion</button>
         </div>
         <div class="col-md-2" v-if="origen === 'OR' || origen === 'FAC'">
@@ -337,7 +337,7 @@
       PDFCareer () {
         this.PDFcarrera = 'SI'
         this.loadProjects()
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
       },
@@ -685,7 +685,7 @@
       },
       // Metodos para el cuerpo del PDF
       loadCareerBody () {
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
         // Cargar el cuerpo, es decir datos por carrera
@@ -698,13 +698,13 @@
           })
           .catch(error => console.log(error))
         if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+          this.origen = 'DEPEN'
         }
       },
       loadCareerTotals () {
         // Cargar el agrupado por carrera, montos Totales
         // Cargamos los nombres de las carreras
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
         let uniqueCareers = this.careers
@@ -718,11 +718,11 @@
           })
           .catch(error => console.log(error))
         if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+          this.origen = 'DEPEN'
         }
       },
       loadAllTotals () {
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
         // Cargar el total de todas las regionales que ve el usuario
@@ -735,7 +735,7 @@
           })
           .catch(error => console.log(error))
         if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+          this.origen = 'DEPEN'
         }
       },
       sayMyName () {

@@ -365,7 +365,7 @@
       PDFCareer () {
         this.PDFcarrera = 'SI'
         this.loadCareers()
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
       },
@@ -382,7 +382,7 @@
         this.IsFetching = false
       },
       loadCareerBody () {
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
         // Cargar el cuerpo, es decir datos por carrera
@@ -395,13 +395,13 @@
           })
           .catch(error => console.log(error))
         if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+          this.origen = 'DEPEN'
         }
       },
       loadCareerTotals () {
         // Cargar el agrupado por carrera, montos Totales
         // Cargamos los nombres de las carreras
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
         let uniqueCareers = this.careers
@@ -415,7 +415,7 @@
           })
           .catch(error => console.log(error))
         if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+          this.origen = 'DEPEN'
         }
       },
       actualCarrera () {
