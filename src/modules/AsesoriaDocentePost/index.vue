@@ -112,12 +112,6 @@
             field: 'Cod',
             label: 'Cod U-O',
             minWidth: 15
-          },
-          {
-            prop: 'Name',
-            field: 'Name',
-            label: 'U-O',
-            minWidth: 45
           }
         ],
         pagination: {

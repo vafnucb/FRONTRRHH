@@ -29,29 +29,29 @@
         </div>
       </div>
       <!--INFO PROYECTO-->
-      <div class="row" v-for="info in projectSelected">
-        <div class="form-group col-md-3">
-          <label >PEI/PO Proyecto</label>
+      <div class="container-fluid" v-for="info in projectSelected">
+        <div class="form-group col-md-1">
+          <label >PEI/PO</label>
           <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.U_PEI_PO">
         </div>
-        <div class="form-group col-md-3">
-          <label >Fecha Inicio Proyecto</label>
+        <div class="form-group col-md-2" style="width:145px;">
+          <label >Fecha Inicio</label>
           <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.ValidFrom">
         </div>
-        <div class="form-group col-md-3">
-          <label >Fecha Fin Proyecto</label>
+        <div class="form-group col-md-2" style="width:145px;">
+          <label >Fecha Fin</label>
           <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.ValidTo">
         </div>
-        <div class="form-group col-md-3">
-          <label >Tipo Proyecto</label>
+        <div class="form-group col-md-2" style="width:160px;">
+          <label >Tipo</label>
           <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.U_Tipo">
         </div>
-        <div class="form-group col-md-3">
-          <label >Código Unidad Organizacional</label>
+        <div class="form-group col-md-1">
+          <label >Código U.O</label>
           <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="codeOrg">
         </div>
-        <div class="form-group col-md-3">
-          <label >Unidad Organizacional</label>
+        <div class="form-group col-md-2">
+          <label >Denominación</label>
           <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="nameOrg">
         </div>
       </div>
@@ -90,9 +90,7 @@
     </div>
     </div>
     <div class="row">
-    <!-- Selects -->
-    <div class="col-md-3">
-      <div class="form-group" style="margin-bottom: 20px;">
+      <div class="form-group col-md-3" style="margin-bottom: 20px; width:400px;">
         <label>Docente</label>
         <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
                       :options="teacherArray" v-model="teacherIdentifier"
@@ -100,34 +98,31 @@
                       :onchange="actualCat()">
         </model-select>
       </div>
-    </div>
-    <div class="col-md-2">
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label>Tipo Pago</label>
-        <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
-                      :options="tipoPago" v-model.lazy="tutoria.TipoPagoId"
-                      placeholder="Tipo Pago">
-        </model-select>
-      </div>
-    </div>
-    <div class="col-md-2">
-      <div class="form-group" style="margin-bottom: 20px;">
+
+      <div class="form-group col-md-3" style="margin-bottom: 20px; width:250px">
         <label>Tipo Tarea</label>
         <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
                       :options="tipoTarea" v-model="tutoria.TipoTareaId"
                       placeholder="Tipo de tarea">
         </model-select>
       </div>
-    </div>
-      <div class="col-md-2">
-        <label >N° de Contrato?</label>
+
+      <div class="form-group col-md-3" style="margin-bottom: 20px; width:150px">
+        <label>Tipo Pago</label>
+        <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
+                      :options="tipoPago" v-model.lazy="tutoria.TipoPagoId"
+                      placeholder="Tipo Pago">
+        </model-select>
+      </div>
+      <div class="form-group col-md-3" style="margin-bottom: 20px; width:100px">
+        <label >Contrato?</label>
         <input type="checkbox" class="form-control" v-model.lazy="contrato">
       </div>
       <div v-show="contrato" class="col-md-2">
         <label >N° de Contrato</label>
         <input type="text" placeholder="N° de Contrato" class="form-control textBox" v-model.lazy="tutoria.NumeroContrato">
       </div>
-  </div>
+      </div>
 </div>
 
         <!--
@@ -141,23 +136,6 @@
           </model-select>
         </div>-->
         
-        <div class="form-group col-md-1">
-          <label >Registrar estudiante?</label>
-          <input type="checkbox" class="form-control" v-model="estudiante">
-        </div>
-        <!--
-        <div class="form-group col-md-2">
-          <label >Otra Regional?</label>
-          <input type="checkbox" class="form-control" v-model="or" @click="ChangeButton()">
-        </div>-->
-      
-      <!--ESTUDIANTE-->
-      <div class="row" v-if="estudiante">
-        <div class="form-group col-md-12">
-          <label >Estudiante</label>
-          <input type="text" placeholder="JUAN PEREZ" style="text-transform: uppercase; background-color: #f0efeb" class="form-control" v-model="tutoria.StudentFullName">
-        </div>
-      </div>
       <!--OBSERVACION MODULO CONDICIONAL-->
       <div class="row" v-for="infoMod in aux1">
         <div class="form-group col-md-8">
@@ -167,17 +145,34 @@
       </div>
       <!--OBSERVACIONES-->
       <div class="row">
-      <div class="form-group col-md-8">
+      <div class="form-group col-md-6">
           <label for="exampleFormControlTextarea1">Observaciones</label>
           <textarea class="form-control textBox" id="exampleFormControlTextarea1" rows="2" v-model.lazy="tutoria.Observaciones"></textarea>
       </div>
+      
         <div class="form-group col-md-2">
           <label >Ignorar repetido?</label>
           <input type="checkbox" class="form-control" v-model="tutoria.Ignore">
         </div>
+        <div class="form-group col-md-2">
+          <label >Registrar estudiante?</label>
+          <input type="checkbox" class="form-control" v-model="estudiante">
+        </div>
+        <!--
+        <div class="form-group col-md-2">
+          <label >Otra Regional?</label>
+          <input type="checkbox" class="form-control" v-model="or" @click="ChangeButton()">
+        </div>-->
         <div class="form-group col-md-2" v-if="!dependiente">
-        <label >Factura?</label>
-        <input type="checkbox" class="form-control" v-model="tutoria.Factura" @click="facturaOn()">
+          <label >Factura?</label>
+          <input type="checkbox" class="form-control" v-model="tutoria.Factura" @click="facturaOn()">
+        </div>
+      <!--ESTUDIANTE-->
+      <div class="row" v-if="estudiante">
+        <div class="form-group col-md-12">
+          <label >Estudiante</label>
+          <input type="text" placeholder="JUAN PEREZ" style="text-transform: uppercase; background-color: #f0f0f0; color: black; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);" class="form-control" v-model="tutoria.StudentFullName">
+        </div>
       </div>
     </div>
       <!--COSTOS-->
@@ -870,6 +865,9 @@
         this.aux.SocioNegocio = ''
         this.aux.TeacherCI = ''
         this.aux.TeacherFullName = ''
+        this.tutoria.NumeroContrato = ''
+        this.contrato = false
+        this.extranjero = false
         // Variables de control de errores
       },
       post () {
@@ -1163,4 +1161,10 @@
   .textBox {
     background-color: white;
   }
+  .container-fluid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
 </style>

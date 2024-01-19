@@ -43,7 +43,7 @@ export default {
     return {
       actualTab: 0,
       tabs: [
-        { title: 'Verificación Dependientes', icon: 'fa fa-user-check', estado: 'REGISTRADO', origen: 'DEP', tipo: 'dependientes' },
+        { title: 'Verificación Dependientes', icon: 'fa fa-user-check', estado: 'REGISTRADO', origen: 'DEPEN', tipo: 'dependientes' },
         { title: 'Verificación Independientes', icon: 'fa fa-user-check', estado: 'REGISTRADO', origen: 'INDEP', tipo: 'independientes' },
         { title: 'Verificación Otras Regionales', icon: 'fa fa-user-check', estado: 'REGISTRADO', origen: 'OR', tipo: 'otras regionales' },
         { title: 'Verificación Servicios con Factura', icon: 'fa fa-user-check', estado: 'REGISTRADO', origen: 'FAC', tipo: 'factura' },
