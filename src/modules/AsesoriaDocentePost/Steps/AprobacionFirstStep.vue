@@ -44,7 +44,7 @@
             <span v-else>Desmarcar Todos</span>
           </button>
         </div>
-        <div class="col-md-2" v-if="origen === 'DEP' || origen === 'INDEP' || origen === 'EXT'">
+        <div class="col-md-2" v-if="origen === 'DEPEN' || origen === 'INDEP' || origen === 'EXT'">
           <button class="btn btn-info btn-wd" @click="UpdateState">Enviar a Aprobacion</button>
         </div>
         <div class="col-md-2" v-if="origen === 'OR' || origen === 'FAC'">
@@ -337,7 +337,7 @@
       PDFCareer () {
         this.PDFcarrera = 'SI'
         this.loadProjects()
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
       },
@@ -631,19 +631,19 @@
             // Las posiciones de los nombres y las observaciones se mantienen estáticas
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
-              0: {cellWidth: 60},
-              1: {cellWidth: 60},
-              2: {cellWidth: 54},
-              3: {cellWidth: 10},
+              0: {cellWidth: 45},
+              1: {cellWidth: 45},
+              2: {cellWidth: 10},
+              3: {cellWidth: 40},
               4: {cellWidth: 10},
               5: {cellWidth: 14},
               6: {cellWidth: 12},
               7: {cellWidth: 12},
               8: {cellWidth: 12},
-              9: {cellWidth: 14.5},
-              10: {cellWidth: 50},
-              11: {cellWidth: 10},
-              12: {cellWidth: 10},
+              9: {cellWidth: 12},
+              10: {cellWidth: 10},
+              11: {cellWidth: 12},
+              12: {cellWidth: 25},
               13: {cellWidth: 10}
             }
           })
@@ -656,10 +656,10 @@
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos
-            margin: {left: 158.2},
+            margin: {left: 178.2},
             theme: 'grid',
             body: resultBody,
-            columnStyles: {0: {cellWidth: 14}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 14.5}, 5: {cellWidth: 14.5}},
+            columnStyles: {0: {cellWidth: 12}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 10}, 5: {cellWidth: 12}},
             styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
           })
           // Reset del cuerpo para otras carreras y sus resultados
@@ -673,8 +673,8 @@
           startY: y,
           theme: 'grid',
           body: this.finalResult,
-          margin: {left: 158.2},
-          columnStyles: {0: {cellWidth: 14}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 14.5}, 5: {cellWidth: 14.5}},
+          margin: {left: 178.2},
+          columnStyles: {0: {cellWidth: 12}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 10}, 5: {cellWidth: 12}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })
         doc.setFontSize(8)
@@ -685,7 +685,7 @@
       },
       // Metodos para el cuerpo del PDF
       loadCareerBody () {
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
         // Cargar el cuerpo, es decir datos por carrera
@@ -698,13 +698,13 @@
           })
           .catch(error => console.log(error))
         if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+          this.origen = 'DEPEN'
         }
       },
       loadCareerTotals () {
         // Cargar el agrupado por carrera, montos Totales
         // Cargamos los nombres de las carreras
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
         let uniqueCareers = this.careers
@@ -718,11 +718,11 @@
           })
           .catch(error => console.log(error))
         if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+          this.origen = 'DEPEN'
         }
       },
       loadAllTotals () {
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
         // Cargar el total de todas las regionales que ve el usuario
@@ -730,12 +730,12 @@
         axios.get('PDFReportBodyPostgrado?part=FinalResult;' + this.estado + ';' + this.origen)
           .then(response => {
             response.data.forEach(function (element) {
-              final.push([element.Total_Bruto, element.Deduccion, element.IUE, element.IT, element.Total_Neto])
+              final.push([element.Total_Bruto, element.Deduccion, element.IUE, element.IT, element.IUEExt, element.Total_Neto])
             })
           })
           .catch(error => console.log(error))
         if (this.origen === 'DEPEN') {
-          this.origen = 'DEP'
+          this.origen = 'DEPEN'
         }
       },
       sayMyName () {

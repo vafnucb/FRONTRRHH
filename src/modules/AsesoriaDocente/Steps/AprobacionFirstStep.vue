@@ -33,7 +33,7 @@
             <span v-else>Desmarcar Todos</span>
           </button>
         </div>
-        <div class="col-md-2" v-if="origen==='DEP'|| origen==='INDEP' || origen === 'EXT'">
+        <div class="col-md-2" v-if="origen==='DEPEN'|| origen==='INDEP' || origen === 'EXT'">
           <button class="btn btn-info" @click="UpdateState">Enviar a Aprobacion</button>
         </div>
         <div class="col-md-2" v-if="origen==='OR' || origen==='FAC'">
@@ -853,7 +853,7 @@
           let tableBody = []
           for (var tableIndex = index; tableIndex < index + tableLength; tableIndex++) {
             // Crear un array de arrays con los elementos que correspondan
-            tableBody.push([files[tableIndex].Docente, files[tableIndex].Origen, files[tableIndex].Modal, files[tableIndex].Tarea, files[tableIndex].Alumno, files[tableIndex].Acta + ' ', (files[tableIndex].Fecha), files[tableIndex].Horas, files[tableIndex].Costo_Hora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
+            tableBody.push([files[tableIndex].Docente, files[tableIndex].Origen, files[tableIndex].Modal, files[tableIndex].Tarea, files[tableIndex].Alumno, files[tableIndex].Acta + ' ', (files[tableIndex].Fecha), files[tableIndex].TipoPago, files[tableIndex].NumeroContrato, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
           }
           // console.log('this is the body with results: ')
           // console.log(tableBody)
@@ -862,7 +862,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'Horas', 'Costo Hora', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'TotalNeto', 'Observaciones', 'Dup']],
+            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'Tipo Pago', 'N° Cont.', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'TotalNeto', 'Observaciones', 'Dup']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},
@@ -874,21 +874,21 @@
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
               0: {cellWidth: 40},
-              1: {cellWidth: 5},
+              1: {cellWidth: 13},
               2: {cellWidth: 10},
               3: {cellWidth: 10},
               4: {cellWidth: 40},
               5: {cellWidth: 20},
               6: {cellWidth: 10},
-              7: {cellWidth: 15},
+              7: {cellWidth: 12},
               8: {cellWidth: 15},
               9: {cellWidth: 15},
-              10: {cellWidth: 15},
+              10: {cellWidth: 10},
               11: {cellWidth: 10},
               12: {cellWidth: 10},
               13: {cellWidth: 10},
               14: {cellWidth: 15},
-              15: {cellWidth: 8},
+              15: {cellWidth: 21},
               16: {cellWidth: 8}
             }
           })
@@ -901,10 +901,10 @@
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos
-            margin: {left: 189},
+            margin: {left: 184},
             theme: 'grid',
             body: resultBody,
-            columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 15}, 2: {cellWidth: 10.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 15}},
+            columnStyles: {0: {cellWidth: 15}, 1: {cellWidth: 10}, 2: {cellWidth: 10}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 15}},
             styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
           })
           // Reset del cuerpo para otras carreras y sus resultados
@@ -918,8 +918,8 @@
           startY: y,
           theme: 'grid',
           body: this.finalResult,
-          margin: {left: 189},
-          columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 15.3}, 2: {cellWidth: 14.8}, 3: {cellWidth: 15}, 4: {cellWidth: 15}, 5: {cellWidth: 15}},
+          margin: {left: 184},
+          columnStyles: {0: {cellWidth: 15}, 1: {cellWidth: 10}, 2: {cellWidth: 10}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 15}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })
         doc.setFontSize(8)
@@ -931,7 +931,7 @@
       // Metodos para el cuerpo del PDF
       loadCareerBody () {
         let tempOrigen = this.origen
-        if (tempOrigen === 'DEP') {
+        if (tempOrigen === 'DEPEN') {
           tempOrigen = 'DEPEN'
         }
         // Cargar el cuerpo, es decir datos por carrera
@@ -945,14 +945,14 @@
           })
           .catch(error => console.log(error))
         if (tempOrigen === 'DEPEN') {
-          tempOrigen = 'DEP'
+          tempOrigen = 'DEPEN'
         }
       },
       loadCareerTotals () {
         let tempOrigen = this.origen
         // Cargar el agrupado por carrera, montos Totales
         // Cargamos los nombres de las carreras
-        if (tempOrigen === 'DEP') {
+        if (tempOrigen === 'DEPEN') {
           tempOrigen = 'DEPEN'
         }
         let uniqueCareers = this.careers
@@ -966,12 +966,12 @@
           })
           .catch(error => console.log(error))
         if (tempOrigen === 'DEPEN') {
-          tempOrigen = 'DEP'
+          tempOrigen = 'DEPEN'
         }
       },
       loadAllTotals () {
         let tempOrigen = this.origen
-        if (tempOrigen === 'DEP') {
+        if (tempOrigen === 'DEPEN') {
           tempOrigen = 'DEPEN'
         }
         // Cargar el total de todas las regionales que ve el usuario
@@ -979,12 +979,12 @@
         axios.get('PDFReportBody?part=FinalResult;' + this.estado + ';' + this.origen)
           .then(response => {
             response.data.forEach(function (element) {
-              final.push([element.Total_Bruto, element.Deduccion, element.IUE, element.IT, element.Total_Neto])
+              final.push([element.Total_Bruto, element.Deduccion, element.IUE, element.IT, element.IUEExt, element.Total_Neto])
             })
           })
           .catch(error => console.log(error))
         if (tempOrigen === 'DEPEN') {
-          tempOrigen = 'DEP'
+          tempOrigen = 'DEPEN'
         }
       },
       loadBranchData () {
@@ -1030,7 +1030,7 @@
       PDFCareer () {
         this.PDFcarrera = 'SI'
         this.loadCareers()
-        if (this.origen === 'DEP') {
+        if (this.origen === 'DEPEN') {
           this.origen = 'DEPEN'
         }
       },

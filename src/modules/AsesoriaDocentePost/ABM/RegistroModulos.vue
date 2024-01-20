@@ -20,28 +20,28 @@
         </div>
       <!--INFO PROYECTO-->
         <div class="row" v-for="info in projectSelected">
-                    <div class="form-group col-md-3">
-                      <label >PEI/PO Proyecto</label>
+                    <div class="form-group col-md-1">
+                      <label >PEI/PO</label>
                       <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.U_PEI_PO">
                     </div>
-                    <div class="form-group col-md-3">
-                      <label >Fecha Inicio Proyecto</label>
+                    <div class="form-group col-md-2" style="width:145px;">
+                      <label >Fecha Inicio</label>
                       <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.ValidFrom">
                     </div>
-                    <div class="form-group col-md-3">
-                      <label >Fecha Fin Proyecto</label>
+                    <div class="form-group col-md-2" style="width:145px;">
+                      <label >Fecha Fin </label>
                       <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.ValidTo">
                     </div>
-                    <div class="form-group col-md-3">
-                    <label >Tipo Proyecto</label>
+                    <div class="form-group col-md-2" style="width:160px;">
+                    <label >Tipo </label>
                     <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.U_Tipo">
                     </div>
-                    <div class="form-group col-md-3">
-                      <label >Código Unidad Organizacional</label>
+                    <div class="form-group col-md-1">
+                      <label >Código U.O</label>
                       <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="codeOrg">
                     </div>
-                    <div class="form-group col-md-3">
-                      <label >Unidad Organizacional</label>
+                    <div class="form-group col-md-2">
+                      <label >Denominación</label>
                       <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="nameOrg">
                     </div>
                   </div>

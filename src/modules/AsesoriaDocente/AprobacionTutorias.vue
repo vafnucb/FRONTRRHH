@@ -51,7 +51,7 @@ export default {
     return {
       actualTab: 0,
       tabs: [
-        { title: 'Validación Dependientes', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'DEP', tipo: 'dependientes' },
+        { title: 'Validación Dependientes', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'DEPEN', tipo: 'dependientes' },
         { title: 'Validación Independientes', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'INDEP', tipo: 'independientes' },
         { title: 'Validación Otras Regionales', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'OR', tipo: 'otras regionales' },
         { title: 'Validación Servicios con Factura', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'FAC', tipo: 'factura' },
