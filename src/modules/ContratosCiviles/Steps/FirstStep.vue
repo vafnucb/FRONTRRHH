@@ -1,79 +1,81 @@
 <template>
   <div>
     <h5 class="text-center">PASO:1 Identificar Tipo de Archivo.</h5>
-    <div class="row">
-      <div class="col-md-3 el-col-md-offset-6">
-        <div class="form-group">
+    <div class="container custom-centered-row">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="control-label">
+              Segmento
+            </label>
+            <br>
+            <el-select class="select-info"
+                      size="large"
+                      name="segmento"
+                      placeholder="Regional"
+                      v-model="segmentoOrigen"
+                      v-validate="modelValidations.segmento">
+              <el-option v-for="option in selectBranches.values"
+                        class="select-danger"
+                        :value="option.Id"
+                        :label="option.Name"
+                        :key="option.Id">
+              </el-option>
+            </el-select>
+            <small class="text-danger" v-show="segmento.invalid">
+              {{ getError('segmento') }}
+            </small>
+          </div>
+        </div>
+        <div class="col-md-4">
           <label class="control-label">
-            Segmento
+            Tipo de Servicio
           </label>
           <br>
-          <el-select class="select-info"
-                     size="large"
-                     name="segmento"
-                     placeholder="Regional"
-                     v-model="segmentoOrigen"
-                     v-validate="modelValidations.segmento">
-            <el-option v-for="option in selectBranches.values"
-                       class="select-danger"
-                       :value="option.Id"
-                       :label="option.Name"
-                       :key="option.Id">
-            </el-option>
-          </el-select>
-          <small class="text-danger" v-show="segmento.invalid">
-            {{ getError('segmento') }}
-          </small>
+          <div class="form-group">
+            <el-select class="select-info"
+                      name="tipo"
+                      v-validate="modelValidations.tipo"
+                      size="large"
+                      placeholder="Tipo de Archivo"
+                      v-model="tipoArchivo">
+              <el-option v-for="option in selectMes.values"
+                        class="select-danger"
+                        :value="option.Id"
+                        :label="option.Name"
+                        :key="option.Id">
+              </el-option>
+            </el-select>
+            <small class="text-danger" v-show="tipo.invalid">
+              {{ getError('tipo') }}
+            </small>
+          </div>
         </div>
-      </div>
-      <div class="col-md-3">
+        <div class="col-md-4">
         <label class="control-label">
-          Tipo de Servicio
+          Tipo Docente
         </label>
         <br>
         <div class="form-group">
           <el-select class="select-info"
-                     name="tipo"
-                     v-validate="modelValidations.tipo"
-                     size="large"
-                     placeholder="Tipo de Archivo"
-                     v-model="tipoArchivo">
-            <el-option v-for="option in selectMes.values"
-                       class="select-danger"
-                       :value="option.Id"
-                       :label="option.Name"
-                       :key="option.Id">
+                    name="tipoDocente"
+                    v-validate="modelValidations.tipoDocente"
+                    size="large"
+                    placeholder="Tipo de Docente"
+                    v-model="tipoDocente"> <!-- Utiliza tipoDocente como v-model -->
+            <el-option v-for="option in selectTipoDocente.values"
+                      class="select-danger"
+                      :value="option.Id"
+                      :label="option.Name"
+                      :key="option.Id">
             </el-option>
           </el-select>
-          <small class="text-danger" v-show="tipo.invalid">
-            {{ getError('tipo') }}
+          <small class="text-danger" v-show="tipoDocente.invalid">
+            {{ getError('tipoDocente') }}
           </small>
         </div>
       </div>
-      <div class="col-md-3">
-  <label class="control-label">
-    Tipo Docente
-  </label>
-  <br>
-  <div class="form-group">
-    <el-select class="select-info"
-               name="tipoDocente"
-               v-validate="modelValidations.tipoDocente"
-               size="large"
-               placeholder="Tipo de Docente"
-               v-model="tipoDocente"> <!-- Utiliza tipoDocente como v-model -->
-      <el-option v-for="option in selectTipoDocente.values"
-                 class="select-danger"
-                 :value="option.Id"
-                 :label="option.Name"
-                 :key="option.Id">
-      </el-option>
-    </el-select>
-    <small class="text-danger" v-show="tipoDocente.invalid">
-      {{ getError('tipoDocente') }}
-    </small>
-  </div>
-</div>
+      </div>
     </div>
     <div class="row">
       <div class="col-md-offset-2">
@@ -191,6 +193,11 @@
             prop: 'NIT',
             label: 'NIT',
             minWidth: 100
+          },
+          {
+            prop: 'TipoDocente',
+            label: 'Tipo Docente',
+            minWidth: 100
           }
         ],
         pagination: {
@@ -285,4 +292,9 @@
   }
 </script>
 <style>
+.custom-centered-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 </style>

@@ -36,7 +36,7 @@
     data () {
       return {
         url: '/ServContract/HistoryBP/' + this.personId,
-        propsToSearch: ['Serv_ProcessId', 'Branch', 'FileType', 'SAPId'],
+        propsToSearch: ['Serv_ProcessId', 'Branch', 'FileType', 'SAPId', 'ServiceName', 'TipoDocente'],
         tableColumns: [
           {
             prop: 'Serv_ProcessId',
@@ -55,6 +55,11 @@
             minWidth: 100
           }, */
           {
+            prop: 'TipoDocente',
+            label: 'Tipo Docente',
+            minWidth: 40
+          },
+          {
             prop: 'ServiceName',
             label: 'Servicio',
             minWidth: 80
@@ -72,6 +77,11 @@
           {
             prop: 'IT',
             label: 'IT',
+            minWidth: 30
+          },
+          {
+            prop: 'IUEExterior',
+            label: 'IUEExterior',
             minWidth: 30
           },
           {

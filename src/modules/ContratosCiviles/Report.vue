@@ -58,11 +58,12 @@
         doc.text('Universidad Católica Boliviana "San Pablo" ', 145, 20, null, null, 'center')
         // El nombre de la ruta actual
         doc.setFontSize(18)
-        doc.text('Sistema de Renumeraciones Académicas a Independientes', 145, 30, null, null, 'center')
+        doc.text('Sistema de Renumeraciones Académicas', 145, 30, null, null, 'center')
         doc.setFontSize(15)
         doc.text('Total Detalle', 145, 40, null, null, 'center')
         doc.setFontSize(12)
         doc.text(this.REGIONAL + ' - ' + this.SERVICIO + ' - ' + this.ID + ' - ' + this.ESTADO, 145, 46, null, null, 'center')
+        doc.text('Reporte de - ' + this.TIPODOCENTE, 145, 53, null, null, 'center')
         // Para controlar donde comienza el reporte en el eje Y
         let y = 54
         // El cuerpo del header y de la tabla
@@ -99,7 +100,7 @@
         doc.setFontSize(8)
         doc.setFontStyle('normal')
         doc.text('Reporte generado por: ' + this.username, 14, y + (205 - y) - 10)
-        doc.save('TotalDetalle.pdf')
+        doc.save('TotalDetalleSARAÍ.pdf')
       },
       loadCareerBody () {
         // Cargar el cuerpo, es decir datos por carrera
