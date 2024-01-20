@@ -52,6 +52,8 @@
                 <td width="80px">{{REGIONAL}}</td>
                 <td width="80px"><h6>Estado:</h6></td>
                 <td width="80px">{{ESTADO}}</td>
+                <td width="100px"><h6 style="margin-left: 30px">Docente:</h6></td>
+                <td width="100px">{{TIPODOCENTE}}</td>
               </tr>
             </table></div>
           <div  style="margin-top: 15px" align="center">
@@ -147,6 +149,7 @@
         REGIONAL: '',
         SERVICIO: '',
         ESTADO: '',
+        TIPODOCENTE: '',
         respuestasServContract: [],
         todosLosCampos: [],
         busqueda: '',
@@ -159,43 +162,27 @@
       }
     },
     methods: {
-      // guardoDatos () {
-      //   axios.get('ServContract/History/')
-      //     .then(response => {
-      //       response.data.forEach(objeto => {
-      //       // Accede al Id de cada objeto
-      //         const id = objeto.Id
-      //       // Haz algo con el valor del Id
-      //         axios.get('/ServContract/' + id)
-      //         .then(respuestaDetallada => {
-      //           // Haz algo con la respuesta detallada según tus necesidades
-      //           console.log('Respuesta detallada para el ID', id, ':', respuestaDetallada.data)
-      //         })
-      //         .catch(errorDetallado => {
-      //           console.error('Error al obtener detalles para el ID', id, ':', errorDetallado)
-      //         })
-      //       })
-      //     })
-      //   .catch(error => console.log(error))
-      // },
-      // infoExtra () {
-      //   console.log('DUPLICANDOOOO', id, this.formData)
-      //   axios.get('ServContract/' + id, this.formData)
-      //   console.log('VERIFICOOOOOO', response.data)
-      //   return response.data
-      // },
       buscar () {
         // Mantener un conjunto de IDs únicos
         const idsUnicos = new Set()
         // Realizar la búsqueda en todosLosCampos si hay algo en el campo de búsqueda
         if (this.busqueda.trim() !== '') {
           for (const elemento of this.todosLosCampos) {
+            // Función auxiliar para buscar en objetos anidados
+            const buscarEnObjeto = (obj, busqueda) => {
+              for (const valor of Object.values(obj)) {
+                if (typeof valor === 'object') {
+                  if (buscarEnObjeto(valor, busqueda)) {
+                    return true
+                  }
+                } else if (String(valor).toLowerCase().includes(busqueda.toLowerCase())) {
+                  return true
+                }
+              }
+              return false
+            }
             // Verificar si la búsqueda coincide en cualquier campo
-            const coincidencias = Object.values(elemento)
-              .map(valor => String(valor).toLowerCase())
-              .filter(valor => valor.includes(this.busqueda.toLowerCase()))
-            // Si hay coincidencias, agregar el ID al conjunto de IDs únicos
-            if (coincidencias.length > 0) {
+            if (buscarEnObjeto(elemento, this.busqueda)) {
               idsUnicos.add(elemento.Id)
             }
           }
@@ -206,33 +193,85 @@
       obtenerTodo: async function () {
         try {
           const responsePending = await axios.get('ServContract/History')
-          const ids = responsePending.data.map(item => item.Id)
-          for (const id of ids) {
-            const responseServContract = await axios.get('ServContract/getdistributionPDF/' + id)
-            // Iterar sobre cada objeto en la respuesta y extraer los campos específicos
-            responseServContract.data.forEach(item => {
-              const {
-                Codigo_Carrera,
-                Docente,
-                Tarea_Asignada,
-                Postulante,
-                Nombre_del_Servicio
-              } = item
-              // Guardar los campos en un solo array
-              this.todosLosCampos.push({
-                Id: id,
-                Codigo_Carrera,
-                Docente,
-                Tarea_Asignada,
-                Postulante,
-                Nombre_del_Servicio
-              })
-            })
+          const data = responsePending.data
+          for (const item of data) {
+            const { Id, FileType } = item
+            const responseServContract = await axios.get('ServContract/getdistributionPDF/' + Id)
+            // Definir campos según el FileType
+            let campos = {}
+            switch (FileType) {
+              case 'CARRERA':
+                campos = this.obtenerCamposCarrera(responseServContract.data, Id)
+                break
+              case 'PROYECTOS':
+                campos = this.obtenerCamposProyectos(responseServContract.data, Id)
+                break
+              case 'PARALELO':
+                campos = this.obtenerCamposParalelo(responseServContract.data, Id)
+                break
+              case 'VARIOS':
+                campos = this.obtenerCamposVarios(responseServContract.data, Id)
+                break
+            }
+            // Guardar los campos en un solo array
+            const camposCompletos = { Id, FileType, ...campos }
+            this.todosLosCampos.push(camposCompletos)
           }
           console.log('Todos los campos:', this.todosLosCampos)
         } catch (error) {
           console.error(error)
         }
+      },
+      obtenerCamposCarrera (data, id) {
+        // Procesar y devolver los campos específicos para CARRERA
+        if (Array.isArray(data)) {
+          return data.map(item => ({
+            Id: id,
+            Codigo_Carrera: item.Codigo_Carrera,
+            Docente: item.Docente,
+            Tarea_Asignada: item.Tarea_Asignada,
+            Postulante: item.Postulante,
+            Nombre_del_Servicio: item.Nombre_del_Servicio
+          }))
+        }
+        return []
+      },
+      obtenerCamposProyectos (data, id) {
+        // Procesar y devolver los campos específicos para PROYECTOS
+        if (Array.isArray(data)) {
+          return data.map(item => ({
+            Id: id,
+            Docente: item.Docente,
+            Codigo_Proyecto_SAP: item.Codigo_Proyecto_SAP,
+            Nombre_del_Servicio: item.Nombre_del_Servicio,
+            Nombre_del_Proyecto: item.Nombre_del_Proyecto
+          }))
+        }
+        return []
+      },
+      obtenerCamposParalelo (data, id) {
+        // Procesar y devolver los campos específicos para PARALELO
+        if (Array.isArray(data)) {
+          return data.map(item => ({
+            Id: id,
+            Docente: item.Docente,
+            Sigla_Asignatura: item.Sigla_Asignatura,
+            Nombre_del_Servicio: item.Nombre_del_Servicio
+          }))
+        }
+        return []
+      },
+      obtenerCamposVarios (data, id) {
+        // Procesar y devolver los campos específicos para VARIOS
+        if (Array.isArray(data)) {
+          return data.map(item => ({
+            Id: id,
+            Nombre_del_Servicio: item.Nombre_del_Servicio,
+            Docente: item.Docente,
+            Objeto_del_Contrato: item.Objeto_del_Contrato
+          }))
+        }
+        return []
       },
       successMessage: function () {
         swal({
@@ -274,6 +313,8 @@
             this.ID = response.data.Id
             console.log(response.data.FileType)
             this.SERVICIO = response.data.FileType
+            console.log('TDDDD', response.data.TipoDocente)
+            this.TIPODOCENTE = response.data.TipoDocente
             console.log(response.data.BranchesId)
             if (response.data.BranchesId === 3) {
               this.REGIONAL = 'CBB'
