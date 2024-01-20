@@ -106,8 +106,8 @@
             // Las posiciones de los nombres y las observaciones se mantienen estáticas
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
-              0: {cellWidth: 20},
-              1: {cellWidth: 20},
+              0: {cellWidth: 30},
+              1: {cellWidth: 30},
               2: {cellWidth: 14},
               3: {cellWidth: 54},
               4: {cellWidth: 10},
@@ -115,10 +115,10 @@
               6: {cellWidth: 12},
               7: {cellWidth: 12},
               8: {cellWidth: 12},
-              9: {cellWidth: 14.5},
-              10: {cellWidth: 14.5},
-              11: {cellWidth: 15},
-              12: {cellWidth: 30},
+              9: {cellWidth: 12},
+              10: {cellWidth: 12},
+              11: {cellWidth: 12},
+              12: {cellWidth: 35},
               13: {cellWidth: 10}
             }
           })
@@ -131,10 +131,10 @@
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos
-            margin: {left: 145.8},
+            margin: {left: 165.8},
             theme: 'grid',
             body: resultBody,
-            columnStyles: {0: {cellWidth: 12}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 14.5}, 4: {cellWidth: 14.5}, 5: {cellWidth: 14.5}},
+            columnStyles: {0: {cellWidth: 12}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 12}, 5: {cellWidth: 12}},
             styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
           })
           // Reset del cuerpo para otras carreras y sus resultados
@@ -148,8 +148,8 @@
           startY: y,
           theme: 'grid',
           body: this.finalResult,
-          margin: {left: 145.8},
-          columnStyles: {0: {cellWidth: 12}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 14.5}, 4: {cellWidth: 14.5}, 5: {cellWidth: 14.5}},
+          margin: {left: 165.8},
+          columnStyles: {0: {cellWidth: 12}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 12}, 5: {cellWidth: 12}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })
         doc.setFontSize(8)

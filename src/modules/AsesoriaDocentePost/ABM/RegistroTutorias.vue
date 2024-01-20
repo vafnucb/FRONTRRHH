@@ -110,7 +110,7 @@
       <div class="form-group col-md-3" style="margin-bottom: 20px; width:150px">
         <label>Tipo Pago</label>
         <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}"
-                      :options="tipoPago" v-model.lazy="tutoria.TipoPagoId"
+                      :options="tipoPago" v-model.lazy="tutoria.TipoPago"
                       placeholder="Tipo Pago">
         </model-select>
       </div>
@@ -334,7 +334,7 @@
           Deduccion: 0,
           Origen: 'DEPEN',
           TipoTareaId: 0,
-          TipoPagoId: 0,
+          TipoPago: null,
           Ignore: false,
           IUE: 0,
           IT: 0,
@@ -362,31 +362,43 @@
       totalNeto: function () {
         this.totalBruto = this.tutoria.TotalBruto
         if (this.extranjero) {
-          // Lógica específica para extranjeros
-          this.tutoria.IUEExterior = (this.totalBruto * (this.IUEExterior / 100)).toFixed(2)
-          this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
+          // Calcular el IUEExterior sin redondeo
+          this.tutoria.IUEExterior = this.totalBruto * (this.IUEExterior / 100)
+          // Aplicar redondeo a todos los valores
+          this.tutoria.IUEExterior = parseFloat(this.tutoria.IUEExterior.toFixed(2))
+          this.tutoria.TotalNeto = parseFloat((this.totalBruto - this.tutoria.IUEExterior).toFixed(2))
           this.tutoria.Deduccion = 0
           this.tutoria.IT = 0
           this.tutoria.IUE = 0
-          return (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
+          // Devolver el resultado redondeado para su presentación
+          return this.tutoria.TotalNeto
         } else {
-            // Los calculos cambian si es DEPENDIENTE O INDEPENDIENTE
+          // Lógica para Dependientes o Independientes que no son extranjeros
           if (this.dependiente) {
-            this.tutoria.TotalNeto = (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
-            this.tutoria.Deduccion = this.tutoria.TotalBruto - this.tutoria.TotalNeto
-            this.tutoria.IUE = 0
-            this.tutoria.IT = 0
+            // Calcular el TotalNeto sin redondeo
+            this.tutoria.TotalNeto = this.totalBruto - (this.totalBruto * (this.Deduccion / 100))
+            // Aplicar redondeo a todos los valores
+            this.tutoria.TotalNeto = parseFloat(this.tutoria.TotalNeto.toFixed(2))
+            this.tutoria.Deduccion = parseFloat((this.totalBruto - this.tutoria.TotalNeto).toFixed(2))
             this.tutoria.IUEExterior = 0
-            return (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
+            this.tutoria.IT = 0
+            this.tutoria.IUE = 0
+            // Devolver el resultado redondeado para su presentación
+            return this.tutoria.TotalNeto
           } else {
-              // Cuando es independiente se calculan nuevos tipos de descuentos que no aplican para los independientes
-            this.tutoria.IUE = (this.totalBruto * (this.IUE / 100)).toFixed(2)
-            this.tutoria.IT = (this.totalBruto * (this.IT / 100)).toFixed(2)
-            // this.tutoria.Deduccion = (this.tutoria.IUE + this.tutoria.IT)
-            this.tutoria.TotalNeto = (this.totalBruto - (this.tutoria.IUE) - (this.tutoria.IT)).toFixed(2)
+            // Calcular IUE, IT y TotalNeto sin redondeo
+            this.tutoria.IUE = this.totalBruto * (this.IUE / 100)
+            this.tutoria.IT = this.totalBruto * (this.IT / 100)
+            this.tutoria.TotalNeto = this.totalBruto - this.tutoria.IUE - this.tutoria.IT
+            // Aplicar redondeo a todos los valores
+            this.tutoria.IUE = parseFloat(this.tutoria.IUE.toFixed(2))
+            this.tutoria.IT = parseFloat(this.tutoria.IT.toFixed(2))
+            this.tutoria.TotalNeto = parseFloat(this.tutoria.TotalNeto.toFixed(2))
+            // Otros ajustes
             this.tutoria.Deduccion = 0
             this.tutoria.IUEExterior = 0
-            return (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
+            // Devolver el resultado redondeado para su presentación
+            return this.tutoria.TotalNeto
           }
         }
       },

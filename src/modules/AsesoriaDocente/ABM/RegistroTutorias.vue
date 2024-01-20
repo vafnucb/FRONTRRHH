@@ -321,30 +321,43 @@
       // --------------------------Para el cálculo de los montos----------------------------
       totalNeto: function () {
         if (this.extranjero) {
-          // Lógica específica para extranjeros
-          this.tutoria.IUEExterior = (this.totalBruto * (this.IUEExterior / 100)).toFixed(2)
-          this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
+          // Calcular el IUEExterior sin redondeo
+          this.tutoria.IUEExterior = this.totalBruto * (this.IUEExterior / 100)
+          // Aplicar redondeo a todos los valores
+          this.tutoria.IUEExterior = parseFloat(this.tutoria.IUEExterior.toFixed(2))
+          this.tutoria.TotalNeto = parseFloat((this.totalBruto - this.tutoria.IUEExterior).toFixed(2))
           this.tutoria.Deduccion = 0
           this.tutoria.IT = 0
           this.tutoria.IUE = 0
-          return (this.totalBruto - this.tutoria.IUEExterior).toFixed(2)
+          // Devolver el resultado redondeado para su presentación
+          return this.tutoria.TotalNeto
         } else {
           // Lógica para Dependientes o Independientes que no son extranjeros
           if (this.dependiente) {
-            this.tutoria.TotalNeto = (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
-            this.tutoria.Deduccion = this.tutoria.TotalBruto - this.tutoria.TotalNeto
+            // Calcular el TotalNeto sin redondeo
+            this.tutoria.TotalNeto = this.totalBruto - (this.totalBruto * (this.Deduccion / 100))
+            // Aplicar redondeo a todos los valores
+            this.tutoria.TotalNeto = parseFloat(this.tutoria.TotalNeto.toFixed(2))
+            this.tutoria.Deduccion = parseFloat((this.totalBruto - this.tutoria.TotalNeto).toFixed(2))
             this.tutoria.IUEExterior = 0
             this.tutoria.IT = 0
             this.tutoria.IUE = 0
-            return (this.totalBruto - (this.totalBruto * (this.Deduccion / 100))).toFixed(2)
+            // Devolver el resultado redondeado para su presentación
+            return this.tutoria.TotalNeto
           } else {
-            this.tutoria.IUE = (this.totalBruto * (this.IUE / 100)).toFixed(2)
-            this.tutoria.IT = (this.totalBruto * (this.IT / 100)).toFixed(2)
-            this.tutoria.TotalNeto = (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
-            // this.tutoria.Deduccion = (this.tutoria.TotalBruto - this.tutoria.TotalNeto)
+            // Calcular IUE, IT y TotalNeto sin redondeo
+            this.tutoria.IUE = this.totalBruto * (this.IUE / 100)
+            this.tutoria.IT = this.totalBruto * (this.IT / 100)
+            this.tutoria.TotalNeto = this.totalBruto - this.tutoria.IUE - this.tutoria.IT
+            // Aplicar redondeo a todos los valores
+            this.tutoria.IUE = parseFloat(this.tutoria.IUE.toFixed(2))
+            this.tutoria.IT = parseFloat(this.tutoria.IT.toFixed(2))
+            this.tutoria.TotalNeto = parseFloat(this.tutoria.TotalNeto.toFixed(2))
+            // Otros ajustes
             this.tutoria.Deduccion = 0
             this.tutoria.IUEExterior = 0
-            return (this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2)
+            // Devolver el resultado redondeado para su presentación
+            return this.tutoria.TotalNeto
           }
         }
       },
@@ -436,22 +449,22 @@
                 this.or = true
               }
               // para igualar costos, es necesario hacer un cálculo inverso porque nosotros guardamos monto pero desplegamos porcentaje
-              this.Deduccion = ((100 * this.tutoria.Deduccion) / this.tutoria.TotalBruto).toFixed(2)
+              this.Deduccion = parseFloat(((100 * this.tutoria.Deduccion) / this.tutoria.TotalBruto).toFixed(2))
             } else if (this.tutoria.Origen === 'INDEP') {
               this.origin = 'INDEP'
               this.dependiente = false
               this.extranjero = false
               this.teacherIdentifier = this.tutoria.TeacherBP
               // para igualar costos
-              this.IUE = ((100 * this.tutoria.IUE) / this.tutoria.TotalBruto).toFixed(2)
-              this.IT = ((100 * this.tutoria.IT) / this.tutoria.TotalBruto).toFixed(2)
+              this.IUE = parseFloat(((100 * this.tutoria.IUE) / this.tutoria.TotalBruto).toFixed(2))
+              this.IT = parseFloat(((100 * this.tutoria.IT) / this.tutoria.TotalBruto).toFixed(2))
             } else if (this.tutoria.Origen === 'EXT') { // Nueva funcionalidad para extranjeros
               this.origin = 'EXT'
               this.dependiente = false
               this.extranjero = true
               this.teacherIdentifier = this.tutoria.TeacherBP
               // para igualar costos en caso de ser extranjero
-              this.IUEExterior = ((100 * this.tutoria.IUEExterior) / this.tutoria.TotalBruto).toFixed(2)
+              this.IUEExterior = parseFloat(((100 * this.tutoria.IUEExterior) / this.tutoria.TotalBruto).toFixed(2))
             }
             this.totalBruto = this.initialTotalBruto
             if (this.tutoria.Horas <= 0) {
