@@ -115,14 +115,14 @@
               6: {cellWidth: 10},
               7: {cellWidth: 15},
               8: {cellWidth: 15},
-              9: {cellWidth: 15},
-              10: {cellWidth: 15},
-              11: {cellWidth: 15},
-              12: {cellWidth: 15},
-              13: {cellWidth: 15},
-              14: {cellWidth: 8},
-              15: {cellWidth: 8},
-              16: {cellWidth: 8}
+              9: {cellWidth: 10},
+              10: {cellWidth: 10},
+              11: {cellWidth: 10},
+              12: {cellWidth: 10},
+              13: {cellWidth: 10},
+              14: {cellWidth: 10},
+              15: {cellWidth: 25},
+              16: {cellWidth: 9}
             }
           })
           // -------------------------------------Tabla con totales por carrera-----------------------------------------
@@ -134,10 +134,10 @@
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos
-            margin: {left: 174.2},
+            margin: {left: 189},
             theme: 'grid',
             body: resultBody,
-            columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 15.3}, 2: {cellWidth: 14.8}, 3: {cellWidth: 15}, 4: {cellWidth: 15}, 5: {cellWidth: 15}},
+            columnStyles: {0: {cellWidth: 10}, 1: {cellWidth: 10}, 2: {cellWidth: 10}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 10}},
             styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
           })
           // Reset del cuerpo para otras carreras y sus resultados
@@ -151,8 +151,8 @@
           startY: y,
           theme: 'grid',
           body: this.finalResult,
-          margin: {left: 174.2},
-          columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 15.3}, 2: {cellWidth: 14.8}, 3: {cellWidth: 15}, 4: {cellWidth: 15}, 5: {cellWidth: 15}},
+          margin: {left: 189},
+          columnStyles: {0: {cellWidth: 10}, 1: {cellWidth: 10}, 2: {cellWidth: 10}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 10}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })
         doc.setFontSize(8)
