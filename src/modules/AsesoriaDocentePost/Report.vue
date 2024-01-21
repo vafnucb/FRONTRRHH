@@ -86,7 +86,7 @@
           let tableBody = []
           for (var tableIndex = index; tableIndex < index + tableLength; tableIndex++) {
             // Crear un array de arrays con los elementos que correspondan
-            tableBody.push([files[tableIndex].TeacherFullName, files[tableIndex].TipoTarea, files[tableIndex].Modulo, files[tableIndex].Horas, files[tableIndex].MontoHora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
+            tableBody.push([files[tableIndex].TeacherFullName, files[tableIndex].Origen, files[tableIndex].TipoTarea, files[tableIndex].Modulo, files[tableIndex].Horas, files[tableIndex].MontoHora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
           }
           // console.log('this is the body with results: ')
           // console.log(tableBody)
@@ -95,7 +95,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'IUE', 'IT', 'IUEExt', 'Total Neto', 'Observaciones', 'Dup']],
+            head: [['Docente', 'Origen', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'RCIVA', 'IT', 'IUEExt', 'Total Neto', 'Observaciones', 'Dup']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},
@@ -106,18 +106,20 @@
             // Las posiciones de los nombres y las observaciones se mantienen estáticas
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
-              0: {cellWidth: 60},
+              0: {cellWidth: 50},
               1: {cellWidth: 10},
-              2: {cellWidth: 54},
-              3: {cellWidth: 10},
+              2: {cellWidth: 10},
+              3: {cellWidth: 49},
               4: {cellWidth: 10},
-              5: {cellWidth: 14},
+              5: {cellWidth: 10},
               6: {cellWidth: 12},
               7: {cellWidth: 12},
               8: {cellWidth: 12},
-              9: {cellWidth: 14.5},
-              10: {cellWidth: 50},
-              11: {cellWidth: 10}
+              9: {cellWidth: 12},
+              10: {cellWidth: 12},
+              11: {cellWidth: 12},
+              12: {cellWidth: 50},
+              13: {cellWidth: 8}
             }
           })
           // -------------------------------------Tabla con totales por carrera-----------------------------------------
@@ -129,10 +131,10 @@
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos
-            margin: {left: 158.2},
+            margin: {left: 153},
             theme: 'grid',
             body: resultBody,
-            columnStyles: {0: {cellWidth: 14}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 14.5}},
+            columnStyles: {0: {cellWidth: 12}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 12}, 5: {cellWidth: 12}},
             styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
           })
           // Reset del cuerpo para otras carreras y sus resultados
@@ -146,14 +148,14 @@
           startY: y,
           theme: 'grid',
           body: this.finalResult,
-          margin: {left: 158.2},
-          columnStyles: {0: {cellWidth: 14}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 14.5}},
+          margin: {left: 153},
+          columnStyles: {0: {cellWidth: 12}, 1: {cellWidth: 12}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 12}, 5: {cellWidth: 12}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })
         doc.setFontSize(8)
         doc.setFontStyle('normal')
         doc.text('Reporte generado por: ' + this.username, 14, y + (205 - y) - 10)
-        doc.save('ReporteAgrupado.pdf')
+        doc.save('ReporteAgrupadoTotalPostgrado.pdf')
         return doc
       },
       loadCareerBody () {
@@ -187,7 +189,7 @@
         axios.get('PDFReportBodyPostgrado?part=FinalResult;' + this.state + ';' + this.origin)
           .then(response => {
             response.data.forEach(function (element) {
-              final.push([element.Total_Bruto, element.Deduccion, element.IUE, element.IT, element.Total_Neto])
+              final.push([element.Total_Bruto, element.Deduccion, element.IUE, element.IT, element.IUEExt, element.Total_Neto])
             })
           })
           .catch(error => console.log(error))

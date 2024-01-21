@@ -785,7 +785,7 @@
             margin: {left: 196.2},
             theme: 'grid',
             body: resultBody,
-            columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 12.3}, 2: {cellWidth: 9.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 9}},
+            columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 12.3}, 2: {cellWidth: 9.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 10}},
             styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
           })
           // Reset del cuerpo para otras carreras y sus resultados
@@ -800,7 +800,7 @@
           theme: 'grid',
           body: this.finalResult,
           margin: {left: 196.2},
-          columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 12.3}, 2: {cellWidth: 9.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 9}},
+          columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 12.3}, 2: {cellWidth: 9.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 10}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })
         doc.setFontSize(8)
