@@ -227,11 +227,11 @@
         if (Array.isArray(data)) {
           return data.map(item => ({
             Id: id,
-            Codigo_Carrera: item.Codigo_Carrera,
+            Codigo_Carrera: item.Carrera,
             Docente: item.Docente,
-            Tarea_Asignada: item.Tarea_Asignada,
+            Tarea_Asignada: item.Tarea,
             Postulante: item.Postulante,
-            Nombre_del_Servicio: item.Nombre_del_Servicio
+            Nombre_del_Servicio: item.Servicio
           }))
         }
         return []
@@ -242,9 +242,9 @@
           return data.map(item => ({
             Id: id,
             Docente: item.Docente,
-            Codigo_Proyecto_SAP: item.Codigo_Proyecto_SAP,
-            Nombre_del_Servicio: item.Nombre_del_Servicio,
-            Nombre_del_Proyecto: item.Nombre_del_Proyecto
+            Codigo_Proyecto_SAP: item.Codigo_SAP,
+            Nombre_del_Servicio: item.Servicio,
+            Nombre_del_Proyecto: item.Proyecto
           }))
         }
         return []
@@ -255,8 +255,8 @@
           return data.map(item => ({
             Id: id,
             Docente: item.Docente,
-            Sigla_Asignatura: item.Sigla_Asignatura,
-            Nombre_del_Servicio: item.Nombre_del_Servicio
+            Sigla_Asignatura: item.Sigla,
+            Nombre_del_Servicio: item.Servicio
           }))
         }
         return []
@@ -266,7 +266,7 @@
         if (Array.isArray(data)) {
           return data.map(item => ({
             Id: id,
-            Nombre_del_Servicio: item.Nombre_del_Servicio,
+            Nombre_del_Servicio: item.Servicio,
             Docente: item.Docente,
             Objeto_del_Contrato: item.Objeto_del_Contrato
           }))
