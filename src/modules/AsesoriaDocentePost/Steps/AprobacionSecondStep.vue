@@ -250,7 +250,8 @@
       windowDateEXT () {
         this.action = 'MODIFY'
         this.fileUrl = 'ProyectosExt?data='
-        this.file = 'CARRERA'
+        this.file = 'PROYECTOS'
+        this.title = 'SARAI/'
       },
       toPregrado () {
         if (this.file === 'POSGRADO') {
