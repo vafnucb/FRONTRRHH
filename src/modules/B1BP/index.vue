@@ -47,6 +47,7 @@
           { label: 'GroupCode', prop: 'GroupCode' },
           { label: 'Currency', prop: 'Currency' },
           { label: 'Ciudad', prop: 'City' },
+          { label: 'Regional', prop: 'BPLName' },
           { label: 'País', prop: 'Country' }
         ],
         filteredData: [],

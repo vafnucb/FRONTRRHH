@@ -322,10 +322,12 @@
           }
         }
       },
+      // Esta función loadProjects está mal, porque carga los proyectos de la base de datos que son REGISTRADOS,
+      // solo deberían aparecer los proyectos que tienen registros APROBADOS, pero no hay forma de validar eso
+      // debido a que el diseño en la base de datos está mal. Es por eso que se generan PDF's vacíos!.
       loadProjects () {
         let proyectos = this.Proyecto
         axios.get('/AseProyectos?by=' + this.estado + '-' + this.origen)
-
           .then(response => {
             response.data.forEach(function (element) {
               proyectos.push({value: element.Cod, text: element.Cod + '-' + element.Proyecto, Id: element.Cod})
@@ -620,7 +622,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Alumno', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'IUE', 'IT', 'IUEExt', 'Total Neto', 'Observaciones', 'Dup']],
+            head: [['Docente', 'Alumno', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'RCIVA', 'IT', 'IUEExt', 'Total Neto', 'Observaciones', 'Dup']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},

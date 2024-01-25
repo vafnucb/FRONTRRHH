@@ -744,7 +744,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'Tipo Pago', 'N° Contrato', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'TotalNeto', 'Observaciones']],
+            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'T. Pago', 'N° Contrato', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'TotalNeto', 'Observaciones']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},
@@ -755,14 +755,14 @@
             // Las posiciones de los nombres y las observaciones se mantienen estáticas
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
-              0: {cellWidth: 45},
+              0: {cellWidth: 53},
               1: {cellWidth: 12},
               2: {cellWidth: 10},
-              3: {cellWidth: 10},
+              3: {cellWidth: 9},
               4: {cellWidth: 45},
               5: {cellWidth: 15},
               6: {cellWidth: 10},
-              7: {cellWidth: 20},
+              7: {cellWidth: 12},
               8: {cellWidth: 15},
               9: {cellWidth: 15},
               10: {cellWidth: 12},
@@ -770,7 +770,7 @@
               12: {cellWidth: 10},
               13: {cellWidth: 10},
               14: {cellWidth: 10},
-              15: {cellWidth: 20}
+              15: {cellWidth: 21}
             }
           })
           // -------------------------------------Tabla con totales por carrera-----------------------------------------
@@ -782,7 +782,7 @@
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
             // para que aparezca debajo de los montos
-            margin: {left: 196.2},
+            margin: {left: 195.2},
             theme: 'grid',
             body: resultBody,
             columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 12.3}, 2: {cellWidth: 9.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 10}},
@@ -799,7 +799,7 @@
           startY: y,
           theme: 'grid',
           body: this.finalResult,
-          margin: {left: 196.2},
+          margin: {left: 195.2},
           columnStyles: {0: {cellWidth: 14.7}, 1: {cellWidth: 12.3}, 2: {cellWidth: 9.8}, 3: {cellWidth: 10}, 4: {cellWidth: 10}, 5: {cellWidth: 10}},
           styles: {cellPadding: 0.5, fontSize: 8, fillColor: [222, 222, 222], fontStyle: 'bold'}
         })

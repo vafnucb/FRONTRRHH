@@ -95,7 +95,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'Tipo Pago', 'N° Contrato', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'Total Neto', 'Observación', 'Dup']],
+            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'T. Pago', 'N° Contrato', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'Total Neto', 'Observación', 'Dup']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},
@@ -106,14 +106,14 @@
             // Las posiciones de los nombres y las observaciones se mantienen estáticas
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
-              0: {cellWidth: 35},
+              0: {cellWidth: 43},
               1: {cellWidth: 12},
               2: {cellWidth: 10},
               3: {cellWidth: 10},
               4: {cellWidth: 45},
               5: {cellWidth: 15},
               6: {cellWidth: 10},
-              7: {cellWidth: 20},
+              7: {cellWidth: 12},
               8: {cellWidth: 15},
               9: {cellWidth: 15},
               10: {cellWidth: 12},
