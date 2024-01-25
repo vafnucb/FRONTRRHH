@@ -562,6 +562,11 @@
             } else {
               this.contrato = true
             }
+            if (this.tutoria.StudentFullName === '' || this.tutoria.StudentFullName === null) {
+              this.estudiante = false
+            } else {
+              this.estudiante = true
+            }
             this.loadModules()
             this.IsFetching = false
             console.log('Modulo' + this.tutoria.Modulo)
