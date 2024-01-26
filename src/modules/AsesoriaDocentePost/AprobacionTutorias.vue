@@ -48,11 +48,11 @@ export default {
     return {
       actualTab: 0,
       tabs: [
-        { title: 'Validación Dependientes', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'REGISTRADO', origen: 'DEPEN', tipo: 'dependientes' },
-        { title: 'Validación Independientes', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'REGISTRADO', origen: 'INDEP', tipo: 'independientes' },
-        { title: 'Validación Otras Regionales', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'REGISTRADO', origen: 'OR', tipo: 'otras regionales' },
-        { title: 'Validación Servicios con Factura', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'REGISTRADO', origen: 'FAC', tipo: 'factura' },
-        { title: 'Validación Extranjeros', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'REGISTRADO', origen: 'EXT', tipo: 'extranjero' },
+        { title: 'Validación Dependientes', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'DEPEN', tipo: 'dependientes' },
+        { title: 'Validación Independientes', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'INDEP', tipo: 'independientes' },
+        { title: 'Validación Otras Regionales', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'OR', tipo: 'otras regionales' },
+        { title: 'Validación Servicios con Factura', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'FAC', tipo: 'factura' },
+        { title: 'Validación Extranjeros', icon: 'fa fa-user-check', component: 'FirstStep', estado: 'VERIFICADO', origen: 'EXT', tipo: 'extranjero' },
         { title: 'Aprobación', icon: 'fa fa-university', component: 'SecondStepAll', estado: '', origen: '', tipo: '' }
       ]
     }

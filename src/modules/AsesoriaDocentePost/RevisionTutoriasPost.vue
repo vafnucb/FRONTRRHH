@@ -30,7 +30,7 @@
   </template>
   
   <script>
-  import FirstStep from './Steps/AprobacionFirstStep'
+  import FirstStep from './Steps/AprobacionFirstStepGeneral'
   import SecondStepAll from './Steps/AprobacionSecondStep'
   import router from '../../router'
   
@@ -66,7 +66,7 @@
         }
       },
       volverAHistorial () {
-        router.push('../AsesoriaDocente')
+        router.push('../AsesoriaPostgrado')
       },
       // Método para acceder al componente FirstStep
       getFirstStepComponent () {
