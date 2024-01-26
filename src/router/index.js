@@ -82,6 +82,7 @@ import AprobacionPost from 'src/modules/AsesoriaDocentePost/AprobacionTutorias'
 import HistorialPostgrado from 'src/modules/AsesoriaDocentePost/HistorialPostgrado'
 import BusqAvanzadaPost from 'src/modules/AsesoriaDocentePost/Busqueda/BusquedaReporte'
 import BusqFechas from 'src/modules/AsesoriaDocentePost/Busqueda/BusquedaXFechas'
+import RevisionTutoriasPost from 'src/modules/AsesoriaDocentePost/RevisionTutoriasPost'
 
 import TipoTarea from 'src/modules/AsesoriaDocente/Admin/TipoTarea'
 import Modalidades from 'src/modules/AsesoriaDocente/Admin/Modalidades'
@@ -405,6 +406,11 @@ let Menu = {
       path: '/RegistroTutoriasPost',
       name: 'Registro Postgrado',
       component: RegistroTutoriaPost
+    },
+    {
+      path: '/RevisionTutoriasPost',
+      name: 'Revisión registros Postgrado',
+      component: RevisionTutoriasPost
     },
     {
       path: '/AprobacionTutoriasPost/',
