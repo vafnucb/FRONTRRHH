@@ -56,7 +56,8 @@
           return {
             name: '',
             path: '',
-            children: []
+            children: [],
+            collapsed: true
           }
         }
       }
@@ -145,4 +146,7 @@
   }
 </script>
 <style>
+  .collapsed {
+    transition: opacity 1s;
+  }
 </style>

@@ -452,7 +452,8 @@ const routes = [
 
 const router = new VueRouter({
   routes,
-  mode: 'hash'
+  mode: 'hash',
+  linkActiveClass: 'active'
 })
 
 router.beforeEach((to, from, next) => {
