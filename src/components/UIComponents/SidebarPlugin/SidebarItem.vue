@@ -56,8 +56,7 @@
           return {
             name: '',
             path: '',
-            children: [],
-            collapsed: true
+            children: []
           }
         }
       }
@@ -75,7 +74,8 @@
     data () {
       return {
         children: [],
-        collapsed: true
+        collapsed: true,
+        isActive: false
       }
     },
     computed: {

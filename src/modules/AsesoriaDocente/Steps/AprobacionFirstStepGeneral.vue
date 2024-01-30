@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <!-- <template v-if="PDFcarrera==='SI'">
+    <template v-if="PDFcarrera==='SI'">
       <div class="row">
         <div class="form-group col-md-6 el-col-md-offset-5">
           <label>Carrera</label>
@@ -260,7 +260,7 @@
           <button class="btn btn-success btn-fill" @click="send">Enviar a Historico</button>
         </div>
       </div>
-    </template> -->
+    </template>
   </div>
 </template>
 <script>

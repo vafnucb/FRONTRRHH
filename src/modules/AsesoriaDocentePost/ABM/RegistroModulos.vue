@@ -40,7 +40,7 @@
                       <label >Código U.O</label>
                       <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="codeOrg">
                     </div>
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-2" style="width:260px;">
                       <label >Denominación</label>
                       <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="nameOrg">
                     </div>

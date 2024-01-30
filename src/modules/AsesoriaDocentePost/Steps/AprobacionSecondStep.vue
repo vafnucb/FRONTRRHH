@@ -15,16 +15,16 @@
     <!-- Segunda columna -->
     <div class="col-md-4" align="center">
       <br>
-        <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo PREGRADO SALOMÓN</button>
+        <button type="button" class="btn btn-info" @click="windowDateSALOMON">Generar archivo SALOMÓN</button>
     </div>
 
     <!-- Tercera columna -->
     <div class="col-md-4" align="center">
         <br>
-        <button class="btn btn-info" @click="windowDateSARAI">Generar archivo CARRERA SARAI Independientes</button>
+        <button class="btn btn-info" @click="windowDateSARAI">Generar archivo SARAI Independientes</button>
         <br>
         <br>
-        <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
+        <button class="btn btn-info" @click="windowDateEXT">Generar archivo SARAI Extranjeros</button>
     </div>
       </div>
     </template>
