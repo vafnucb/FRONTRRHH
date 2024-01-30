@@ -36,7 +36,7 @@
                             <button class="btn btn-info" @click="generatePDF">Generar PDF</button>
                         </div>
                         <div class="col-md-3">
-                            <button class="btn btn-info" @click="PDFCareer">Generar PDF por Carrera</button>
+                            <button class="btn btn-info" @click="PDFCareer">Generar PDF por Proyecto</button>
                         </div>
                         <div class="col-md-2">
                             <button class="btn btn-info" @click="EraseSelected">
@@ -65,6 +65,7 @@
                     <reporte-proyecto :origin="origen" :state="estado" :proyecto="ProyectoModel"></reporte-proyecto>
                 </div>
             </template>
+          
         </div>
 </template>
 <script>
@@ -223,6 +224,24 @@
         }
     },
       methods: {
+        loadProjects () {
+        let proyectos = this.Proyecto
+        axios.get('/AseProyectos?by=' + this.estado + '-' + this.origen)
+          .then(response => {
+            response.data.forEach(function (element) {
+              proyectos.push({value: element.Cod, text: element.Cod + '-' + element.Proyecto, Id: element.Cod})
+            })
+          })
+          .catch(error => console.log(error))
+        this.IsFetching = false
+      },
+      PDFCareer () {
+        this.PDFcarrera = 'SI'
+        this.loadProjects()
+        if (this.origen === 'DEPEN') {
+          this.origen = 'DEPEN'
+        }
+      },
         toArchivoOR () {
           let data = this.segmento + ';' + this.mes + ';' + this.gestion + ';' + this.segmentoOrigen
           axios.get(this.fileUrl + data,
@@ -272,6 +291,16 @@
               })
               reader.readAsText(blob)
             })
+        },
+        fakeLoad () {
+          this.$store.commit('crud/loadSetter', true)
+          setTimeout(() => {
+            this.$store.commit('crud/loadSetter', false)
+          }, 2000)
+        },
+        actualCarrera () {
+          this.fakeLoad()
+          this.aparezco = 'SI'
         },
         loadBranchData () {
         let regionals = this.selectBranches

@@ -464,6 +464,9 @@ router.beforeEach((to, from, next) => {
       name: 'Login',
       component: Login
     })
+  } else if (to.name === 'Login' && t !== null && t !== '401') {
+    console.log('Redirigiendo a /instancia...')
+    next('/instancia')
   } else {
     next()
   }
