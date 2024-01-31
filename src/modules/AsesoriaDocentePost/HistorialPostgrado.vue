@@ -9,9 +9,9 @@
             <el-tooltip class="item" effect="dark" content="Historial del docente" placement="top-start">
               <a class="btn btn-simple btn-xs btn-icon btn-info" @click="Modify(props.queriedData[props.index].Id, props.queriedData[props.index].Profesor)"><i class="fa fa-edit"></i></a>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="Eliminar" placement="top">
+            <!-- <el-tooltip class="item" effect="dark" content="Eliminar" placement="top">
             <a class="btn btn-simple btn-xs btn-danger btn-icon"  @click="removeAccess(props.queriedData[props.index].Id, props.queriedData[props.index].Profesor)"><i class="fa fa-trash-alt"></i></a>
-          </el-tooltip>
+          </el-tooltip> -->
           </template>
         </data-tables>
       </div>
@@ -92,30 +92,36 @@
             prop: 'Tarea',
             field: 'Tarea',
             label: 'Tarea',
-            minWidth: 20
+            minWidth: 15
           },
           {
             prop: 'Mes',
             field: 'Mes',
             label: 'Mes',
-            minWidth: 25
+            minWidth: 15
           },
           {
             prop: 'Gestion',
             field: 'Gestion',
             label: 'Gestion',
-            minWidth: 25
+            minWidth: 15
           },
           {
             prop: 'Origen',
             field: 'Origen',
             label: 'Origen',
+            minWidth: 15
+          },
+          {
+            prop: 'TotalBruto',
+            field: 'TotalBruto',
+            label: 'Total Bruto',
             minWidth: 25
           },
           {
-            prop: 'TipoPago',
-            field: 'TipoPago',
-            label: 'Tipo Pago',
+            prop: 'TotalNeto',
+            field: 'TotalNeto',
+            label: 'Total Neto',
             minWidth: 25
           },
           {
@@ -135,50 +141,6 @@
       }
     },
     methods: {
-      removeAccess (index) {
-        swal({
-          title: 'Estas Seguro?',
-          text: 'No será posible volver atras!',
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Si, borrar!',
-          cancelButtonText: 'No, cancelar',
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          buttonsStyling: false
-        }).then(function () {
-          axios.delete('DeleteRecordPostgrado/' + index)
-            .then(response => {
-              swal({
-                title: 'Eliminado!',
-                text: 'Se elimino de forma correcta',
-                type: 'success',
-                confirmButtonClass: 'btn btn-success btn-fill',
-                buttonsStyling: false
-              }).then(function () {
-                // la página se recarga con frescura :v
-                location.reload()
-              })
-            })
-            .catch(error => swal({
-              title: 'No se pudo eliminar el registro',
-              text: error.response.data.Message,
-              type: 'error',
-              confirmButtonClass: 'btn btn-info btn-fill',
-              buttonsStyling: false
-            }))
-        }, function (dismiss) {
-          if (dismiss === 'cancel') {
-            swal({
-              title: 'Cancelado',
-              text: 'Este item está a salvo :)',
-              type: 'error',
-              confirmButtonClass: 'btn btn-info btn-fill',
-              buttonsStyling: false
-            })
-          }
-        })
-      },
       GetPdfBody () {
         var pdf = []
         var data = this.tableData
