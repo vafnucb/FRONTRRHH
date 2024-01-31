@@ -529,7 +529,7 @@
           let tableBody = []
           for (var tableIndex = index; tableIndex < index + tableLength; tableIndex++) {
             // Crear un array de arrays con los elementos que correspondan
-            tableBody.push([files[tableIndex].TeacherFullName, files[tableIndex].Alumno, files[tableIndex].TipoTarea, files[tableIndex].Modulo, files[tableIndex].Horas, files[tableIndex].MontoHora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
+            tableBody.push([files[tableIndex].TeacherFullName, files[tableIndex].Origen, files[tableIndex].Alumno, files[tableIndex].TipoTarea, files[tableIndex].Modulo, files[tableIndex].Horas, files[tableIndex].MontoHora, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
           }
           // console.log('this is the body with results: ')
           // console.log(tableBody)
@@ -538,7 +538,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Alumno', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'RCIVA', 'IT', 'IUEExt', 'Total Neto', 'Observaciones', 'Dup']],
+            head: [['Docente', 'Origen', 'Alumno', 'Tarea', 'Modulo', 'Horas', 'Costo Hora', 'Total Bruto', 'Deduccion', 'RCIVA', 'IT', 'IUEExt', 'Total Neto', 'Observaciones', 'Dup']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},
@@ -549,20 +549,21 @@
             // Las posiciones de los nombres y las observaciones se mantienen estáticas
             columnStyles: {
               text: {cellWidth: 'auto', valign: 'center'},
-              0: {cellWidth: 45},
-              1: {cellWidth: 45},
-              2: {cellWidth: 10},
-              3: {cellWidth: 40},
-              4: {cellWidth: 10},
-              5: {cellWidth: 14},
-              6: {cellWidth: 12},
+              0: {cellWidth: 39},
+              1: {cellWidth: 12},
+              2: {cellWidth: 39},
+              3: {cellWidth: 10},
+              4: {cellWidth: 40},
+              5: {cellWidth: 10},
+              6: {cellWidth: 14},
               7: {cellWidth: 12},
               8: {cellWidth: 12},
               9: {cellWidth: 12},
-              10: {cellWidth: 10},
-              11: {cellWidth: 12},
-              12: {cellWidth: 25},
-              13: {cellWidth: 10}
+              10: {cellWidth: 12},
+              11: {cellWidth: 10},
+              12: {cellWidth: 12},
+              13: {cellWidth: 25},
+              14: {cellWidth: 10}
             }
           })
           // -------------------------------------Tabla con totales por carrera-----------------------------------------
