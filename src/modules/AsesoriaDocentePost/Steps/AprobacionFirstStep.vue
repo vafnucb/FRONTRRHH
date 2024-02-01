@@ -7,7 +7,7 @@
       <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'ISAAC II'}" id="datatable">
         <template slot="buttons" slot-scope="props">
           <!--Botones para modificar o hacer otras acciones-->
-          <el-tooltip class="item" effect="dark" content="Editar" placement="top">
+          <el-tooltip class="item" effect="dark" content="Ver" placement="top">
             <a class="btn btn-simple btn-xs btn-icon btn-info" @click="Modify(props.queriedData[props.index].Id)"><i class="fa fa-edit"></i></a>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="Eliminar" placement="top">

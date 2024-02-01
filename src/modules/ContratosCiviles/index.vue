@@ -8,7 +8,7 @@
                        error-color="#D32F2F"
                        color="#FFA000"
                        title="Registro Lotes de pago"
-                       subtitle="Actividades Académicas efectuadas por Independientes">
+                       subtitle="Actividades Académicas efectuadas por Independientes - Extranjeros">
             <tab-content title="CONFIG"
                          :before-change="validateFirstStep"
                          icon="fa fa-cogs">
@@ -20,7 +20,7 @@
               <h5 class="text-center">{{tittle}}</h5>
 
               <h5 class="text-center">PASO :2 Cargar el Archivo Excel.</h5>
-              <file-uploader v-if="firstStep" :url="uploadUrl" :fileType="tipoArchivo" @uploaded="uploadChanged"></file-uploader>
+              <file-uploader v-if="firstStep" :url="uploadUrl" :fileType="tipoArchivo" :tipoDocente="tipoDocente" @uploaded="uploadChanged"></file-uploader>
             </tab-content>
 
             <tab-content title="Comprobación"

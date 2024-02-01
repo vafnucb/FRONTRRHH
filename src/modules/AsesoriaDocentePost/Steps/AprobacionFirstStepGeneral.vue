@@ -365,8 +365,7 @@
                         confirmButtonClass: 'btn btn-success btn-fill',
                         buttonsStyling: false
                       }).then(function () {
-                        // la página se recarga con frescura :v
-                        // location.reload()
+                        location.reload()
                       })
                     })
                     .catch(error => swal({
@@ -435,7 +434,7 @@
             cancelButtonClass: 'btn btn-danger btn-fill',
             buttonsStyling: false
           }).then(function () {
-            axios.delete('DeleteRecord/' + index)
+            axios.delete('DeleteRecordPostgrado/' + index)
               .then(response => {
                 swal({
                   title: 'Eliminado!',
