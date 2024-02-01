@@ -8,7 +8,7 @@ const uploadedFiles = ({ commit, state }) => {
     TipoDocente: state.TipoDocente
   }
   console.log('Datos enviados:', formData)
-  axios.post('/ServContract/checkupload', formData, {
+  axios.post('/ServContract/CheckUpload', formData, {
     headers: {
       'token': localStorage.getItem('token')
     }

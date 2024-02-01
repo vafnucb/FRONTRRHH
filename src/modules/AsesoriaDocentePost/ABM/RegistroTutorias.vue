@@ -885,6 +885,7 @@
         this.tutoria.NumeroContrato = ''
         this.contrato = false
         this.extranjero = false
+        this.tutoria.TipoPago = null
         // Variables de control de errores
       },
       post () {

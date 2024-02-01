@@ -134,7 +134,7 @@
         opendate: new Date(1975, 5, 1),
         url: '/AsesoriaPostgrado?by=PRE-APROBADO',
         username: '',
-        propsToSearch: ['Id', 'Proyecto', 'Modulo', 'TeacherFullName', 'TipoTarea', 'TotalNeto', 'TotalBruto'],
+        propsToSearch: ['Id', 'Proyecto', 'Modulo', 'TeacherFullName', 'TipoTarea', 'TotalNeto', 'TotalBruto', 'Origen'],
         tableColumns: [
           {
             prop: 'Id',

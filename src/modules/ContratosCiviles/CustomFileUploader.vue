@@ -49,6 +49,10 @@
       fileType: {
         type: String,
         required: true
+      },
+      tipoDocente: {
+        type: String,
+        required: true
       }
     },
     computed: {
@@ -81,6 +85,7 @@
         formData.append('BranchesId', this.$store.state.civ.BranchesId)
         formData.append('FileType', this.$store.state.civ.FileType)
         formData.append('TipoDocente', this.$store.state.civ.TipoDocente)
+        console.log('TipoDocente', this.$store.state.civ.TipoDocente)
         axios.post(this.url,
           formData,
           {
