@@ -27,7 +27,7 @@ const login = ({ commit, dispatch }, authData) => {
       })
     }).then(response => {
       commit('crud/loadSetter', false, { root: true })
-      router.push('/instancia')
+      router.push('/')
       localStorage.setItem('Menu', JSON.stringify(response.data))
       location.reload()
     })
