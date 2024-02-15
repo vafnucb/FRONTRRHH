@@ -36,7 +36,7 @@ Vue.use(VueWorker)
 locale.use(lang)
 
 // Prod server, usar este para probar el servidor de producción
-axios.defaults.baseURL = 'http://192.168.18.75:8020/api'
+axios.defaults.baseURL = 'http://192.168.18.75:8002/api'
 
 // Agregando dirección para el servidor de desarrollo
 // El servidor de desarrollo apunta directamente al backend local
