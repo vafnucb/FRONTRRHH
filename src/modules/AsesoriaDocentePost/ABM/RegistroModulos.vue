@@ -32,18 +32,18 @@
                       <label >Fecha Fin </label>
                       <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.ValidTo">
                     </div>
-                    <div class="form-group col-md-2" style="width:160px;">
+                    <div class="form-group col-md-2" style="width:240px;">
                     <label >Tipo </label>
                     <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.U_Tipo">
                     </div>
                     <div class="form-group col-md-1">
                       <label >Código U.O</label>
-                      <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="codeOrg">
+                      <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.U_UOrganiza">
                     </div>
-                    <div class="form-group col-md-2" style="width:260px;">
+                    <!-- <div class="form-group col-md-2" style="width:260px;">
                       <label >Denominación</label>
                       <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="nameOrg">
-                    </div>
+                    </div> -->
                   </div>
       <!--MODULO-->
         <div class="row">
@@ -289,11 +289,6 @@
         }
       },
       methods: {
-        handleProjectSelection () {
-          // Esta función se llamará cuando el usuario seleccione un proyecto
-          this.loadUnitName()
-          this.loadUniteCode()
-        },
         // --------------------------Para la validación antes del POST/PUT----------------------------
         valid: function () {
           this.formError.CodigoModulo.active = this.isEmptyBlanckOrNull(this.module.CodModule)
@@ -363,26 +358,6 @@
             .catch(error => console.log(error))
           this.IsFetching = false
         },
-        loadUnitName () {
-          console.log('El código es:', this.module.CodProject)
-          axios.get('GetUnitName/' + this.module.CodProject)
-            .then(response => {
-              console.log('El responde data para el Nombre de la Organizacion es: ', response.data)
-              // Actualiza la propiedad en tu componente con el valor recibido
-              this.nameOrg = response.data
-            })
-            .catch(error => console.log(error))
-        },
-        loadUniteCode () {
-          console.log('El código es:', this.module.CodProject)
-          axios.get('GetUniteCode/' + this.module.CodProject)
-            .then(response => {
-              console.log('El responde data para el Code de la Organizacion es: ', response.data)
-              // Actualiza la propiedad en tu componente con el valor recibido
-              this.codeOrg = response.data
-            })
-            .catch(error => console.log(error))
-        },
         convert (str) {
           let date = new Date(str)
           let mnth = ('0' + (date.getMonth() + 1)).slice(-2)
@@ -434,8 +409,6 @@
         },
         loadModule: function () {
           console.log('ProjectModules/' + this.moduleId)
-          this.loadUnitName(this.moduleId)
-          this.loadUniteCode(this.moduleId)
           axios.get('/ProjectModules/' + this.moduleId)
             .then(response => {
               this.module = response.data
@@ -461,8 +434,6 @@
               }
               this.loadTeachersPut()
               this.loadProjectsInfo()
-              this.loadUnitName()
-              this.loadUniteCode()
               console.log('Teacher' + this.teacherIdentifier)
               if (this.module.FechaInicio != null) {
                 var actaYear = this.module.FechaInicio.substring(0, 4)
@@ -749,8 +720,6 @@
             .then(response => {
               this.projectSelected = response.data
               if (this.projectSelected.length > 0) {
-                this.loadUnitName()
-                this.loadUniteCode()
               }
             })
             .catch(error => console.log(error))
@@ -804,14 +773,10 @@
           this.fakeLoad()
           this.loadModule()
           this.loadProjects()
-          this.loadUnitName()
           this.loadTeachers()
-          this.loadUniteCode()
         } else {
           this.loadProjects()
           this.loadTeachers()
-          this.loadUnitName()
-          this.loadUniteCode()
         }
       }
     }

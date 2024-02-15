@@ -42,18 +42,18 @@
           <label >Fecha Fin</label>
           <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.ValidTo">
         </div>
-        <div class="form-group col-md-2" style="width:160px;">
+        <div class="form-group col-md-2" style="width:240px;">
           <label >Tipo</label>
           <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.U_Tipo">
         </div>
         <div class="form-group col-md-1">
           <label >Código U.O</label>
-          <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="codeOrg">
+          <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="info.U_UOrganiza">
         </div>
-        <div class="form-group col-md-2" style="width:260px;">
+        <!-- <div class="form-group col-md-2" style="width:260px;">
           <label >Denominación</label>
           <input type="text" style="text-transform: uppercase; background-color: #f0efeb" class="form-control textBox" readonly v-model="nameOrg">
-        </div>
+        </div> -->
       </div>
       <!--INFO MODULO-->
       <div class="row" v-for="infoMod in aux1">
@@ -413,11 +413,6 @@
       }
     },
     methods: {
-      handleProjectSelection () {
-        // Esta función se llamará cuando el usuario seleccione un proyecto
-        this.loadUnitName()
-        this.loadUniteCode()
-      },
       resetValues: function () {
         console.log('Resetting values...')
         this.MontoHora = ''
@@ -635,15 +630,9 @@
         this.IsFetching = false
       },
       loadProjectsInfo () {
-        console.log('VIENDO SI SIRVE EL TUTORIA.PROTYECTO', this.tutoria.Proyecto)
-        this.loadUnitName(this.tutoria.Proyecto)
-        this.loadUniteCode(this.tutoria.Proyecto)
-        console.log('GetProjectInfo/' + this.tutoria.Proyecto)
         axios.get('GetProjectInfo/' + this.tutoria.Proyecto)
           .then(response => {
             this.projectSelected = response.data
-            this.loadUnitName()
-            this.loadUniteCode()
           })
           .catch(error => console.log(error))
         this.IsFetching = false
@@ -1062,26 +1051,6 @@
             this.warnMessage('El monto por hora no coincide con lo registrado en el módulo.')
           }
         }
-      },
-      loadUnitName () {
-        console.log('El código esssssssss:', this.tutoria.Proyecto)
-        axios.get('GetUnitName/' + this.tutoria.Proyecto)
-          .then(response => {
-            console.log('El responde data para el Nombre de la Organizacion es: ', response.data)
-            // Actualiza la propiedad en tu componente con el valor recibido
-            this.nameOrg = response.data
-          })
-          .catch(error => console.log(error))
-      },
-      loadUniteCode () {
-        console.log('El código es en registro tutoria:', this.tutoria.Proyecto)
-        axios.get('GetUniteCode/' + this.tutoria.Proyecto)
-          .then(response => {
-            console.log('El responde data para el Code de la Organizacion es: ', response.data)
-            // Actualiza la propiedad en tu componente con el valor recibido
-            this.codeOrg = response.data
-          })
-          .catch(error => console.log(error))
       }
     },
     watch: {
@@ -1154,16 +1123,12 @@
         this.loadTeachers()
         this.loadProjects()
         this.loadTipoPago()
-        this.loadUnitName()
-        this.loadUniteCode()
       } else {
         this.loadProjects()
         this.loadModalidades()
         this.loadTipoTarea()
         this.loadTeachers()
         this.loadTipoPago()
-        this.loadUnitName()
-        this.loadUniteCode()
       }
     }
   }
