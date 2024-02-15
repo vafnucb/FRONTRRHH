@@ -106,13 +106,15 @@
             field: 'MontoHora',
             label: 'Monto Hora',
             minWidth: 15
-          },
-          {
-            prop: 'Cod',
-            field: 'Cod',
-            label: 'Cod U-O',
-            minWidth: 15
           }
+          // En caso de solucionar en el backend el tema de modulos duplicados, mostrar el código organizacional quitando
+          // el comentario de las siguientes lineas (112-117):
+          // {
+          //   prop: 'Cod',
+          //   field: 'Cod',
+          //   label: 'Cod U-O',
+          //   minWidth: 15
+          // }
         ],
         pagination: {
           perPage: 10,
