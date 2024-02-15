@@ -10,6 +10,9 @@
           <br>
         <Info></Info>
         <br>
+        <br>
+        <button class="btn btn-info" @click="PDFCareer">Generar PDF por Proyecto</button>
+        <br>
     </div>
 
     <!-- Segunda columna -->
@@ -101,6 +104,24 @@
         </div>
       </div>
     </template>
+    <template v-if="PDFcarrera==='SI'">
+      <div class="row">
+        <div class="form-group col-md-6 el-col-md-offset-5">
+          <label>Proyecto</label>
+          <div>
+            <model-select class="select-info"
+                          :options="projects"
+                          v-model="Proyecto"
+                          @input="actualCarrera"
+                          placeholder="Seleccione un proyecto">
+            </model-select>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-6 el-col-md-offset-5" v-if="aparezco==='SI'">
+        <reporte-proyecto :origin="origen" :state="estado" :proyecto="Proyecto" ></reporte-proyecto>
+      </div>
+    </template>
   </div>
 </template>
 <script>
@@ -109,11 +130,13 @@
   import { ModelSelect } from 'vue-search-select'
   import swal from 'sweetalert2'
   import Info from '../Report'
+  import ReporteProyecto from '../ReportProjects'
 
   export default {
     components: {
       Datepicker,
       ModelSelect,
+      ReporteProyecto,
       Info
     },
     data () {
@@ -122,6 +145,9 @@
         fileUrl: '',
         file: 'POSGRADO',
         Proyecto: '',
+        aparezco: 'NO',
+        ProyectoModel: '',
+        PDFcarrera: 'NO',
         projects: [],
         mes: null,
         segmento: null,
@@ -235,6 +261,23 @@
       }
     },
     methods: {
+      fakeLoad () {
+        this.$store.commit('crud/loadSetter', true)
+        setTimeout(() => {
+          this.$store.commit('crud/loadSetter', false)
+        }, 2000)
+      },
+      actualCarrera () {
+        this.fakeLoad()
+        this.aparezco = 'SI'
+      },
+      PDFCareer () {
+        this.PDFcarrera = 'SI'
+        this.loadProjects2()
+        if (this.origen === 'DEPEN') {
+          this.origen = 'DEPEN'
+        }
+      },
       windowDateSALOMON () {
         this.action = 'MODIFY'
         this.fileUrl = 'ToPostgradoFile?data='
@@ -397,11 +440,24 @@
           })
           .catch(error => console.log(error))
         this.IsFetching = false
+      },
+      loadProjects2 () {
+        let proyectos = this.projects
+        axios.get('/AseProyectos?by=PRE-APROBADO')
+          .then(response => {
+            console.log('AUIDASDS', response.data)
+            response.data.forEach(function (element) {
+              proyectos.push({value: element.Cod, text: element.Cod + '-' + element.Proyecto})
+            })
+          })
+          .catch(error => console.log(error))
+        this.IsFetching = false
       }
     },
     created () {
       this.loadSegmentos()
       this.loadProjects()
+      this.loadProjects2()
     }
   }
 </script>
