@@ -85,38 +85,67 @@ const reload = ({ commit, dispatch }) => {
 
 const logout = ({ commit }) => {
   commit('crud/loadSetter', true, { root: true })
+
+  // Si el usuario no está autenticado, no es necesario enviar una solicitud al servidor
+  if (!localStorage.getItem('token')) {
+    // Limpiar el estado de autenticación y redirigir al inicio
+    commit('authUser', {
+      token: null,
+      refreshToken: null,
+      userId: null,
+      Menu: null
+    })
+    localStorage.removeItem('userId')
+    localStorage.removeItem('token')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('Menu')
+    router.push('/')
+    router.go(0)
+    commit('crud/loadSetter', false, { root: true })
+    return  // Salir de la función
+  }
+
+  // Si el usuario está autenticado, enviar la solicitud de logout al servidor
   axios.get('/auth/logout/', {
     headers: {
       'token': localStorage.getItem('token')
     }
   })
     .then(response => {
-      commit('crud/loadSetter', false, { root: true })
-      localStorage.removeItem('userId')
-      localStorage.removeItem('token')
-      localStorage.removeItem('refreshToken')
-      localStorage.removeItem('Menu')
+      // Limpiar el estado de autenticación y redirigir al inicio
       commit('authUser', {
         token: null,
         refreshToken: null,
         userId: null,
         Menu: null
       })
+      localStorage.removeItem('userId')
+      localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('Menu')
       router.push('/')
       router.go(0)
+      commit('crud/loadSetter', false, { root: true })
     })
     .catch(error => {
       console.log(error)
+      // Si hay un error en la solicitud de logout, limpiar el estado de autenticación y redirigir al inicio
       commit('authUser', {
         token: null,
         refreshToken: null,
-        userId: null
+        userId: null,
+        Menu: null
       })
+      localStorage.removeItem('userId')
+      localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('Menu')
       router.push('/')
       router.go(0)
       commit('crud/loadSetter', false, { root: true })
     })
 }
+
 
 const setLogoutTimer = ({ dispatch }, expirationTimeIn) => {
   setTimeout(() => {

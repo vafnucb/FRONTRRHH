@@ -203,10 +203,15 @@
         try {
           const responsePending = await axios.get('ServContract/PendingApproval')
           const data = responsePending.data
-          for (const item of data) {
-            const { Id, FileType } = item
-            const responseServContract = await axios.get('ServContract/getdistributionPDF/' + Id)
-            // Definir campos según el FileType
+          // Obtener todos los Ids
+          const ids = data.map(item => item.Id)
+          // Hacer una sola solicitud para todos los Ids
+          const responses = await Promise.all(
+              ids.map(id => axios.get('ServContract/getdistributionPDF/' + id))
+          )
+          for (let i = 0; i < data.length; i++) {
+            const { Id, FileType } = data[i]
+            const responseServContract = responses[i]
             let campos = {}
             switch (FileType) {
               case 'CARRERA':
@@ -222,7 +227,6 @@
                 campos = this.obtenerCamposVarios(responseServContract.data, Id)
                 break
             }
-            // Guardar los campos en un solo array
             const camposCompletos = { Id, FileType, ...campos }
             this.todosLosCampos.push(camposCompletos)
           }
