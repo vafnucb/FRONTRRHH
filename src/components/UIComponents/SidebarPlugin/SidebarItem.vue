@@ -74,8 +74,7 @@
     data () {
       return {
         children: [],
-        collapsed: true,
-        isActive: false
+        collapsed: true
       }
     },
     computed: {
@@ -146,7 +145,4 @@
   }
 </script>
 <style>
-  .collapsed {
-    transition: opacity 1s;
-  }
 </style>
