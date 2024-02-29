@@ -2,13 +2,13 @@
   <div class="row">
     <div class="col-md-12 card">
       <template v-if="!showWizard">
-        <div class="card mb-4 custom-card">
+      <!--  <div class="card mb-4 custom-card">
       <div class="card-body text-center">
         <h3>Búsqueda Detallada</h3>
-        <!-- Barra de búsqueda -->
+        
         <input v-model="busqueda" class="form-control input-search" placeholder="Buscar por código, docente, tarea asignada, postulante o nombre del servicio">
         
-        <!-- Resultados de la búsqueda -->
+        
         <div v-if="resultados.length > 0" class="mt-3">
   <p class="result-message">
     Tus criterios de búsqueda coinciden con
@@ -22,7 +22,7 @@
 </div>
 
 
-        <!-- Mensaje inicial -->
+        
         <div v-else-if="busqueda && resultados.length === 0" class="mt-3">
           <p class="no-results-message">No se encontraron resultados para la búsqueda.</p>
         </div>
@@ -30,7 +30,7 @@
           <p class="initial-message">Realiza la búsqueda detallada para localizar un número de lote.</p>
         </div>
       </div>
-    </div>
+    </div>-->
         <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'SARAI'}">
           <template slot="buttons" slot-scope="props">
             <el-tooltip class="item" effect="dark" content="Revisar" placement="top-start">
@@ -385,7 +385,7 @@
       Reporte
     },
     created () {
-      this.obtenerTodo()
+      // this.obtenerTodo()
     }
   }
 </script>
