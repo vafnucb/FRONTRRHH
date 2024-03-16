@@ -148,7 +148,7 @@
         url: '/AsesoriaDocente?by=PRE-APROBADO',
         username: '',
         // Nuevo PDF x carrera
-        headersPDF: ['Docente', 'Categ', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha Acta', 'Horas', 'Costo Hora', 'Total Bruto', 'Total Neto', 'Observaciones'],
+        headersPDF: ['Docente', 'Categ', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha Acta', 'Horas', 'Costo Hora', 'Total Bruto', 'Total Neto', 'Observaciones', 'Origen'],
         careersPDF: [],
         teachersPDF: [],
         recordsPDF: [],
@@ -250,6 +250,12 @@
             field: 'Duplicado',
             label: 'Dup',
             minWidth: 10
+          },
+          {
+            prop: 'Origen',
+            field: ' Origen',
+            label: ' Origen',
+            minWidth: 15
           }
         ],
         pagination: {
