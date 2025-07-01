@@ -195,15 +195,15 @@
         </div>
         <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
           <label >RC-IVA(%)</label>
-          <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IUE" :readonly="ridy">
+          <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IUE" :readonly="!dependiente && !extranjero">
         </div>
         <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
           <label >IT(%)</label>
-          <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IT" :readonly="ridy">
+          <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IT" :readonly="!dependiente && !extranjero">
         </div>
         <div v-show="extranjero" class="form-group col-md-2">
           <label >IUE Exterior(%)</label>
-          <input type="text" placeholder="IUE en %" class="form-control textBox" v-model.lazy="IUEExterior" :readonly="ridy">
+          <input type="text" placeholder="IUE en %" class="form-control textBox" v-model.lazy="IUEExterior" :readonly="extranjero">
         </div>
         <div class="form-group col-md-2">
           <label >Total Neto</label>
@@ -362,10 +362,8 @@
       totalNeto: function () {
         this.totalBruto = this.tutoria.TotalBruto
         if (this.extranjero) {
-          // Calcular el IUEExterior sin redondeo
-          this.tutoria.IUEExterior = this.totalBruto * (this.IUEExterior / 100)
-          // Aplicar redondeo a todos los valores
-          this.tutoria.IUEExterior = parseFloat(this.tutoria.IUEExterior.toFixed(2))
+          this.IUEExterior = 12.5
+          this.tutoria.IUEExterior = parseFloat((this.totalBruto * (this.IUEExterior / 100)).toFixed(2))
           this.tutoria.TotalNeto = parseFloat((this.totalBruto - this.tutoria.IUEExterior).toFixed(2))
           this.tutoria.Deduccion = 0
           this.tutoria.IT = 0
@@ -387,14 +385,11 @@
             return this.tutoria.TotalNeto
           } else {
             // Calcular IUE, IT y TotalNeto sin redondeo
-            this.tutoria.IUE = this.totalBruto * (this.IUE / 100)
-            this.tutoria.IT = this.totalBruto * (this.IT / 100)
-            this.tutoria.TotalNeto = this.totalBruto - this.tutoria.IUE - this.tutoria.IT
-            // Aplicar redondeo a todos los valores
-            this.tutoria.IUE = parseFloat(this.tutoria.IUE.toFixed(2))
-            this.tutoria.IT = parseFloat(this.tutoria.IT.toFixed(2))
-            this.tutoria.TotalNeto = parseFloat(this.tutoria.TotalNeto.toFixed(2))
-            // Otros ajustes
+            this.IUE = 13
+            this.IT = 3
+            this.tutoria.IUE = parseFloat((this.totalBruto * (this.IUE / 100)).toFixed(2))
+            this.tutoria.IT = parseFloat((this.totalBruto * (this.IT / 100)).toFixed(2))
+            this.tutoria.TotalNeto = parseFloat((this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2))
             this.tutoria.Deduccion = 0
             this.tutoria.IUEExterior = 0
             // Devolver el resultado redondeado para su presentación

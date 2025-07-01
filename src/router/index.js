@@ -73,6 +73,7 @@ import RegistroTutoria from 'src/modules/AsesoriaDocente/ABM/RegistroTutorias'
 import AprobacionTutoria from 'src/modules/AsesoriaDocente/AprobacionTutorias'
 import RevisionTutorias from 'src/modules/AsesoriaDocente/RevisionTutorias'
 import BusquedaAvanzada from 'src/modules/AsesoriaDocente/Busqueda/BusquedaReporte'
+import EstadoRegistro from 'src/modules/AsesoriaDocente/EstadoRegistro.vue'
 
 // Asesorías de Post
 import AsesoriaPost from 'src/modules/AsesoriaDocentePost/index'
@@ -83,6 +84,7 @@ import HistorialPostgrado from 'src/modules/AsesoriaDocentePost/HistorialPostgra
 import BusqAvanzadaPost from 'src/modules/AsesoriaDocentePost/Busqueda/BusquedaReporte'
 import BusqFechas from 'src/modules/AsesoriaDocentePost/Busqueda/BusquedaXFechas'
 import RevisionTutoriasPost from 'src/modules/AsesoriaDocentePost/RevisionTutoriasPost'
+import EstadoRegistroPostgrado from 'src/modules/AsesoriaDocentePost/EstadoRegistroPostgrado'
 
 import TipoTarea from 'src/modules/AsesoriaDocente/Admin/TipoTarea'
 import Modalidades from 'src/modules/AsesoriaDocente/Admin/Modalidades'
@@ -308,6 +310,11 @@ let Menu = {
       component: Asesoria
     },
     {
+      path: '/EstadoRegistro',
+      name: 'Estado de Registros',
+      component: EstadoRegistro
+    },
+    {
       path: '/RegistroTutorias',
       name: 'Registro Pregrado',
       component: RegistroTutoria
@@ -318,6 +325,11 @@ let Menu = {
       component: AprobacionTutoria
     },
     {
+      path: '/EstadoRegistroPostgrado',
+      name: 'Estado de Registros Postgrado',
+      component: EstadoRegistroPostgrado
+    },
+    {
       path: '/RevisionTutorias',
       name: 'Revisión registros Pregrado',
       component: RevisionTutorias
@@ -326,6 +338,11 @@ let Menu = {
       path: '/BusquedaAvanzada',
       name: 'Búsqueda Avanzada Pre',
       component: BusquedaAvanzada
+    },
+    {
+      path: '/EstadoRegistro',
+      name: 'Estado de Registros',
+      component: EstadoRegistro
     },
     {
       path: '/BusquedaIndividual',

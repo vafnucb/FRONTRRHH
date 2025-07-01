@@ -20,8 +20,21 @@
               <button class="btn btn-fill btn-success btn-block"  id="search-person" @click="findBP()" style="margin-top: 25px;">Buscar</button>
             </div>
           </div>
+
           <div class="row">
             <div class="col-md-2 col-md-offset-2">
+              <div class="form-group row">
+                <label>Habilitar en:</label>
+                <div>
+                  <select class="form-control" v-model="formData.Abr">
+                    <option disabled value="">Seleccione una sede</option>
+                    <option v-for="b in branchAbrs" :key="b" :value="b">{{ b }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-2">
               <div class="form-group row">
                 <label>NIT</label>
                 <div>
@@ -38,6 +51,7 @@
                 </div>
               </div>
             </div>
+
             <div class="col-md-7 col-md-offset-2">
               <div class="form-group row">
                 <button class="btn btn-fill btn-success btn-block" @click="send()" style="margin-top: 25px;">Habilitar como persona independiente</button>
@@ -57,8 +71,6 @@
   import axios from 'axios'
   import swal from 'sweetalert2'
   export default {
-    computed: {
-    },
     data () {
       return {
         fuente: 'SARAI',
@@ -68,8 +80,10 @@
           FullName: null,
           SAPId: null,
           NIT: null,
-          Document: null
+          Document: null,
+          Abr: ''
         },
+        branchAbrs: ['LPZ', 'SCZ', 'CBB', 'TJA', 'ORU', 'EPC', 'SRE', 'TEO', 'UCE'],
         action: false,
         url2: '/CivilbyBranch/0',
         propsToSearch: ['Id', 'FullName', 'Abr', 'Category', 'SAPId', 'NIT'],
@@ -81,7 +95,7 @@
           },
           {
             prop: 'Abr',
-            label: 'Regional',
+            label: 'Sede',
             minWidth: 25
           },
           {
@@ -109,7 +123,7 @@
       }
     },
     methods: {
-      successMessage: function () {
+      successMessage () {
         swal({
           title: `Buen trabajo!`,
           text: 'Se guardaron los cambios!',
@@ -118,7 +132,7 @@
           type: 'success'
         })
       },
-      errorMessage: function (text) {
+      errorMessage (text) {
         swal({
           title: `Ups!`,
           text: text,
@@ -127,8 +141,8 @@
           type: 'error'
         })
       },
-      findBP: function () {
-        axios.post('civilfindInSAP/', {'CardCode': this.formData.SAPId})
+      findBP () {
+        axios.post('civilfindInSAP/', { CardCode: this.formData.SAPId })
           .then(response => {
             this.formData.FullName = response.data.FullName
             this.formData.SAPId = response.data.SAPId
@@ -144,21 +158,24 @@
             }
           })
       },
-      ResetForm: function () {
+      ResetForm () {
         this.formData.FullName = null
         this.formData.NIT = null
         this.formData.Document = null
+        this.formData.Abr = ''
       },
-      send: function () {
-        console.log(this.formData.FullName)
-        console.log(this.formData.SAPId)
-        console.log(this.formData.NIT)
-        console.log(this.formData.Document)
-        axios.post('civil/', this.formData)
+      ResetPerson () {
+        this.formData.Document = null
+      },
+      send () {
+        const payload = {
+          SAPId: this.formData.SAPId,
+          Abr: this.formData.Abr
+        }
+        axios.post('civil/', payload)
           .then(response => {
             this.successMessage()
             this.formData.SAPId = null
-            // permite cargar la información después de haberla mandado
             this.$store.dispatch('crud/loadData', this.url2)
             this.ResetForm()
           })
@@ -176,3 +193,4 @@
 </script>
 <style>
 </style>
+

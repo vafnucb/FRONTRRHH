@@ -3,85 +3,64 @@
     <div class="col-md-12 card">
       <template v-if="!showWizard">
 
-    <div class="card mb-4 custom-card">
-      <div class="card-body text-center">
-        <h3>Búsqueda Detallada</h3>
-        <!-- Barra de búsqueda -->
-        <input v-model="busqueda" class="form-control input-search" placeholder="Buscar por código, docente, tarea asignada, postulante o nombre del servicio">
         
-        <!-- Resultados de la búsqueda -->
-        <div v-if="resultados.length > 0" class="mt-3">
-  <p class="result-message">
-    Tus criterios de búsqueda coinciden con
-    <template v-if="resultados.length === 1">
-      el lote: {{ resultados[0] }}
-    </template>
-    <template v-else>
-      los lotes: {{ resultados.join(', ') }}
-    </template>
-  </p>
-</div>
+        <data-tables v-bind="{ url, propsToSearch, tableColumns, pagination, fuentePDF: 'SARAI' }">
 
-
-        <!-- Mensaje inicial -->
-        <div v-else-if="busqueda && resultados.length === 0" class="mt-3">
-          <p class="no-results-message">No se encontraron resultados para la búsqueda.</p>
-        </div>
-        <div v-else class="mt-3">
-          <p class="initial-message">Realiza la búsqueda detallada para localizar un número de lote.</p>
-        </div>
-      </div>
-    </div>
-        <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'SARAI'}">
-          
           <template slot="buttons" slot-scope="props">
-            
+
             <el-tooltip class="item" effect="dark" content="Aprobar" placement="top-start">
-              <a class="btn btn-simple btn-xs btn-icon btn-info" @click="initWizard(props.queriedData[props.index].Id)">APROBAR</a>
+              <a class="btn btn-simple btn-xs btn-icon btn-info"
+                @click="initWizard(props.queriedData[props.index].Id)">APROBAR</a>
             </el-tooltip>
           </template>
         </data-tables>
-        
-    <div>
-  </div>
+
+        <div>
+        </div>
       </template>
-      
+
       <template v-else>
         <div class="row">
           <div class="form-group col-md-8 col-md-offset-2" style="margin-top: 15px;">
-          <table border="0" >
-          <tr>
-            <td width="80px"><h6>Nro. Lote:</h6></td>
-            <td width="80px">{{ID}}</td>
-            <td width="80px"><h6>Tipo Servicio:</h6></td>
-            <td width="100px">{{SERVICIO}}</td>
-            <td width="80px"><h6>Sede:</h6></td>
-            <td width="80px">{{REGIONAL}}</td>
-            <td width="80px"><h6>Estado:</h6></td>
-            <td width="80px">{{ESTADO}}</td>
-            <td width="100px"><h6 style="margin-left: 30px">Docente:</h6></td>
-            <td width="100px">{{TIPODOCENTE}}</td>
-          </tr>
-        </table></div>
-          <div  style="margin-top: 15px">
-          <button  class="btn btn-warning btn-fill btn-wd btn-back"  @click="showWizard= false">Volver a Historial</button>
+            <table border="0">
+              <tr>
+                <td width="80px">
+                  <h6>Nro. Lote:</h6>
+                </td>
+                <td width="80px">{{ID}}</td>
+                <td width="80px">
+                  <h6>Tipo Servicio:</h6>
+                </td>
+                <td width="100px">{{SERVICIO}}</td>
+                <td width="80px">
+                  <h6>Sede:</h6>
+                </td>
+                <td width="80px">{{REGIONAL}}</td>
+                <td width="80px">
+                  <h6>Estado:</h6>
+                </td>
+                <td width="80px">{{ESTADO}}</td>
+                <td width="100px">
+                  <h6 style="margin-left: 30px">Docente:</h6>
+                </td>
+                <td width="100px">{{TIPODOCENTE}}</td>
+              </tr>
+            </table>
+          </div>
+          <div style="margin-top: 15px">
+            <button class="btn btn-warning btn-fill btn-wd btn-back" @click="showWizard= false">Volver a
+              Historial</button>
           </div>
         </div>
         <div class="card card-wizard" id="wizardCard">
-          <form-wizard shape="tab" ref="wizard"
-                       @on-complete="wizardComplete"
-                       error-color="#D32F2F"
-                       color="#FFA000"
-                       title="Aprobación de lotes"
-                       subtitle="Actividades Académicas efectuadas por Independientes">
+          <form-wizard shape="tab" ref="wizard" @on-complete="wizardComplete" error-color="#D32F2F" color="#FFA000"
+            title="Aprobación de lotes" subtitle="Actividades Académicas efectuadas por Independientes">
 
-            <tab-content title="Comprobación"
-                         icon="ti-check">
+            <tab-content title="Comprobación" icon="ti-check">
               <BeforeEndStep></BeforeEndStep>
             </tab-content>
 
-            <tab-content title="Confirmación"
-                         icon="ti-check">
+            <tab-content title="Confirmación" icon="ti-check">
               <EndStep :ToAprove="ToAprove"></EndStep>
             </tab-content>
 

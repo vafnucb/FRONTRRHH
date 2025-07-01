@@ -6,11 +6,8 @@
         <div class="form-group col-md-6">
           <label>Carrera</label>
           <div>
-            <model-select class="select-info"
-                          v-bind:class="{fixI : action==='PUT'}"
-                          :options="careers"
-                          v-model.lazy="tutoria.Carrera"
-                          placeholder="Seleccione una carrera">
+            <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}" :options="careers"
+              v-model.lazy="tutoria.Carrera" placeholder="Seleccione una carrera">
             </model-select>
           </div>
         </div>
@@ -19,38 +16,33 @@
       <div class="row">
         <div class="form-group col-md-4">
           <label>Docente</label>
-          <model-select class="select-info"
-                        v-bind:class="{fixI : action==='PUT'}"
-                        :options="teacherArray"
-                        v-model.lazy="teacherIdentifier"
-                        placeholder="Seleccionar docente"
-                        @input="actualCat(teacherIdentifier)"
-          >
+          <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}" :options="teacherArray"
+            v-model.lazy="teacherIdentifier" placeholder="Seleccionar docente" @input="actualCat(teacherIdentifier)">
           </model-select>
         </div>
         <div class="form-group col-md-1">
           <label>Categoría</label>
-          <model-select class="select-info"
-                        v-bind:class="{fixI : action==='PUT'}"
-                        :options="tipoDoc"
-                        v-model="tutoria.Categoría">
+          <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}" :options="tipoDoc"
+            v-model="tutoria.Categoría">
           </model-select>
         </div>
         <div class="form-group col-md-1">
-          <label >Dependiente?</label>
-          <input type="checkbox" class="form-control" v-model.lazy="dependiente" :disabled="extranjero" @click="filterTeachers()">
+          <label>Dependiente?</label>
+          <input type="checkbox" class="form-control" v-model.lazy="dependiente" :disabled="extranjero"
+            @click="filterTeachers()">
         </div>
         <div class="form-group col-md-1">
-          <label >Otra Regional?</label>
+          <label>Otra Regional?</label>
           <input type="checkbox" class="form-control" v-model.lazy="or" @click="ChangeButton()">
         </div>
         <div class="form-group col-md-1">
-          <label >Por Hora?</label>
+          <label>Por Hora?</label>
           <input type="checkbox" class="form-control" v-model.lazy="porHora">
         </div>
         <div class="form-group col-md-1">
-          <label >Extranjero?</label>
-          <input type="checkbox" class="form-control" v-model.lazy="extranjero" :disabled="dependiente" @click="lockExtranjero()">
+          <label>Extranjero?</label>
+          <input type="checkbox" class="form-control" v-model.lazy="extranjero" :disabled="dependiente"
+            @click="lockExtranjero()">
         </div>
       </div>
       <!--Modalidad-->
@@ -58,73 +50,65 @@
         <div class="form-group col-md-2">
           <label>Modalidad</label>
           <div>
-            <model-select class="select-info"
-                          v-bind:class="{fixI : action==='PUT'}"
-                          :options="modalidades"
-                          v-model.lazy="tutoria.ModalidadId"
-                          placeholder="Modalidad">
+            <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}" :options="modalidades"
+              v-model.lazy="tutoria.ModalidadId" placeholder="Modalidad">
             </model-select>
           </div>
         </div>
         <div class="form-group col-md-2">
           <label>Tipo Tarea</label>
           <div>
-            <model-select class="select-info"
-                          v-bind:class="{fixI : action==='PUT'}"
-                          :options="tipoTarea"
-                          v-model.lazy="tutoria.TipoTareaId"
-                          placeholder="Tipo de tarea">
+            <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}" :options="tipoTarea"
+              v-model.lazy="tutoria.TipoTareaId" placeholder="Tipo de tarea">
             </model-select>
           </div>
         </div>
         <div class="form-group col-md-2">
           <label>Tipo Pago</label>
           <div>
-            <model-select class="select-info"
-                          v-bind:class="{fixI : action==='PUT'}"
-                          :options="tipoPago"
-                          v-model.lazy="tutoria.TipoPago"
-                          placeholder="Tipo Pago">
+            <model-select class="select-info" v-bind:class="{fixI : action==='PUT'}" :options="tipoPago"
+              v-model.lazy="tutoria.TipoPago" placeholder="Tipo Pago">
             </model-select>
           </div>
         </div>
         <div class="form-group col-md-2">
-          <label >N° de Contrato?</label>
+          <label>N° de Contrato?</label>
           <input type="checkbox" class="form-control" v-model.lazy="contrato">
         </div>
         <div v-show="contrato" class="form-group col-md-2">
-          <label >N° de Contrato</label>
-          <input type="text" placeholder="N° de Contrato" class="form-control textBox" v-model.lazy="tutoria.NumeroContrato">
-          <small v-show="formError.NumeroContrato.active" class="form-text text-muted text-danger">{{formError.NumeroContrato.message}}</small>
+          <label>N° de Contrato</label>
+          <input type="text" placeholder="N° de Contrato" class="form-control textBox"
+            v-model.lazy="tutoria.NumeroContrato">
+          <small v-show="formError.NumeroContrato.active"
+            class="form-text text-muted text-danger">{{formError.NumeroContrato.message}}</small>
         </div>
       </div>
       <!--Del Alumno y acta-->
       <div class="row">
         <div class="form-group col-md-6">
-          <label >Nombre del Alumno</label>
-          <input type="text" placeholder="Apellidos y nombres del estudiante" style="text-transform: uppercase;" class="form-control textBox" v-model.lazy="tutoria.StudentFullName">
-          <small v-show="formError.Student.active" class="form-text text-muted text-danger">{{formError.Student.message}}</small>
+          <label>Nombre del Alumno</label>
+          <input type="text" placeholder="Apellidos y nombres del estudiante" style="text-transform: uppercase;"
+            class="form-control textBox" v-model.lazy="tutoria.StudentFullName">
+          <small v-show="formError.Student.active"
+            class="form-text text-muted text-danger">{{formError.Student.message}}</small>
         </div>
         <div class="form-group col-md-2">
-          <label >Tiene acta?</label>
+          <label>Tiene acta?</label>
           <input type="checkbox" placeholder="Acta" class="form-control" v-model.lazy="acta">
         </div>
         <!--Si el acta existe, llenar datos-->
         <div v-show="acta">
           <div class="form-group col-md-2">
-            <label >Acta</label>
+            <label>Acta</label>
             <input type="text" placeholder="N° Acta" class="form-control textBox" v-model.lazy="tutoria.Acta">
-            <small v-show="formError.Acta.active" class="form-text text-muted text-danger">{{formError.Acta.message}}</small>
+            <small v-show="formError.Acta.active"
+              class="form-text text-muted text-danger">{{formError.Acta.message}}</small>
           </div>
           <div class="form-group col-md-2">
             <label> Fecha </label>
             <div class="row">
-              <date-picker
-                v-model="tutoria.ActaFecha"
-                :format=format
-                :use-utc="true"
-                placeholder="DD/MM/YYYY"
-              ></date-picker>
+              <date-picker v-model="tutoria.ActaFecha" :format=format :use-utc="true"
+                placeholder="DD/MM/YYYY"></date-picker>
             </div>
           </div>
         </div>
@@ -133,50 +117,56 @@
       <div class="row">
         <div class="form-group col-md-6">
           <label for="exampleFormControlTextarea1">Observaciones</label>
-          <textarea class="form-control textBox" style="text-transform: uppercase;" id="exampleFormControlTextarea1" rows="2" v-model.lazy="tutoria.Observaciones"></textarea>
+          <textarea class="form-control textBox" style="text-transform: uppercase;" id="exampleFormControlTextarea1"
+            rows="2" v-model.lazy="tutoria.Observaciones"></textarea>
         </div>
         <div class="form-group col-md-2">
-          <label >Ignorar repetido?</label>
+          <label>Ignorar repetido?</label>
           <input type="checkbox" class="form-control" v-model="tutoria.Ignore">
         </div>
         <div class="form-group col-md-2" v-show="!dependiente">
-          <label >Factura?</label>
+          <label>Factura?</label>
           <input type="checkbox" class="form-control" v-model="tutoria.Factura" @click="facturaOn()">
         </div>
       </div>
       <!--Costos-->
       <div class="row">
         <div class="form-group col-md-2">
-          <label >Costo Hora</label>
+          <label>Costo Hora</label>
           <input type="text" placeholder="C/H" class="form-control" v-model.lazy="tutoria.MontoHora" readonly>
         </div>
         <div class="form-group col-md-2">
-          <label >Horas</label>
-          <input type="text" placeholder="Horas" class="form-control" :onchange="hrsChange()" v-model="tutoria.Horas" :readonly="!porHora">
+          <label>Horas</label>
+          <input type="text" placeholder="Horas" class="form-control" :onchange="hrsChange()" v-model="tutoria.Horas"
+            :readonly="!porHora">
         </div>
         <div class="form-group col-md-2">
-          <label >Total Bruto</label>
-          <input type="text" placeholder="TB" class="form-control textBox" :readonly="porHora" v-model.lazy="totalBruto">
+          <label>Total Bruto</label>
+          <input type="text" placeholder="TB" class="form-control textBox" :readonly="porHora"
+            v-model.lazy="totalBruto">
         </div>
         <div v-show="dependiente && !extranjero" class="form-group col-md-2">
-          <label >Deduccion(%)</label>
+          <label>Deduccion(%)</label>
           <input type="text" placeholder="%" class="form-control textBox" v-model.lazy="Deduccion">
         </div>
         <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
-          <label >RC-IVA(%)</label>
-          <input type="text" placeholder="%" class="form-control textBox" v-model.lazy="IUE" :readonly="ridy">
+          <label>RC-IVA(%)</label>
+          <input type="text" placeholder="%" class="form-control textBox" v-model.lazy="IUE"
+            :readonly="!dependiente && !extranjero">
         </div>
         <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
-          <label >IT(%)</label>
-          <input type="text" placeholder="%" class="form-control textBox" v-model.lazy="IT" :readonly="ridy">
+          <label>IT(%)</label>
+          <input type="text" placeholder="%" class="form-control textBox" v-model.lazy="IT"
+            :readonly="!dependiente && !extranjero">
         </div>
 
+
         <div v-show="extranjero" class="form-group col-md-2">
-          <label >IUE Exterior(%)</label>
-          <input type="text" placeholder="IUE en %" class="form-control textBox" v-model.lazy="IUEExterior">
+          <label>IUE Exterior(%)</label>
+          <input type="text" placeholder="IUE en %" class="form-control textBox" v-model.lazy="IUEExterior" :readonly="extranjero">
         </div>
         <div class="form-group col-md-2">
-          <label >Total Neto</label>
+          <label>Total Neto</label>
           <input type="text" placeholder="TN" class="form-control textBox" v-model="totalNeto" readonly>
         </div>
       </div>
@@ -321,10 +311,8 @@
       // --------------------------Para el cálculo de los montos----------------------------
       totalNeto: function () {
         if (this.extranjero) {
-          // Calcular el IUEExterior sin redondeo
-          this.tutoria.IUEExterior = this.totalBruto * (this.IUEExterior / 100)
-          // Aplicar redondeo a todos los valores
-          this.tutoria.IUEExterior = parseFloat(this.tutoria.IUEExterior.toFixed(2))
+          this.IUEExterior = 12.5
+          this.tutoria.IUEExterior = parseFloat((this.totalBruto * (this.IUEExterior / 100)).toFixed(2))
           this.tutoria.TotalNeto = parseFloat((this.totalBruto - this.tutoria.IUEExterior).toFixed(2))
           this.tutoria.Deduccion = 0
           this.tutoria.IT = 0
@@ -345,18 +333,14 @@
             // Devolver el resultado redondeado para su presentación
             return this.tutoria.TotalNeto
           } else {
-            // Calcular IUE, IT y TotalNeto sin redondeo
-            this.tutoria.IUE = this.totalBruto * (this.IUE / 100)
-            this.tutoria.IT = this.totalBruto * (this.IT / 100)
-            this.tutoria.TotalNeto = this.totalBruto - this.tutoria.IUE - this.tutoria.IT
-            // Aplicar redondeo a todos los valores
-            this.tutoria.IUE = parseFloat(this.tutoria.IUE.toFixed(2))
-            this.tutoria.IT = parseFloat(this.tutoria.IT.toFixed(2))
-            this.tutoria.TotalNeto = parseFloat(this.tutoria.TotalNeto.toFixed(2))
-            // Otros ajustes
+            // Fijar los porcentajes
+            this.IUE = 13
+            this.IT = 3
+            this.tutoria.IUE = parseFloat((this.totalBruto * (this.IUE / 100)).toFixed(2))
+            this.tutoria.IT = parseFloat((this.totalBruto * (this.IT / 100)).toFixed(2))
+            this.tutoria.TotalNeto = parseFloat((this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2))
             this.tutoria.Deduccion = 0
             this.tutoria.IUEExterior = 0
-            // Devolver el resultado redondeado para su presentación
             return this.tutoria.TotalNeto
           }
         }
