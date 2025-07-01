@@ -313,6 +313,7 @@
               this.$store.commit('civ/uploadedFilesIdSetter', id)
               this.$store.commit('civ/segmentoSetter', response.data.BranchesId)
               this.$store.commit('civ/tipoArchivoSetter', response.data.FileType)
+              this.$store.commit('civ/tipoDocenteSetter', response.data.TipoDocente) // New line
               this.$store.dispatch('civ/uploadedFiles')
               this.showWizard = true
             } else {
