@@ -67,6 +67,7 @@ import HistorialCivil from 'src/modules/Civil/HistorialDocente'
 import ContratosCiviles from 'src/modules/ContratosCiviles'
 import ContratosCivilesHistory from 'src/modules/ContratosCiviles/ContratosCivilesHistory'
 import ContratosCivilesAprobacion from 'src/modules/ContratosCiviles/ContratosCivilesAprobacion'
+import ContratosBusquedaAvanzada from 'src/modules/ContratosCiviles/ContratosBusquedaAvanzada'
 // Asesorías de Docentes
 import Asesoria from 'src/modules/AsesoriaDocente/index'
 import RegistroTutoria from 'src/modules/AsesoriaDocente/ABM/RegistroTutorias'
@@ -303,6 +304,11 @@ let Menu = {
       path: '/ContratosCivilesAprobacion',
       name: 'Aprobación de Lotes',
       component: ContratosCivilesAprobacion
+    },
+    {
+      path: '/BusquedaAvanzadaSarai',
+      name: 'Búsqueda Avanzada',
+      component: ContratosBusquedaAvanzada
     },
     {
       path: '/AsesoriaDocente',
