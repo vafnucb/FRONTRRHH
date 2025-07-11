@@ -86,6 +86,7 @@ import BusqAvanzadaPost from 'src/modules/AsesoriaDocentePost/Busqueda/BusquedaR
 import BusqFechas from 'src/modules/AsesoriaDocentePost/Busqueda/BusquedaXFechas'
 import RevisionTutoriasPost from 'src/modules/AsesoriaDocentePost/RevisionTutoriasPost'
 import EstadoRegistroPostgrado from 'src/modules/AsesoriaDocentePost/EstadoRegistroPostgrado'
+import PagosPendientes from 'src/modules/AsesoriaDocentePost/PagosPendientes'
 
 import TipoTarea from 'src/modules/AsesoriaDocente/Admin/TipoTarea'
 import Modalidades from 'src/modules/AsesoriaDocente/Admin/Modalidades'
@@ -334,6 +335,11 @@ let Menu = {
       path: '/EstadoRegistroPostgrado',
       name: 'Estado de Registros Postgrado',
       component: EstadoRegistroPostgrado
+    },
+    {
+      path: '/PagosPendientes',
+      name: 'Pagos Pendientes',
+      component: PagosPendientes
     },
     {
       path: '/RevisionTutorias',
