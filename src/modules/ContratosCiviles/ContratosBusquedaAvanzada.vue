@@ -1,146 +1,271 @@
 <template>
-    <div class="row">
-      <div class="col-md-12 card">
-        <data-tables 
-          v-bind="{
-            url: '/ServContract/Search',
-            propsToSearch,
-            tableColumns,
-            pagination,
-            fuentePDF: 'SARAI'
-          }"
-        >
-          <!-- Action buttons if needed -->
-          <template slot="buttons" slot-scope="props">
-            <el-tooltip class="item" effect="dark" content="Ver Detalles" placement="top-start">
-              <a class="btn btn-simple btn-xs btn-icon btn-info" @click="viewDetails(props.queriedData[props.index].BatchId)">
-                <i class="ti-eye"></i>
-              </a>
-            </el-tooltip>
-          </template>
-        </data-tables>
+  <div>
+    <!-- Filter Selection Page -->
+    <div v-if="!filtersApplied" class="row">
+      <div class="col-md-6 offset-md-3 card">
+        <div class="card-body">
+          <h4 class="card-title" style="color: #1c3b6c;">Filtrar Lotes de Pago</h4>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label style="color: #1c3b6c; font-weight: 500;">Tipo de Lote:</label>
+                <el-select
+                  v-model="batchFileType"
+                  placeholder="Seleccione tipo"
+                  class="w-100"
+                  style="border: 1px solid #1c3b6c; border-radius: 4px;"
+                >
+                  <el-option
+                    v-for="type in batchTypes"
+                    :key="type.value"
+                    :label="type.label"
+                    :value="type.value">
+                  </el-option>
+                </el-select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label style="color: #1c3b6c; font-weight: 500;">Regional:</label>
+                <el-select
+                  v-model="branchId"
+                  placeholder="Seleccione regional"
+                  class="w-100"
+                  style="border: 1px solid #1c3b6c; border-radius: 4px;"
+                >
+                  <el-option
+                    v-for="region in regions"
+                    :key="region.id"
+                    :label="region.name"
+                    :value="region.id">
+                  </el-option>
+                </el-select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center mt-4">
+            <button @click="applyFilters" class="btn btn-info btn-fill btn-wd">
+              Aplicar Filtros
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        propsToSearch: [
-          'BatchId',
-          'CardName',
-          'OU',
-          'PEI',
-          'Memo',
-          'LineMemo',
-          'AssignedAccount'
-        ],
-        tableColumns: [
-          { prop: 'BatchId', label: '# Lote', minWidth: 80 },
-          { 
-            prop: 'BranchesId', 
-            label: 'Regional', 
-            minWidth: 100,
-            formatter: this.getRegionalName 
-          },
-          { 
-            prop: 'BatchState', 
-            label: 'Estado', 
-            minWidth: 120,
-            formatter: this.formatState,
-            render: (h, { row }) => {
-              return h('el-tag', {
-                props: {
-                  type: this.getStateTagType(row.BatchState)
-                }
-              }, this.formatState(row.BatchState))
-            }
-          },
-          { prop: 'BatchSAPId', label: 'SAPId', minWidth: 100 },
-          { 
-            prop: 'BatchCreatedAt', 
-            label: 'Creado', 
-            minWidth: 120,
-            formatter: this.formatDate 
-          },
-          { prop: 'CardName', label: 'Docente', minWidth: 180 },
-          { prop: 'OU', label: 'U.O.', minWidth: 100 },
-          { prop: 'PEI', label: 'PEI', minWidth: 100 },
-          { prop: 'Memo', label: 'Servicio', minWidth: 200, showOverflowTooltip: true },
-          { prop: 'LineMemo', label: 'Detalle', minWidth: 250, showOverflowTooltip: true },
-          { prop: 'AssignedAccount', label: 'Cuenta', minWidth: 120 },
-          { 
-            prop: 'Credit', 
-            label: 'Monto Bruto', 
-            minWidth: 120,
-            align: 'right',
-            formatter: this.formatCurrency
-          },
-          { 
-            prop: 'Debit', 
-            label: 'Monto Pagar', 
-            minWidth: 120,
-            align: 'right',
-            formatter: this.formatCurrency
+
+    <!-- Data Table Page -->
+    <div v-else class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header" style="background-color: #f8f9fa;">
+            <button @click="resetFilters" class="btn btn-default btn-fill btn-wd btn-back">
+              ← Volver a Filtros
+            </button>
+            <h4 class="d-inline-block ml-3" style="color: #1c3b6c;">Lotes de Pago</h4>
+          </div>
+          <div class="card-body">
+            <data-tables 
+              v-bind="{
+                url: tableUrl,
+                propsToSearch,
+                tableColumns,
+                pagination,
+                fuentePDF: 'SARAI'
+              }"
+            >
+              <!-- Action buttons -->
+              <template slot="buttons" slot-scope="props">
+                <el-tooltip class="item" effect="dark" content="Ver Detalles" placement="top-start">
+                  <a class="btn btn-simple btn-xs btn-icon btn-info" @click="viewDetails(props.queriedData[props.index].BatchId)">
+                    <i class="ti-eye"></i>
+                  </a>
+                </el-tooltip>
+              </template>
+            </data-tables>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      filtersApplied: false,
+      batchFileType: null,
+      branchId: null,
+      batchTypes: [
+        { value: 'VARIOS', label: 'Varios' },
+        { value: 'PARALELO', label: 'Paralelo' },
+        { value: 'PROYECTOS', label: 'Proyectos' },
+        { value: 'CARRERA', label: 'Carrera' }
+      ],
+      regions: [
+        { id: 2, name: 'TJA' },
+        { id: 3, name: 'CBB' },
+        { id: 16, name: 'SCZ' },
+        { id: 17, name: 'LPZ' },
+        { id: 18, name: 'EPC' },
+        { id: 22, name: 'TEO' },
+        { id: 23, name: 'SUC' },
+        { id: 24, name: 'ORU' }
+      ],
+      propsToSearch: [
+        'BatchId',
+        'CardName',
+        'OU',
+        'PEI',
+        'Memo',
+        'LineMemo',
+        'AssignedAccount'
+      ],
+      tableColumns: [
+        { prop: 'BatchId', label: '# Lote', minWidth: 80 },
+        { 
+          prop: 'BranchAbr', 
+          label: 'Regional', 
+          minWidth: 100
+        },
+        { 
+          prop: 'BatchState', 
+          label: 'Estado', 
+          minWidth: 120,
+          formatter: this.formatState,
+          render: (h, { row }) => {
+            return h('el-tag', {
+              props: {
+                type: this.getStateTagType(row.BatchState)
+              }
+            }, this.formatState(row.BatchState))
           }
-        ],
-        pagination: { 
-          perPage: 10, 
-          currentPage: 1, 
-          perPageOptions: [10, 20, 50], 
-          total: 0 
+        },
+        { prop: 'BatchSAPId', label: 'SAPId', minWidth: 100 },
+        { 
+          prop: 'BatchCreatedAt', 
+          label: 'Creado', 
+          minWidth: 120,
+          formatter: this.formatDate 
+        },
+        { prop: 'CardName', label: 'Docente', minWidth: 180 },
+        { prop: 'OU', label: 'U.O.', minWidth: 100 },
+        { prop: 'PEI', label: 'PEI', minWidth: 100 },
+        { prop: 'Memo', label: 'Servicio', minWidth: 200, showOverflowTooltip: true },
+        { prop: 'LineMemo', label: 'Detalle', minWidth: 250, showOverflowTooltip: true },
+        { prop: 'AssignedAccount', label: 'Cuenta', minWidth: 120 },
+        { 
+          prop: 'Credit', 
+          label: 'Monto Bruto', 
+          minWidth: 120,
+          align: 'right',
+          formatter: this.formatCurrency
+        },
+        { 
+          prop: 'Debit', 
+          label: 'Monto Pagar', 
+          minWidth: 120,
+          align: 'right',
+          formatter: this.formatCurrency
         }
-      }
-    },
-    methods: {
-      getRegionalName(id) {
-        const regionalMap = {
-          3: 'CBB',
-          22: 'TEO',
-          2: 'TJA',
-          17: 'LPZ',
-          18: 'EPC',
-          16: 'SCZ',
-          6: 'UCE'
-        }
-        return regionalMap[id] || id
-      },
-      formatState(state) {
-        switch (state) {
-          case 'PendingApproval': return 'Pendiente'
-          case 'INSAP': return 'En SAP'
-          case 'Rejected': return 'Rechazado'
-          default: return state
-        }
-      },
-      getStateTagType(state) {
-        switch (state) {
-          case 'PendingApproval': return 'warning'
-          case 'INSAP': return 'success'
-          case 'Rejected': return 'danger'
-          default: return ''
-        }
-      },
-      formatCurrency(value) {
-        return value ? new Intl.NumberFormat('es-BO', {
-          style: 'currency',
-          currency: 'BOB'
-        }).format(value) : ''
-      },
-      formatDate(dateString) {
-        if (!dateString) return ''
-        const date = new Date(dateString)
-        return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
-      },
-      viewDetails(batchId) {
-        // Implement your detail view logic here
-        console.log('Viewing details for batch:', batchId)
+      ],
+      pagination: { 
+        perPage: 10, 
+        currentPage: 1, 
+        perPageOptions: [10, 20, 50], 
+        total: 0 
       }
     }
+  },
+  computed: {
+    tableUrl() {
+      let url = '/ServContract/Search';
+      const params = [];
+      
+      if (this.batchFileType) {
+        params.push(`batchFileType=${this.batchFileType}`);
+      }
+      
+      if (this.branchId) {
+        params.push(`branchId=${this.branchId}`);
+      }
+      
+      if (params.length > 0) {
+        url += `?${params.join('&')}`;
+      }
+      
+      return url;
+    }
+  },
+  methods: {
+    applyFilters() {
+      this.filtersApplied = true;
+    },
+    resetFilters() {
+      this.filtersApplied = false;
+      this.batchFileType = null;
+      this.branchId = null;
+    },
+    formatState(state) {
+      switch (state) {
+        case 'PendingApproval': return 'Pendiente'
+        case 'INSAP': return 'En SAP'
+        case 'Rejected': return 'Rechazado'
+        case 'ESPERANDO APROBACION': return 'Pendiente'
+        case 'IN SAP': return 'En SAP'
+        case 'RECHAZADO': return 'Rechazado'
+        default: return state
+      }
+    },
+    getStateTagType(state) {
+      switch (state) {
+        case 'PendingApproval': 
+        case 'ESPERANDO APROBACION': 
+          return 'warning'
+        case 'INSAP': 
+        case 'IN SAP': 
+          return 'success'
+        case 'Rejected': 
+        case 'RECHAZADO': 
+          return 'danger'
+        default: return ''
+      }
+    },
+    formatCurrency(value) {
+      return value ? new Intl.NumberFormat('es-BO', {
+        style: 'currency',
+        currency: 'BOB'
+      }).format(value) : ''
+    },
+    formatDate(dateString) {
+      if (!dateString) return ''
+      const date = new Date(dateString)
+      return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
+    },
+    viewDetails(batchId) {
+      // Implement your detail view logic here
+      console.log('Viewing details for batch:', batchId)
+    }
   }
-  </script>
-  
-  <style>
-  /* Add any custom styles here if needed */
-  </style>
+}
+</script>
+
+<style>
+/* Add any custom styles here if needed */
+.card {
+  margin-top: 20px;
+  border-radius: 4px;
+}
+.btn-info {
+  background-color: #1c3b6c;
+  border-color: #1c3b6c;
+}
+.btn-info:hover {
+  background-color: #0d2a5a;
+  border-color: #0d2a5a;
+}
+.el-select {
+  width: 100%;
+}
+</style>
