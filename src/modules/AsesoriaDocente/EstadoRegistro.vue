@@ -102,18 +102,19 @@
       </div>
       <div class="col-md-6">
         <div class="row">
+            <div class="col-md-3">
+            <div class="form-group">
+              <label>RC-IVA</label>
+              <div class="form-control form-control-static data-box small-box">{{ detail.IUE }}</div>
+            </div>
+          </div>
           <div class="col-md-3">
             <div class="form-group">
               <label>IT</label>
               <div class="form-control form-control-static data-box small-box">{{ detail.IT }}</div>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label>RS-IVA</label>
-              <div class="form-control form-control-static data-box small-box">{{ detail.IUE }}</div>
-            </div>
-          </div>
+          
           <div class="col-md-3">
             <div class="form-group">
               <label>IUE Exterior</label>

@@ -27,10 +27,10 @@
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label style="color: #1c3b6c; font-weight: 500;">Regional:</label>
+                <label style="color: #1c3b6c; font-weight: 500;">Sede:</label>
                 <el-select
                   v-model="branchId"
-                  placeholder="Seleccione regional"
+                  placeholder="Seleccione la Sede"
                   class="w-100"
                   style="border: 1px solid #1c3b6c; border-radius: 4px;"
                 >
@@ -116,17 +116,18 @@ export default {
       propsToSearch: [
         'BatchId',
         'CardName',
+        'BatchSAPId',
         'OU',
-        'PEI',
         'Memo',
         'LineMemo',
+        'BatchState',
         'AssignedAccount'
       ],
       tableColumns: [
         { prop: 'BatchId', label: '# Lote', minWidth: 80 },
         { 
           prop: 'BranchAbr', 
-          label: 'Regional', 
+          label: 'Sede', 
           minWidth: 100
         },
         { 
@@ -151,10 +152,10 @@ export default {
         },
         { prop: 'CardName', label: 'Docente', minWidth: 180 },
         { prop: 'OU', label: 'U.O.', minWidth: 100 },
-        { prop: 'PEI', label: 'PEI', minWidth: 100 },
+        
         { prop: 'Memo', label: 'Servicio', minWidth: 200, showOverflowTooltip: true },
         { prop: 'LineMemo', label: 'Detalle', minWidth: 250, showOverflowTooltip: true },
-        { prop: 'AssignedAccount', label: 'Cuenta', minWidth: 120 },
+        
         { 
           prop: 'Credit', 
           label: 'Monto Bruto', 
@@ -252,7 +253,7 @@ export default {
 </script>
 
 <style>
-/* Add any custom styles here if needed */
+
 .card {
   margin-top: 20px;
   border-radius: 4px;
