@@ -2,41 +2,51 @@
     <div>
       <!-- Filter Selection Page -->
       <div v-if="!filtersApplied" class="row">
-        <div class="col-md-6 offset-md-3 card">
+        <div class="col-md-8 offset-md-2 card">
           <div class="card-body">
-            <h4 class="card-title" style="color: #000000;">Filtrar Pagos Pendientes</h4>
+            <h4 class="card-title" style="color: #1c3b6c;">Filtrar Pagos Pendientes</h4>
             
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group">
                   <label style="color: #1c3b6c; font-weight: 500;">Fecha de Inicio:</label>
                   <input 
                     type="date" 
                     v-model="fechaInicio" 
                     class="form-control"
-                    style="
-                      border: 1px solid #1c3b6c;
-                      border-radius: 4px;
-                      padding: 8px 12px;
-                      height: 40px;
-                    "
+                    style="border: 1px solid #1c3b6c; border-radius: 4px; padding: 8px 12px; height: 40px;"
                   >
                 </div>
               </div>
-              <div class="col-md-6">
+              
+              <div class="col-md-4">
                 <div class="form-group">
                   <label style="color: #1c3b6c; font-weight: 500;">Fecha de Fin:</label>
                   <input 
                     type="date" 
                     v-model="fechaFin" 
                     class="form-control"
-                    style="
-                      border: 1px solid #1c3b6c;
-                      border-radius: 4px;
-                      padding: 8px 12px;
-                      height: 40px;
-                    "
+                    style="border: 1px solid #1c3b6c; border-radius: 4px; padding: 8px 12px; height: 40px;"
                   >
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label style="color: #1c3b6c; font-weight: 500;">Sede:</label>
+                  <el-select
+                    v-model="branchesId"
+                    placeholder="Seleccione una sede"
+                    class="w-100"
+                    style="border: 1px solid #1c3b6c; border-radius: 4px;"
+                  >
+                    <el-option
+                      v-for="region in regions"
+                      :key="region.id"
+                      :label="region.abr"
+                      :value="region.id">
+                    </el-option>
+                  </el-select>
                 </div>
               </div>
             </div>
@@ -70,6 +80,10 @@
                   fuentePDF: 'ISAAC II'
                 }"
               >
+                <!-- Custom column rendering for Branch -->
+                <template slot="BranchesId" slot-scope="{row}">
+                  {{ getRegionalAbr(row.BranchesId) }}
+                </template>
               </data-tables>
             </div>
           </div>
@@ -85,6 +99,17 @@
         filtersApplied: false,
         fechaInicio: '',
         fechaFin: '',
+        branchesId: null, // Changed to match API parameter
+        regions: [
+          { id: 2, abr: 'TJA' },
+          { id: 3, abr: 'CBB' },
+          { id: 16, abr: 'SCZ' },
+          { id: 17, abr: 'LPZ' },
+          { id: 18, abr: 'EPC' },
+          { id: 22, abr: 'TEO' },
+          { id: 23, abr: 'SUC' },
+          { id: 24, abr: 'ORU' }
+        ],
         propsToSearch: [
           'Cod_Proyecto',
           'Nombre_Proyecto',
@@ -95,6 +120,14 @@
           'Fecha_Fin'
         ],
         tableColumns: [
+          {
+            prop: 'BranchesId',
+            label: 'Sede',
+            minWidth: 25,
+            render: (h, { row }) => {
+              return h('span', this.getRegionalAbr(row.BranchesId));
+            }
+          },
           {
             prop: 'Cod_Proyecto',
             label: 'Código Proyecto',
@@ -160,26 +193,34 @@
       }
     },
     computed: {
-      tableUrl() {
-        let url = '/ProjectModules/PagosPendientes';
-        const params = [];
-        
-        if (this.fechaInicio) {
-          params.push(`fechaInicioFiltro=${this.fechaInicio}`);
-        }
-        
-        if (this.fechaFin) {
-          params.push(`fechaFinFiltro=${this.fechaFin}`);
-        }
-        
-        if (params.length > 0) {
-          url += `?${params.join('&')}`;
-        }
-        
-        return url;
+    tableUrl() {
+      let url = '/ProjectModules/PagosPendientes';
+      const params = [];
+      
+      if (this.fechaInicio) {
+        params.push(`fechaInicioFiltro=${this.fechaInicio}`);
       }
-    },
+      
+      if (this.fechaFin) {
+        params.push(`fechaFinFiltro=${this.fechaFin}`);
+      }
+      
+      if (this.branchesId) {
+        params.push(`branchesId=${this.branchesId}`); 
+      }
+      
+      if (params.length > 0) {
+        url += `?${params.join('&')}`;
+      }
+      
+      return url;
+    }
+  },
     methods: {
+        getRegionalAbr(id) {
+      const region = this.regions.find(r => r.id === id);
+      return region ? region.abr : id;
+    },
       applyFilters() {
         this.filtersApplied = true;
       },

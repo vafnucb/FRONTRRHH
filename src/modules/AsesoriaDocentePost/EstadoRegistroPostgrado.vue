@@ -84,16 +84,17 @@
     <div class="row">
       <div class="col-md-2">
         <div class="form-group">
-          <label>Total Neto</label>
-          <div class="form-control form-control-static data-box">{{ detail.TotalNeto }}</div>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group">
           <label>Total Bruto</label>
           <div class="form-control form-control-static data-box">{{ detail.TotalBruto }}</div>
         </div>
       </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Total Neto</label>
+          <div class="form-control form-control-static data-box">{{ detail.TotalNeto }}</div>
+        </div>
+      </div>
+      
       <div class="col-md-8">
         <div class="row">
             <div class="col-md-3">
@@ -130,7 +131,8 @@
       <div class="col-md-8">
         <div class="form-group">
           <label>Observaciones</label>
-          <div class="form-control form-control-static data-box">{{ detail.Observaciones }}</div>
+          <div class="form-control form-control-static data-box text-wrap" style="margin-top: 10px; overflow-wrap: break-word; min-height: 50px; max-height: 100px; overflow-y: auto;">
+            {{ detail.Observaciones }}</div>
         </div>
       </div>
       <div class="col-md-4">
@@ -162,7 +164,7 @@
     data () {
       return {
         url: '/AsesoriaPostgrado/Estado',
-        propsToSearch: ['Id', 'Estado', 'Proyecto', 'Modulo', 'UpdatedAt', 'TotalNeto', 'TotalBruto'],
+        propsToSearch: ['Id', 'Estado', 'Proyecto', 'Modulo', 'UpdatedAt', 'TotalNeto', 'TotalBruto', 'Origen'],
         tableColumns: [
           { prop: 'Id', label: '#', minWidth: 50 },
           { prop: 'Origen', label: 'Origen', minWidth: 70 },

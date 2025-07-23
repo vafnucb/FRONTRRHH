@@ -88,64 +88,72 @@
     
     <!-- Fourth Row: TotalNeto, TotalBruto and tax boxes -->
     <div class="row">
-      <div class="col-md-3">
+    <div class="col-md-2">
         <div class="form-group">
-          <label>Total Neto</label>
-          <div class="form-control form-control-static data-box">{{ detail.TotalNeto }}</div>
+            <label>Total Bruto</label>
+            <div class="form-control form-control-static data-box small-box">{{ detail.TotalBruto }}</div>
         </div>
-      </div>
-      <div class="col-md-3">
+    </div>
+    <div class="col-md-2">
         <div class="form-group">
-          <label>Total Bruto</label>
-          <div class="form-control form-control-static data-box">{{ detail.TotalBruto }}</div>
+            <label>Total Neto</label>
+            <div class="form-control form-control-static data-box small-box">{{ detail.TotalNeto }}</div>
         </div>
-      </div>
-      <div class="col-md-6">
+    </div>
+    <div class="col-md-2">
+    <div class="form-group">
+        <label>Factura</label>
+        <div class="form-control form-control-static data-box small-box">{{ detail.Factura ? 'Tiene' : 'No tiene' }}</div>
+    </div>
+</div>
+    
+    <div class="col-md-6">
         <div class="row">
             <div class="col-md-3">
-            <div class="form-group">
-              <label>RC-IVA</label>
-              <div class="form-control form-control-static data-box small-box">{{ detail.IUE }}</div>
+                <div class="form-group">
+                    <label>RC-IVA</label>
+                    <div class="form-control form-control-static data-box small-box">{{ detail.IUE }}</div>
+                </div>
             </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label>IT</label>
-              <div class="form-control form-control-static data-box small-box">{{ detail.IT }}</div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>IT</label>
+                    <div class="form-control form-control-static data-box small-box">{{ detail.IT }}</div>
+                </div>
             </div>
-          </div>
-          
-          <div class="col-md-3">
-            <div class="form-group">
-              <label>IUE Exterior</label>
-              <div class="form-control form-control-static data-box small-box">{{ detail.IUEExterior }}</div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>IUE Exterior</label>
+                    <div class="form-control form-control-static data-box small-box">{{ detail.IUEExterior }}</div>
+                </div>
             </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label>Deducción</label>
-              <div class="form-control form-control-static data-box small-box">{{ detail.Deduccion }}</div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Deducción</label>
+                    <div class="form-control form-control-static data-box small-box">{{ detail.Deduccion }}</div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-    
-    <!-- Fifth Row: Observaciones, Ultima Modificacion -->
-    <div class="row">
-      <div class="col-md-8">
+</div>
+
+<!-- Fifth Row: Observaciones, Ultima Modificacion -->
+<div class="row">
+    <div class="col-md-8">
         <div class="form-group">
-          <label>Observaciones</label>
-          <div class="form-control form-control-static data-box">{{ detail.Observaciones }}</div>
+            <label>Observaciones</label>
+            <div class="form-control form-control-static data-box text-wrap" style="margin-top: 10px; overflow-wrap: break-word; min-height: 50px; max-height: 100px; overflow-y: auto;">
+                {{ detail.Observaciones }}
+            </div>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="form-group">
-          <label>Última modificación</label>
-          <div class="form-control form-control-static data-box">{{ detail.UpdatedAt }}</div>
-        </div>
-      </div>
     </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Última modificación</label>
+            <div class="form-control form-control-static data-box">{{ detail.UpdatedAt }}</div>
+        </div>
+    </div>
+</div>
     
     <!-- Button Row -->
     <div class="row">
@@ -168,7 +176,7 @@
     data () {
       return {
         url: '/AsesoriaDocente/Estado',
-        propsToSearch: ['Id', 'TeacherFullName', 'StudentFullName', 'Estado', 'Carrera'],
+        propsToSearch: ['Id', 'TeacherFullName', 'StudentFullName', 'Estado', 'Carrera', 'Origen'],
         tableColumns: [
           { prop: 'Id', label: '#', minWidth: 50 },
           { prop: 'Origen', label: 'Origen', minWidth: 60 },

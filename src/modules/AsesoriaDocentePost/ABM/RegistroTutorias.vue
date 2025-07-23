@@ -384,7 +384,7 @@
             // Devolver el resultado redondeado para su presentación
             return this.tutoria.TotalNeto
           } else {
-            // Calcular IUE, IT y TotalNeto sin redondeo
+            // Calcular y fija el IUE e IT
             this.IUE = 13
             this.IT = 3
             this.tutoria.IUE = parseFloat((this.totalBruto * (this.IUE / 100)).toFixed(2))
@@ -392,7 +392,6 @@
             this.tutoria.TotalNeto = parseFloat((this.totalBruto - this.tutoria.IUE - this.tutoria.IT).toFixed(2))
             this.tutoria.Deduccion = 0
             this.tutoria.IUEExterior = 0
-            // Devolver el resultado redondeado para su presentación
             return this.tutoria.TotalNeto
           }
         }
