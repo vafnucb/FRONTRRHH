@@ -4,52 +4,54 @@
       <div v-if="!filtersApplied" class="row">
         <div class="col-md-8 offset-md-2 card">
           <div class="card-body">
-            <h4 class="card-title" style="color: #1c3b6c;">Filtrar Pagos Pendientes</h4>
+            <h4 class="card-title" style="color: #1c3b6c; margin-bottom: 1.5rem;">Filtrar Pagos Pendientes</h4>
             
             <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label style="color: #1c3b6c; font-weight: 500;">Fecha de Inicio:</label>
-                  <input 
-                    type="date" 
-                    v-model="fechaInicio" 
-                    class="form-control"
-                    style="border: 1px solid #1c3b6c; border-radius: 4px; padding: 8px 12px; height: 40px;"
-                  >
-                </div>
-              </div>
-              
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label style="color: #1c3b6c; font-weight: 500;">Fecha de Fin:</label>
-                  <input 
-                    type="date" 
-                    v-model="fechaFin" 
-                    class="form-control"
-                    style="border: 1px solid #1c3b6c; border-radius: 4px; padding: 8px 12px; height: 40px;"
-                  >
-                </div>
-              </div>
-              
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label style="color: #1c3b6c; font-weight: 500;">Sede:</label>
-                  <el-select
-                    v-model="branchesId"
-                    placeholder="Seleccione una sede"
-                    class="w-100"
-                    style="border: 1px solid #1c3b6c; border-radius: 4px;"
-                  >
-                    <el-option
-                      v-for="region in regions"
-                      :key="region.id"
-                      :label="region.abr"
-                      :value="region.id">
-                    </el-option>
-                  </el-select>
-                </div>
-              </div>
-            </div>
+  <!-- Moved branch filter to the top -->
+  <div class="col-md-12">
+    <div class="form-group">
+      <label style="color: #1c3b6c; font-weight: 500;">Sede:</label>
+      <el-select
+        v-model="branchesId"
+        placeholder="Seleccione una sede"
+        class="w-100"
+        style="border: 1px solid; color: #1c3b6c; border-radius: 4px;"
+      >
+        <el-option
+          v-for="region in regions"
+          :key="region.id"
+          :label="region.abr"
+          :value="region.id">
+        </el-option>
+      </el-select>
+    </div>
+  </div>
+  
+  <!-- Date filters below -->
+  <div class="col-md-6">
+    <div class="form-group">
+      <label style="color: #1c3b6c; font-weight: 500;">Fecha de Inicio:</label>
+      <input 
+        type="date" 
+        v-model="fechaInicio" 
+        class="form-control"
+        style="border: 1px solid #1c3b6c; border-radius: 4px; padding: 8px 12px; height: 40px;"
+      >
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="form-group">
+      <label style="color: #1c3b6c; font-weight: 500;">Fecha de Fin:</label>
+      <input 
+        type="date" 
+        v-model="fechaFin" 
+        class="form-control"
+        style="border: 1px solid #1c3b6c; border-radius: 4px; padding: 8px 12px; height: 40px;"
+      >
+    </div>
+  </div>
+</div>
             
             <div class="text-center mt-4">
               <button @click="applyFilters" class="btn btn-info btn-fill btn-wd">
@@ -61,34 +63,55 @@
       </div>
   
       <!-- Data Table Page -->
-      <div v-else class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-header" style="background-color: #f8f9fa;">
-              <button @click="resetFilters" class="btn btn-default btn-fill btn-wd btn-back">
-                ← Volver a Filtros
-              </button>
-              <h4 class="d-inline-block ml-3" style="color: #1c3b6c;">Pagos Pendientes</h4>
-            </div>
-            <div class="card-body">
-              <data-tables 
-                v-bind="{
-                  url: tableUrl,
-                  propsToSearch,
-                  tableColumns,
-                  pagination,
-                  fuentePDF: 'ISAAC II'
-                }"
-              >
-                <!-- Custom column rendering for Branch -->
-                <template slot="BranchesId" slot-scope="{row}">
-                  {{ getRegionalAbr(row.BranchesId) }}
-                </template>
-              </data-tables>
-            </div>
-          </div>
+<div v-else class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header" style="background-color: #f8f9fa;">
+        <button @click="resetFilters" class="btn btn-default btn-fill btn-wd btn-back">
+          ← Volver a Filtros
+        </button>
+        <h4 class="d-inline-block ml-3" style="color: #1c3b6c;">Pagos Pendientes</h4>
+      </div>
+      
+      <!-- Add this new section for applied filters -->
+      <div class="applied-filters" style="padding: 15px 20px; background-color: #f5f7fa; border-bottom: 1px solid #e6e6e6;">
+        <h5 style="color: #1c3b6c; font-size: 14px; margin-bottom: 10px; font-weight: 500;">
+          Filtros aplicados:
+        </h5>
+        <div v-if="selectedFilters.length > 0">
+          <el-tag
+            v-for="(filter, index) in selectedFilters"
+            :key="index"
+            type="info"
+            style="margin-right: 8px; margin-bottom: 8px;"
+          >
+            {{ filter.label }}: <strong>{{ filter.value }}</strong>
+          </el-tag>
+        </div>
+        <div v-else style="color: #666; font-size: 13px;">
+          Sin filtros aplicados (mostrando todos los registros)
         </div>
       </div>
+      
+      <div class="card-body">
+        <data-tables 
+          v-bind="{
+            url: tableUrl,
+            propsToSearch,
+            tableColumns,
+            pagination,
+            fuentePDF: 'ISAAC II'
+          }"
+        >
+          <!-- Custom column rendering for Branch -->
+          <template slot="BranchesId" slot-scope="{row}">
+            {{ getRegionalAbr(row.BranchesId) }}
+          </template>
+        </data-tables>
+      </div>
+    </div>
+  </div>
+</div>
     </div>
   </template>
   
@@ -99,7 +122,7 @@
         filtersApplied: false,
         fechaInicio: '',
         fechaFin: '',
-        branchesId: null, // Changed to match API parameter
+        branchesId: null,
         regions: [
           { id: 2, abr: 'TJA' },
           { id: 3, abr: 'CBB' },
@@ -123,7 +146,7 @@
           {
             prop: 'BranchesId',
             label: 'Sede',
-            minWidth: 25,
+            minWidth: 15,
             render: (h, { row }) => {
               return h('span', this.getRegionalAbr(row.BranchesId));
             }
@@ -141,7 +164,7 @@
           {
             prop: 'Cod_Modulo',
             label: 'Código Módulo',
-            minWidth: 25
+            minWidth: 35
           },
           {
             prop: 'Nombre_Modulo',
@@ -162,26 +185,26 @@
           {
             prop: 'MontoHora',
             label: 'Monto Hora',
-            minWidth: 15,
+            minWidth: 25,
             align: 'right',
             formatter: this.formatCurrency
           },
           {
             prop: 'Total',
             label: 'Total a Pagar',
-            minWidth: 25,
+            minWidth: 35,
             align: 'right',
             formatter: this.formatCurrency
           },
           {
             prop: 'Fecha_Inicio',
             label: 'Fecha Inicio',
-            minWidth: 30
+            minWidth: 60
           },
           {
             prop: 'Fecha_Fin',
             label: 'Fecha Fin',
-            minWidth: 30
+            minWidth: 60
           }
         ],
         pagination: {
@@ -214,12 +237,33 @@
       }
       
       return url;
+    },
+    selectedFilters() {
+    const filters = [];
+    
+    if (this.branchesId) {
+      const region = this.regions.find(r => r.id === this.branchesId);
+      if (region) {
+        filters.push({ label: 'Sede', value: region.abr });
+      }
     }
+    
+    if (this.fechaInicio) {
+      filters.push({ label: 'Fecha Inicio', value: this.fechaInicio });
+    }
+    
+    if (this.fechaFin) {
+      filters.push({ label: 'Fecha Fin', value: this.fechaFin });
+    }
+    
+    return filters;
+  }
   },
     methods: {
         getRegionalAbr(id) {
       const region = this.regions.find(r => r.id === id);
-      return region ? region.abr : id;
+      console.log(region);
+      return region.abr;
     },
       applyFilters() {
         this.filtersApplied = true;
@@ -261,4 +305,21 @@
     border-color: #1c3b6c;
     box-shadow: 0 0 0 0.2rem rgba(28, 59, 108, 0.25);
   }
+  .applied-filters {
+  padding: 15px 20px;
+  background-color: #f5f7fa;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.applied-filters h5 {
+  color: #1c3b6c;
+  font-size: 14px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.el-tag {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
   </style>

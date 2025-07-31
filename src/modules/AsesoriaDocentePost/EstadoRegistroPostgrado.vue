@@ -16,22 +16,28 @@
   <div class="panel-body">
     <!-- First Row: Id, Origen, Estado, Ultima Modificacion -->
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <label>ID</label>
           <div class="form-control form-control-static data-box">{{ detail.Id }}</div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Origen</label>
           <div class="form-control form-control-static data-box">{{ detail.Origen }}</div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Estado</label>
           <div class="form-control form-control-static data-box">{{ detail.Estado }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>Fecha de Creación</label>
+          <div class="form-control form-control-static data-box">{{ detail.CreatedAt }}</div>
         </div>
       </div>
       <div class="col-md-3">
@@ -40,6 +46,7 @@
           <div class="form-control form-control-static data-box">{{ detail.UpdatedAt }}</div>
         </div>
       </div>
+      
     </div>
     
     <!-- Second Row: Proyecto and Modulo -->
@@ -66,18 +73,30 @@
           <div class="form-control form-control-static data-box">{{ detail.TeacherFullName }}</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Tarea</label>
           <div class="form-control form-control-static data-box">{{ detail.Tarea }}</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Número de Contrato</label>
           <div class="form-control form-control-static data-box">{{ detail.NumeroContrato }}</div>
         </div>
       </div>
+      <div class="col-md-2">
+      <div class="form-group">
+        <label>Factura?</label>
+        <div class="form-control form-control-static data-box small-box">{{ detail.Factura ? 'Tiene' : 'No tiene' }}</div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group">
+        <label>Repetido?</label>
+        <div class="form-control form-control-static data-box small-box">{{ detail.Factura ? 'Tiene' : 'No tiene' }}</div>
+      </div>
+    </div>
     </div>
     
     <!-- Fourth Row: TotalNeto, TotalBruto, and tax boxes -->
@@ -164,18 +183,17 @@
     data () {
       return {
         url: '/AsesoriaPostgrado/Estado',
-        propsToSearch: ['Id', 'Estado', 'Proyecto', 'Modulo', 'UpdatedAt', 'TotalNeto', 'TotalBruto', 'Origen'],
+        propsToSearch: ['Id', 'Estado', 'Proyecto', 'Modulo', 'TeacherFullName', 'Origen'],
         tableColumns: [
           { prop: 'Id', label: '#', minWidth: 50 },
           { prop: 'Origen', label: 'Origen', minWidth: 70 },
           { prop: 'Proyecto', label: 'Proyecto', minWidth: 90 },
-          { prop: 'Modulo', label: 'Módulo', minWidth: 90 },
+          { prop: 'Modulo', label: 'Módulo', minWidth: 70 },
+          { prop: 'TeacherFullName', label: 'Docente', minWidth: 150 },
           { prop: 'Estado', label: 'Estado', minWidth: 100 },
-          { prop: 'Horas', label: 'Horas', minWidth: 70 },
-          { prop: 'MontoHora', label: 'Monto Horas', minWidth: 70 },
-          { prop: 'TotalBruto', label: 'Total Bruto', minWidth: 100 },
-          { prop: 'TotalNeto', label: 'Total Neto', minWidth: 100 },
-          { prop: 'UpdatedAt', label: 'Última modificación', minWidth: 150 }
+          { prop: 'TotalBruto', label: 'Total Bruto', minWidth: 80 },
+          { prop: 'TotalNeto', label: 'Total Neto', minWidth: 80 }
+          // { prop: 'UpdatedAt', label: 'Última modificación', minWidth: 100 }
         ],
         pagination: {
           perPage: 10,

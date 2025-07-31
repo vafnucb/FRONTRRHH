@@ -64,6 +64,24 @@
             </button>
             <h4 class="d-inline-block ml-3" style="color: #1c3b6c;">Lotes de Pago</h4>
           </div>
+          <div class="applied-filters" style="padding: 15px 20px; background-color: #f5f7fa; border-bottom: 1px solid #e6e6e6;">
+        <h5 style="color: #1c3b6c; font-size: 14px; margin-bottom: 10px; font-weight: 500;">
+          Filtros aplicados:
+        </h5>
+        <div v-if="selectedFilters.length > 0">
+          <el-tag
+            v-for="(filter, index) in selectedFilters"
+            :key="index"
+            type="info"
+            style="margin-right: 8px; margin-bottom: 8px;"
+          >
+            {{ filter.label }}: <strong>{{ filter.value }}</strong>
+          </el-tag>
+        </div>
+        <div v-else style="color: #666; font-size: 13px;">
+          Sin filtros aplicados (mostrando todos los registros)
+        </div>
+      </div>
           <div class="card-body">
             <data-tables 
               v-bind="{
@@ -75,13 +93,13 @@
               }"
             >
               <!-- Action buttons -->
-              <template slot="buttons" slot-scope="props">
+              <!-- <template slot="buttons" slot-scope="props">
                 <el-tooltip class="item" effect="dark" content="Ver Detalles" placement="top-start">
                   <a class="btn btn-simple btn-xs btn-icon btn-info" @click="viewDetails(props.queriedData[props.index].BatchId)">
                     <i class="ti-eye"></i>
                   </a>
                 </el-tooltip>
-              </template>
+              </template>-->
             </data-tables>
           </div>
         </div>
@@ -120,20 +138,20 @@ export default {
         'OU',
         'Memo',
         'LineMemo',
-        'BatchState',
-        'AssignedAccount'
+        'BatchState'
+       
       ],
       tableColumns: [
         { prop: 'BatchId', label: '# Lote', minWidth: 80 },
         { 
           prop: 'BranchAbr', 
           label: 'Sede', 
-          minWidth: 100
+          minWidth: 80
         },
         { 
           prop: 'BatchState', 
           label: 'Estado', 
-          minWidth: 120,
+          minWidth: 100,
           formatter: this.formatState,
           render: (h, { row }) => {
             return h('el-tag', {
@@ -151,9 +169,9 @@ export default {
           formatter: this.formatDate 
         },
         { prop: 'CardName', label: 'Docente', minWidth: 180 },
-        { prop: 'OU', label: 'U.O.', minWidth: 100 },
+        { prop: 'OU', label: 'U.O.', minWidth: 80 },
         
-        { prop: 'Memo', label: 'Servicio', minWidth: 200, showOverflowTooltip: true },
+        { prop: 'Memo', label: 'Servicio', minWidth: 150, showOverflowTooltip: true },
         { prop: 'LineMemo', label: 'Detalle', minWidth: 250, showOverflowTooltip: true },
         
         { 
@@ -197,7 +215,26 @@ export default {
       }
       
       return url;
+    },
+    selectedFilters() {
+    const filters = [];
+    
+    if (this.batchFileType) {
+      const type = this.batchTypes.find(t => t.value === this.batchFileType);
+      if (type) {
+        filters.push({ label: 'Tipo de Lote', value: type.label });
+      }
     }
+    
+    if (this.branchId) {
+      const region = this.regions.find(r => r.id === this.branchId);
+      if (region) {
+        filters.push({ label: 'Sede', value: region.name });
+      }
+    }
+    
+    return filters;
+  }
   },
   methods: {
     applyFilters() {
@@ -268,5 +305,22 @@ export default {
 }
 .el-select {
   width: 100%;
+}
+.applied-filters {
+  padding: 15px 20px;
+  background-color: #f5f7fa;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.applied-filters h5 {
+  color: #1c3b6c;
+  font-size: 14px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.el-tag {
+  margin-right: 8px;
+  margin-bottom: 8px;
 }
 </style>

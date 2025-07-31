@@ -16,22 +16,28 @@
   <div class="panel-body">
     <!-- First Row: Id, Origen, Estado -->
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-2">
         <div class="form-group">
           <label>ID</label>
           <div class="form-control form-control-static data-box">{{ detail.Id }}</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="form-group">
           <label>Origen</label>
           <div class="form-control form-control-static data-box">{{ detail.Origen }}</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="form-group">
           <label>Estado</label>
           <div class="form-control form-control-static data-box">{{ detail.Estado }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>Fecha De Creación</label>
+          <div class="form-control form-control-static data-box">{{ detail.CreatedAt }}</div>
         </div>
       </div>
     </div>
@@ -60,30 +66,42 @@
     
     <!-- Third Row: Modalidad, Tarea, Contrato, Acta -->
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Modalidad</label>
           <div class="form-control form-control-static data-box">{{ detail.Modalidad }}</div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Tipo de Tarea</label>
           <div class="form-control form-control-static data-box">{{ detail.Tarea }}</div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Contrato</label>
           <div class="form-control form-control-static data-box">{{ detail.NumeroContrato }}</div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Acta</label>
           <div class="form-control form-control-static data-box">{{ detail.Acta }}</div>
         </div>
       </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Fecha Acta</label>
+          <div class="form-control form-control-static data-box">{{ detail.ActaFecha }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+      <div class="form-group">
+        <label>Repetido?</label>
+        <div class="form-control form-control-static data-box small-box">{{ detail.Factura ? 'Tiene' : 'No tiene' }}</div>
+      </div>
+    </div>
     </div>
     
     <!-- Fourth Row: TotalNeto, TotalBruto and tax boxes -->
@@ -101,11 +119,11 @@
         </div>
     </div>
     <div class="col-md-2">
-    <div class="form-group">
+      <div class="form-group">
         <label>Factura</label>
         <div class="form-control form-control-static data-box small-box">{{ detail.Factura ? 'Tiene' : 'No tiene' }}</div>
+      </div>
     </div>
-</div>
     
     <div class="col-md-6">
         <div class="row">
@@ -182,11 +200,12 @@
           { prop: 'Origen', label: 'Origen', minWidth: 60 },
           { prop: 'Carrera', label: 'Carrera', minWidth: 80 },
           { prop: 'TeacherFullName', label: 'Docente', minWidth: 200 },
+          { prop: 'Tarea', label: 'Tarea', minWidth: 150 },
           { prop: 'StudentFullName', label: 'Estudiante', minWidth: 200 },
           { prop: 'Estado', label: 'Estado', minWidth: 100 },
           { prop: 'TotalBruto', label: 'Total Bruto', minWidth: 90 },
-          { prop: 'TotalNeto', label: 'Total Neto', minWidth: 90 },
-          { prop: 'UpdatedAt', label: 'Último cambio', minWidth: 150, formatter: row => row.UpdatedAt ? `${String(new Date(row.UpdatedAt).getDate()).padStart(2, '0')}/${String(new Date(row.UpdatedAt).getMonth() + 1).padStart(2, '0')}/${new Date(row.UpdatedAt).getFullYear()} ${String(new Date(row.UpdatedAt).getHours()).padStart(2, '0')}:${String(new Date(row.UpdatedAt).getMinutes()).padStart(2, '0')}` : '' }
+          { prop: 'TotalNeto', label: 'Total Neto', minWidth: 90 }
+         // { prop: 'UpdatedAt', label: 'Último cambio', minWidth: 150, formatter: row => row.UpdatedAt ? `${String(new Date(row.UpdatedAt).getDate()).padStart(2, '0')}/${String(new Date(row.UpdatedAt).getMonth() + 1).padStart(2, '0')}/${new Date(row.UpdatedAt).getFullYear()} ${String(new Date(row.UpdatedAt).getHours()).padStart(2, '0')}:${String(new Date(row.UpdatedAt).getMinutes()).padStart(2, '0')}` : '' }
         ],
         pagination: { perPage: 10, currentPage: 1, perPageOptions: [10, 20, 50], total: 0 },
         showWizard: false,
