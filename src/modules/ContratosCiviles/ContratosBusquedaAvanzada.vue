@@ -4,12 +4,12 @@
     <div v-if="!filtersApplied" class="row">
       <div class="col-md-6 offset-md-3 card">
         <div class="card-body">
-          <h4 class="card-title" style="color: #1c3b6c;">Filtrar Lotes de Pago</h4>
+          <h4 class="card-title" style="color: #1c3b6c;">Filtrar Lotes de Servicio</h4>
           
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label style="color: #1c3b6c; font-weight: 500;">Tipo de Lote:</label>
+                <label style="color: #1c3b6c; font-weight: 500;">Tipo de Servicio:</label>
                 <el-select
                   v-model="batchFileType"
                   placeholder="Seleccione tipo"

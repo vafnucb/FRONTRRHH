@@ -16,28 +16,46 @@
   <div class="panel-body">
     <!-- First Row: Id, Origen, Estado -->
     <div class="row">
-      <div class="col-md-2">
+      <div class="col-md-1">
         <div class="form-group">
           <label>ID</label>
           <div class="form-control form-control-static data-box">{{ detail.Id }}</div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-1">
         <div class="form-group">
           <label>Origen</label>
           <div class="form-control form-control-static data-box">{{ detail.Origen }}</div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Estado</label>
           <div class="form-control form-control-static data-box">{{ detail.Estado }}</div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <label>Fecha De Creación</label>
           <div class="form-control form-control-static data-box">{{ detail.CreatedAt }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Usuario Creador</label>
+          <div class="form-control form-control-static data-box">{{ detail.UserCreateName }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+            <label>Última modificación</label>
+            <div class="form-control form-control-static data-box">{{ detail.UpdatedAt }}</div>
+        </div>
+    </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Usuario modificador</label>
+          <div class="form-control form-control-static data-box">{{ detail.UserUpdateName }}</div>
         </div>
       </div>
     </div>
@@ -165,12 +183,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label>Última modificación</label>
-            <div class="form-control form-control-static data-box">{{ detail.UpdatedAt }}</div>
-        </div>
-    </div>
+    
 </div>
     
     <!-- Button Row -->
