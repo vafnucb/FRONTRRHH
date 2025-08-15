@@ -165,7 +165,7 @@
         </div>-->
         <div class="form-group col-md-2" v-if="!dependiente">
           <label >Factura?</label>
-          <input type="checkbox" class="form-control" v-model="tutoria.Factura" @click="facturaOn()">
+          <input type="checkbox" class="form-control" v-model="tutoria.Factura" @change="facturaOn">
         </div>
       <!--ESTUDIANTE-->
       <div class="row" v-if="estudiante">
@@ -189,22 +189,28 @@
           <label >Total Bruto</label>
           <input type="number" placeholder="TB" class="form-control" readonly v-model="brutoCalculado">
         </div>
-        <div v-show="dependiente && !extranjero"  class="form-group col-md-2">
-          <label >Deduccion(%)</label>
-          <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="Deduccion">
-        </div>
-        <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
-          <label >RC-IVA(%)</label>
-          <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IUE" :readonly="!dependiente && !extranjero">
-        </div>
-        <div v-show="!dependiente && !extranjero" class="form-group col-md-2">
-          <label >IT(%)</label>
-          <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IT" :readonly="!dependiente && !extranjero">
-        </div>
-        <div v-show="extranjero" class="form-group col-md-2">
-          <label >IUE Exterior(%)</label>
-          <input type="text" placeholder="IUE en %" class="form-control textBox" v-model.lazy="IUEExterior" :readonly="extranjero">
-        </div>
+        <!-- Deducción: solo dependiente, no extranjero, y sin factura -->
+<div v-if="dependiente && !extranjero && !tutoria.Factura" class="form-group col-md-2">
+  <label>Deduccion(%)</label>
+  <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="Deduccion">
+</div>
+
+<!-- RC-IVA e IT: independiente, no extranjero, y sin factura -->
+<div v-if="!dependiente && !extranjero && !tutoria.Factura" class="form-group col-md-2">
+  <label>RC-IVA(%)</label>
+  <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IUE" :readonly="!dependiente && !extranjero">
+</div>
+<div v-if="!dependiente && !extranjero && !tutoria.Factura" class="form-group col-md-2">
+  <label>IT(%)</label>
+  <input type="number" placeholder="%" class="form-control textBox" v-model.lazy="IT" :readonly="!dependiente && !extranjero">
+</div>
+
+<!-- IUE Exterior: solo extranjero y sin factura -->
+<div v-if="extranjero && !tutoria.Factura" class="form-group col-md-2">
+  <label>IUE Exterior(%)</label>
+  <input type="text" placeholder="IUE en %" class="form-control textBox" v-model.lazy="IUEExterior" :readonly="extranjero">
+</div>
+
         <div class="form-group col-md-2">
           <label >Total Neto</label>
           <input type="number" placeholder="TN" class="form-control textBox" v-model="totalNeto" readonly>
@@ -360,6 +366,15 @@
     computed: {
       // --------------------------Para el cálculo de los montos----------------------------
       totalNeto: function () {
+        if (this.tutoria.Factura) {
+    const bruto = Number(this.tutoria.TotalBruto) || 0
+    this.tutoria.Deduccion = 0
+    this.tutoria.IUE = 0
+    this.tutoria.IT = 0
+    this.tutoria.IUEExterior = 0
+    this.tutoria.TotalNeto = parseFloat(bruto.toFixed(2))
+    return this.tutoria.TotalNeto
+  }
         this.totalBruto = this.tutoria.TotalBruto
         if (this.extranjero) {
           this.IUEExterior = 12.5
@@ -458,14 +473,12 @@
         })
       },
       facturaOn: function () {
-        if (!this.tutoria.Factura) {
-          this.ridy = true
-          this.Deduccion = 0
-          this.IUE = 0
-          this.IT = 0
-        } else {
-          this.ridy = false
-        }
+        if (this.tutoria.Factura) {
+    this.Deduccion = 0
+    this.IUE = 0
+    this.IT = 0
+    this.IUEExterior = 0
+  }
       },
       actualCat: function () {
         for (var i = 0; i < this.teacherArray.length; i++) {
@@ -1058,6 +1071,24 @@
           this.tutoria.ActaFecha = null
         }
       },
+      'tutoria.Factura': function (on) {
+    if (on) {
+      // limpiar montos de impuestos (modelo y auxiliares)
+      this.tutoria.Deduccion = 0
+      this.tutoria.IUE = 0
+      this.tutoria.IT = 0
+      this.tutoria.IUEExterior = 0
+      this.Deduccion = 0
+      this.IUE = 0
+      this.IT = 0
+      this.IUEExterior = 0
+    }
+    // Forzar reevaluación inmediata del neto (por si TotalBruto es string)
+    this.$nextTick(() => {
+      const b = Number(this.tutoria.TotalBruto || 0)
+      this.tutoria.TotalBruto = b.toFixed(2) // mantiene tu formato y dispara reactividad
+    })
+  },
       or: function () {
         if (this.or) {
           // Si no es dependiente no puede ser OR
@@ -1087,25 +1118,24 @@
         this.tutoria.Categoría = ''
       },
       dependiente: function () {
-        if (this.dependiente) {
-          if (!this.or) {
-            this.tutoria.Origen = 'DEPEN'
-          }
-        }
-        if (!this.dependiente && !this.extranjero) {
-          this.tutoria.Origen = 'INDEP'
-          // si no es dependiente no puede ser OR
-          this.or = false
-        }
-        // borrar la categoría actual
-        this.tutoria.Categoría = ''
-        // borramos los datos del docente
-        // this.tutoria.TeacherFullName = ''
-        this.tutoria.TeacherCUNI = ''
-        this.tutoria.TeacherBP = ''
-        this.tutoria.IUE = null
-        this.tutoria.IT = null
-      }
+  if (this.dependiente) {
+    if (!this.or) {
+      this.tutoria.Origen = 'DEPEN'
+    }
+    // Factura no aplica en dependientes
+    this.tutoria.Factura = false
+  }
+  if (!this.dependiente && !this.extranjero) {
+    this.tutoria.Origen = 'INDEP'
+    this.or = false
+  }
+  // borrar la categoría/docente/impuestos (tu lógica existente)
+  this.tutoria.Categoría = ''
+  this.tutoria.TeacherCUNI = ''
+  this.tutoria.TeacherBP = ''
+  this.tutoria.IUE = null
+  this.tutoria.IT = null
+}
     },
     created () {
       if (this.action === 'PUT') {
