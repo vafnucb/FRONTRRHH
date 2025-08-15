@@ -222,7 +222,7 @@ export default {
     if (this.batchFileType) {
       const type = this.batchTypes.find(t => t.value === this.batchFileType);
       if (type) {
-        filters.push({ label: 'Tipo de Lote', value: type.label });
+        filters.push({ label: 'Tipo de Servicio', value: type.label });
       }
     }
     

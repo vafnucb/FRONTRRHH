@@ -6,6 +6,11 @@
           <h5>Datos del Socio de Negocio:</h5>
         </div>
         <div class="panel-body">
+          <!-- Error message for sede validation -->
+          <div v-if="sedeError" class="alert alert-warning" style="margin-bottom: 15px;">
+            <i class="el-icon-warning"></i> Por favor seleccione una sede antes de continuar.
+          </div>
+
           <div class="row">
             <div class="col-md-3 col-md-offset-2">
               <div class="form-group row">
@@ -22,7 +27,7 @@
           </div>
 
           <div class="row">
-            <div class="col-md-2 col-md-offset-2">
+            <div class="col-md-2 col-md-offset-2" style="margin-right: 15px;">
               <div class="form-group row">
                 <label>Habilitar en:</label>
                 <div>
@@ -57,139 +62,149 @@
                 <button class="btn btn-fill btn-success btn-block" @click="send()" style="margin-top: 25px;">Habilitar como persona independiente</button>
               </div>
             </div>
-
           </div>
         </div>
       </div>
 
       <data-tables :url="url2" :propsToSearch="propsToSearch" :tableColumns="tableColumns" :pagination="pagination" :actions="action" :fuente-p-d-f="fuente"></data-tables>
-
     </div>
   </div>
 </template>
+
 <script>
-  import axios from 'axios'
-  import swal from 'sweetalert2'
-  export default {
-    data () {
-      return {
-        fuente: 'SARAI',
-        readonly: true,
-        url: '/civil/',
-        formData: {
-          FullName: null,
-          SAPId: null,
-          NIT: null,
-          Document: null,
-          Abr: ''
+import axios from 'axios'
+import swal from 'sweetalert2'
+export default {
+  data () {
+    return {
+      fuente: 'SARAI',
+      readonly: true,
+      url: '/civil/',
+      sedeError: false, // Added for sede validation
+      formData: {
+        FullName: null,
+        SAPId: null,
+        NIT: null,
+        Document: null,
+        Abr: ''
+      },
+      branchAbrs: ['LPZ', 'SCZ', 'CBB', 'TJA', 'ORU', 'EPC', 'SRE', 'TEO', 'UCE'],
+      action: false,
+      url2: '/CivilbyBranch/0',
+      propsToSearch: ['Id', 'FullName', 'Abr', 'Category', 'SAPId', 'NIT'],
+      tableColumns: [
+        {
+          prop: 'Id',
+          label: '#',
+          minWidth: 25
         },
-        branchAbrs: ['LPZ', 'SCZ', 'CBB', 'TJA', 'ORU', 'EPC', 'SRE', 'TEO', 'UCE'],
-        action: false,
-        url2: '/CivilbyBranch/0',
-        propsToSearch: ['Id', 'FullName', 'Abr', 'Category', 'SAPId', 'NIT'],
-        tableColumns: [
-          {
-            prop: 'Id',
-            label: '#',
-            minWidth: 25
-          },
-          {
-            prop: 'Abr',
-            label: 'Sede',
-            minWidth: 25
-          },
-          {
-            prop: 'SAPId',
-            label: 'SAPId',
-            minWidth: 50
-          },
-          {
-            prop: 'FullName',
-            label: 'FullName',
-            minWidth: 100
-          },
-          {
-            prop: 'NIT',
-            label: 'NIT',
-            minWidth: 100
-          }
-        ],
-        pagination: {
-          perPage: 5,
-          currentPage: 1,
-          perPageOptions: [5, 10, 20],
-          total: 0
+        {
+          prop: 'Abr',
+          label: 'Sede',
+          minWidth: 25
+        },
+        {
+          prop: 'SAPId',
+          label: 'SAPId',
+          minWidth: 50
+        },
+        {
+          prop: 'FullName',
+          label: 'FullName',
+          minWidth: 100
+        },
+        {
+          prop: 'NIT',
+          label: 'NIT',
+          minWidth: 100
         }
-      }
-    },
-    methods: {
-      successMessage () {
-        swal({
-          title: `Buen trabajo!`,
-          text: 'Se guardaron los cambios!',
-          buttonsStyling: false,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          type: 'success'
-        })
-      },
-      errorMessage (text) {
-        swal({
-          title: `Ups!`,
-          text: text,
-          buttonsStyling: false,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          type: 'error'
-        })
-      },
-      findBP () {
-        axios.post('civilfindInSAP/', { CardCode: this.formData.SAPId })
-          .then(response => {
-            this.formData.FullName = response.data.FullName
-            this.formData.SAPId = response.data.SAPId
-            this.formData.NIT = response.data.NIT
-            this.formData.Document = response.data.Document
-          })
-          .catch(error => {
-            if (error.response.status === 404) {
-              this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio no existe\n\t- El Socio de Negocio no es Provedor')
-            }
-            if (error.response.status === 401) {
-              this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio no esta habilitado para su regional')
-            }
-          })
-      },
-      ResetForm () {
-        this.formData.FullName = null
-        this.formData.NIT = null
-        this.formData.Document = null
-        this.formData.Abr = ''
-      },
-      ResetPerson () {
-        this.formData.Document = null
-      },
-      send () {
-        const payload = {
-          SAPId: this.formData.SAPId,
-          Abr: this.formData.Abr
-        }
-        axios.post('civil/', payload)
-          .then(response => {
-            this.successMessage()
-            this.formData.SAPId = null
-            this.$store.dispatch('crud/loadData', this.url2)
-            this.ResetForm()
-          })
-          .catch(error => {
-            if (error.response.status === 401) {
-              this.errorMessage('Su usuario no tiene permisos para usar este socio de negocio')
-            }
-            if (error.response.status === 409) {
-              this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio ya existe')
-            }
-          })
+      ],
+      pagination: {
+        perPage: 5,
+        currentPage: 1,
+        perPageOptions: [5, 10, 20],
+        total: 0
       }
     }
+  },
+  methods: {
+    successMessage () {
+      swal({
+        title: `Buen trabajo!`,
+        text: 'Se guardaron los cambios!',
+        buttonsStyling: false,
+        confirmButtonClass: 'btn btn-success btn-fill',
+        type: 'success'
+      })
+    },
+    errorMessage (text) {
+      swal({
+        title: `Ups!`,
+        text: text,
+        buttonsStyling: false,
+        confirmButtonClass: 'btn btn-success btn-fill',
+        type: 'error'
+      })
+    },
+    findBP () {
+      axios.post('civilfindInSAP/', { CardCode: this.formData.SAPId })
+        .then(response => {
+          this.formData.FullName = response.data.FullName
+          this.formData.SAPId = response.data.SAPId
+          this.formData.NIT = response.data.NIT
+          this.formData.Document = response.data.Document
+        })
+        .catch(error => {
+          if (error.response.status === 404) {
+            this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio no existe\n\t- El Socio de Negocio no es Provedor')
+          }
+          if (error.response.status === 401) {
+            this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio no esta habilitado para su regional')
+          }
+        })
+    },
+    ResetForm () {
+      this.formData.FullName = null
+      this.formData.NIT = null
+      this.formData.Document = null
+      this.formData.Abr = ''
+      this.sedeError = false // Reset error when form is reset
+    },
+    ResetPerson () {
+      this.formData.Document = null
+    },
+    send () {
+      // Validate sede selection
+      if (!this.formData.Abr) {
+        this.sedeError = true;
+        return; // Don't proceed if no sede is selected
+      }
+      
+      // Reset error state if validation passes
+      this.sedeError = false;
+
+      const payload = {
+        SAPId: this.formData.SAPId,
+        Abr: this.formData.Abr
+      }
+      axios.post('civil/', payload)
+        .then(response => {
+          this.successMessage()
+          this.formData.SAPId = null
+          this.$store.dispatch('crud/loadData', this.url2)
+          this.ResetForm()
+        })
+        .catch(error => {
+          if (error.response.status === 401) {
+            this.errorMessage('Su usuario no tiene permisos para usar este socio de negocio')
+          }
+          if (error.response.status === 409) {
+            this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio ya existe')
+          }
+        })
+    }
   }
+}
 </script>
 <style>
 </style>
