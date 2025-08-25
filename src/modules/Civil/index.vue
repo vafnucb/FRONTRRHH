@@ -6,7 +6,10 @@
           <h5>Datos del Socio de Negocio:</h5>
         </div>
         <div class="panel-body">
-          <!-- Error message for sede validation -->
+          <!-- Error message for validation -->
+          <div v-if="sapError" class="alert alert-warning" style="margin-bottom: 15px;">
+            <i class="el-icon-warning"></i> Por favor ingrese un código SAP / CI antes de continuar.
+          </div>
           <div v-if="sedeError" class="alert alert-warning" style="margin-bottom: 15px;">
             <i class="el-icon-warning"></i> Por favor seleccione una sede antes de continuar.
           </div>
@@ -80,6 +83,7 @@ export default {
       fuente: 'SARAI',
       readonly: true,
       url: '/civil/',
+      sapError: false, // Added for SAP validation
       sedeError: false, // Added for sede validation
       formData: {
         FullName: null,
@@ -147,6 +151,15 @@ export default {
       })
     },
     findBP () {
+      // Validate SAP code before searching
+      if (!this.formData.SAPId || this.formData.SAPId.trim() === '') {
+        this.sapError = true;
+        return; // Don't proceed if no SAP code is entered
+      }
+      
+      // Reset error state if validation passes
+      this.sapError = false;
+
       axios.post('civilfindInSAP/', { CardCode: this.formData.SAPId })
         .then(response => {
           this.formData.FullName = response.data.FullName
@@ -168,19 +181,27 @@ export default {
       this.formData.NIT = null
       this.formData.Document = null
       this.formData.Abr = ''
-      this.sedeError = false // Reset error when form is reset
+      this.sapError = false // Reset errors when form is reset
+      this.sedeError = false
     },
     ResetPerson () {
       this.formData.Document = null
     },
     send () {
+      // Validate SAP code
+      if (!this.formData.SAPId || this.formData.SAPId.trim() === '') {
+        this.sapError = true;
+        return; // Don't proceed if no SAP code is entered
+      }
+      
       // Validate sede selection
       if (!this.formData.Abr) {
         this.sedeError = true;
         return; // Don't proceed if no sede is selected
       }
       
-      // Reset error state if validation passes
+      // Reset error states if validation passes
+      this.sapError = false;
       this.sedeError = false;
 
       const payload = {
@@ -208,4 +229,3 @@ export default {
 </script>
 <style>
 </style>
-
