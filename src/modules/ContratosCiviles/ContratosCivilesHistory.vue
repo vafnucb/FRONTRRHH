@@ -2,35 +2,7 @@
   <div class="row">
     <div class="col-md-12 card">
       <template v-if="!showWizard">
-      <!--  <div class="card mb-4 custom-card">
-      <div class="card-body text-center">
-        <h3>Búsqueda Detallada</h3>
-        
-        <input v-model="busqueda" class="form-control input-search" placeholder="Buscar por código, docente, tarea asignada, postulante o nombre del servicio">
-        
-        
-        <div v-if="resultados.length > 0" class="mt-3">
-  <p class="result-message">
-    Tus criterios de búsqueda coinciden con
-    <template v-if="resultados.length === 1">
-      el lote: {{ resultados[0] }}
-    </template>
-    <template v-else>
-      los lotes: {{ resultados.join(', ') }}
-    </template>
-  </p>
-</div>
-
-
-        
-        <div v-else-if="busqueda && resultados.length === 0" class="mt-3">
-          <p class="no-results-message">No se encontraron resultados para la búsqueda.</p>
-        </div>
-        <div v-else class="mt-3">
-          <p class="initial-message">Realiza la búsqueda detallada para localizar un número de lote.</p>
-        </div>
-      </div>
-    </div>-->
+    
         <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'SARAI'}">
           <template slot="buttons" slot-scope="props">
             <el-tooltip class="item" effect="dark" content="Revisar" placement="top-start">
@@ -313,7 +285,7 @@
             this.ID = response.data.Id
             console.log(response.data.FileType)
             this.SERVICIO = response.data.FileType
-            console.log('TDDDD', response.data.TipoDocente)
+            console.log(response.data.TipoDocente)
             this.TIPODOCENTE = response.data.TipoDocente
             console.log(response.data.BranchesId)
             if (response.data.BranchesId === 3) {
@@ -341,6 +313,7 @@
               this.$store.commit('civ/uploadedFilesIdSetter', id)
               this.$store.commit('civ/segmentoSetter', response.data.BranchesId)
               this.$store.commit('civ/tipoArchivoSetter', response.data.FileType)
+              this.$store.commit('civ/tipoDocenteSetter', response.data.TipoDocente) // New line
               this.$store.dispatch('civ/uploadedFiles')
               this.showWizard = true
             } else {

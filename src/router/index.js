@@ -67,12 +67,14 @@ import HistorialCivil from 'src/modules/Civil/HistorialDocente'
 import ContratosCiviles from 'src/modules/ContratosCiviles'
 import ContratosCivilesHistory from 'src/modules/ContratosCiviles/ContratosCivilesHistory'
 import ContratosCivilesAprobacion from 'src/modules/ContratosCiviles/ContratosCivilesAprobacion'
+import ContratosBusquedaAvanzada from 'src/modules/ContratosCiviles/ContratosBusquedaAvanzada'
 // Asesorías de Docentes
 import Asesoria from 'src/modules/AsesoriaDocente/index'
 import RegistroTutoria from 'src/modules/AsesoriaDocente/ABM/RegistroTutorias'
 import AprobacionTutoria from 'src/modules/AsesoriaDocente/AprobacionTutorias'
 import RevisionTutorias from 'src/modules/AsesoriaDocente/RevisionTutorias'
 import BusquedaAvanzada from 'src/modules/AsesoriaDocente/Busqueda/BusquedaReporte'
+import EstadoRegistro from 'src/modules/AsesoriaDocente/EstadoRegistro.vue'
 
 // Asesorías de Post
 import AsesoriaPost from 'src/modules/AsesoriaDocentePost/index'
@@ -83,6 +85,8 @@ import HistorialPostgrado from 'src/modules/AsesoriaDocentePost/HistorialPostgra
 import BusqAvanzadaPost from 'src/modules/AsesoriaDocentePost/Busqueda/BusquedaReporte'
 import BusqFechas from 'src/modules/AsesoriaDocentePost/Busqueda/BusquedaXFechas'
 import RevisionTutoriasPost from 'src/modules/AsesoriaDocentePost/RevisionTutoriasPost'
+import EstadoRegistroPostgrado from 'src/modules/AsesoriaDocentePost/EstadoRegistroPostgrado'
+import PagosPendientes from 'src/modules/AsesoriaDocentePost/PagosPendientes'
 
 import TipoTarea from 'src/modules/AsesoriaDocente/Admin/TipoTarea'
 import Modalidades from 'src/modules/AsesoriaDocente/Admin/Modalidades'
@@ -303,9 +307,19 @@ let Menu = {
       component: ContratosCivilesAprobacion
     },
     {
+      path: '/BusquedaAvanzadaSarai',
+      name: 'Búsqueda Avanzada',
+      component: ContratosBusquedaAvanzada
+    },
+    {
       path: '/AsesoriaDocente',
       name: 'Historial Pregrado',
       component: Asesoria
+    },
+    {
+      path: '/EstadoRegistro',
+      name: 'Estado de Registros',
+      component: EstadoRegistro
     },
     {
       path: '/RegistroTutorias',
@@ -318,6 +332,16 @@ let Menu = {
       component: AprobacionTutoria
     },
     {
+      path: '/EstadoRegistroPostgrado',
+      name: 'Estado de Registros Postgrado',
+      component: EstadoRegistroPostgrado
+    },
+    {
+      path: '/PagosPendientes',
+      name: 'Pagos Pendientes',
+      component: PagosPendientes
+    },
+    {
       path: '/RevisionTutorias',
       name: 'Revisión registros Pregrado',
       component: RevisionTutorias
@@ -326,6 +350,11 @@ let Menu = {
       path: '/BusquedaAvanzada',
       name: 'Búsqueda Avanzada Pre',
       component: BusquedaAvanzada
+    },
+    {
+      path: '/EstadoRegistro',
+      name: 'Estado de Registros',
+      component: EstadoRegistro
     },
     {
       path: '/BusquedaIndividual',

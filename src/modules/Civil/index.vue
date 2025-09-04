@@ -6,6 +6,14 @@
           <h5>Datos del Socio de Negocio:</h5>
         </div>
         <div class="panel-body">
+          <!-- Error message for validation -->
+          <div v-if="sapError" class="alert alert-warning" style="margin-bottom: 15px;">
+            <i class="el-icon-warning"></i> Por favor ingrese un código SAP / CI antes de continuar.
+          </div>
+          <div v-if="sedeError" class="alert alert-warning" style="margin-bottom: 15px;">
+            <i class="el-icon-warning"></i> Por favor seleccione una sede antes de continuar.
+          </div>
+
           <div class="row">
             <div class="col-md-3 col-md-offset-2">
               <div class="form-group row">
@@ -20,8 +28,21 @@
               <button class="btn btn-fill btn-success btn-block"  id="search-person" @click="findBP()" style="margin-top: 25px;">Buscar</button>
             </div>
           </div>
+
           <div class="row">
-            <div class="col-md-2 col-md-offset-2">
+            <div class="col-md-2 col-md-offset-2" style="margin-right: 15px;">
+              <div class="form-group row">
+                <label>Habilitar en:</label>
+                <div>
+                  <select class="form-control" v-model="formData.Abr">
+                    <option disabled value="">Seleccione una sede</option>
+                    <option v-for="b in branchAbrs" :key="b" :value="b">{{ b }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-2">
               <div class="form-group row">
                 <label>NIT</label>
                 <div>
@@ -38,141 +59,173 @@
                 </div>
               </div>
             </div>
+
             <div class="col-md-7 col-md-offset-2">
               <div class="form-group row">
                 <button class="btn btn-fill btn-success btn-block" @click="send()" style="margin-top: 25px;">Habilitar como persona independiente</button>
               </div>
             </div>
-
           </div>
         </div>
       </div>
 
       <data-tables :url="url2" :propsToSearch="propsToSearch" :tableColumns="tableColumns" :pagination="pagination" :actions="action" :fuente-p-d-f="fuente"></data-tables>
-
     </div>
   </div>
 </template>
+
 <script>
-  import axios from 'axios'
-  import swal from 'sweetalert2'
-  export default {
-    computed: {
-    },
-    data () {
-      return {
-        fuente: 'SARAI',
-        readonly: true,
-        url: '/civil/',
-        formData: {
-          FullName: null,
-          SAPId: null,
-          NIT: null,
-          Document: null
+import axios from 'axios'
+import swal from 'sweetalert2'
+export default {
+  data () {
+    return {
+      fuente: 'SARAI',
+      readonly: true,
+      url: '/civil/',
+      sapError: false, // Added for SAP validation
+      sedeError: false, // Added for sede validation
+      formData: {
+        FullName: null,
+        SAPId: null,
+        NIT: null,
+        Document: null,
+        Abr: ''
+      },
+      branchAbrs: ['LPZ', 'SCZ', 'CBB', 'TJA', 'ORU', 'EPC', 'SRE', 'TEO', 'UCE'],
+      action: false,
+      url2: '/CivilbyBranch/0',
+      propsToSearch: ['Id', 'FullName', 'Abr', 'Category', 'SAPId', 'NIT'],
+      tableColumns: [
+        {
+          prop: 'Id',
+          label: '#',
+          minWidth: 25
         },
-        action: false,
-        url2: '/CivilbyBranch/0',
-        propsToSearch: ['Id', 'FullName', 'Abr', 'Category', 'SAPId', 'NIT'],
-        tableColumns: [
-          {
-            prop: 'Id',
-            label: '#',
-            minWidth: 25
-          },
-          {
-            prop: 'Abr',
-            label: 'Regional',
-            minWidth: 25
-          },
-          {
-            prop: 'SAPId',
-            label: 'SAPId',
-            minWidth: 50
-          },
-          {
-            prop: 'FullName',
-            label: 'FullName',
-            minWidth: 100
-          },
-          {
-            prop: 'NIT',
-            label: 'NIT',
-            minWidth: 100
-          }
-        ],
-        pagination: {
-          perPage: 5,
-          currentPage: 1,
-          perPageOptions: [5, 10, 20],
-          total: 0
+        {
+          prop: 'Abr',
+          label: 'Sede',
+          minWidth: 25
+        },
+        {
+          prop: 'SAPId',
+          label: 'SAPId',
+          minWidth: 50
+        },
+        {
+          prop: 'FullName',
+          label: 'FullName',
+          minWidth: 100
+        },
+        {
+          prop: 'NIT',
+          label: 'NIT',
+          minWidth: 100
         }
-      }
-    },
-    methods: {
-      successMessage: function () {
-        swal({
-          title: `Buen trabajo!`,
-          text: 'Se guardaron los cambios!',
-          buttonsStyling: false,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          type: 'success'
-        })
-      },
-      errorMessage: function (text) {
-        swal({
-          title: `Ups!`,
-          text: text,
-          buttonsStyling: false,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          type: 'error'
-        })
-      },
-      findBP: function () {
-        axios.post('civilfindInSAP/', {'CardCode': this.formData.SAPId})
-          .then(response => {
-            this.formData.FullName = response.data.FullName
-            this.formData.SAPId = response.data.SAPId
-            this.formData.NIT = response.data.NIT
-            this.formData.Document = response.data.Document
-          })
-          .catch(error => {
-            if (error.response.status === 404) {
-              this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio no existe\n\t- El Socio de Negocio no es Provedor')
-            }
-            if (error.response.status === 401) {
-              this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio no esta habilitado para su regional')
-            }
-          })
-      },
-      ResetForm: function () {
-        this.formData.FullName = null
-        this.formData.NIT = null
-        this.formData.Document = null
-      },
-      send: function () {
-        console.log(this.formData.FullName)
-        console.log(this.formData.SAPId)
-        console.log(this.formData.NIT)
-        console.log(this.formData.Document)
-        axios.post('civil/', this.formData)
-          .then(response => {
-            this.successMessage()
-            this.formData.SAPId = null
-            // permite cargar la información después de haberla mandado
-            this.$store.dispatch('crud/loadData', this.url2)
-            this.ResetForm()
-          })
-          .catch(error => {
-            if (error.response.status === 401) {
-              this.errorMessage('Su usuario no tiene permisos para usar este socio de negocio')
-            }
-            if (error.response.status === 409) {
-              this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio ya existe')
-            }
-          })
+      ],
+      pagination: {
+        perPage: 5,
+        currentPage: 1,
+        perPageOptions: [5, 10, 20],
+        total: 0
       }
     }
+  },
+  methods: {
+    successMessage () {
+      swal({
+        title: `Buen trabajo!`,
+        text: 'Se guardaron los cambios!',
+        buttonsStyling: false,
+        confirmButtonClass: 'btn btn-success btn-fill',
+        type: 'success'
+      })
+    },
+    errorMessage (text) {
+      swal({
+        title: `Ups!`,
+        text: text,
+        buttonsStyling: false,
+        confirmButtonClass: 'btn btn-success btn-fill',
+        type: 'error'
+      })
+    },
+    findBP () {
+      // Validate SAP code before searching
+      if (!this.formData.SAPId || this.formData.SAPId.trim() === '') {
+        this.sapError = true;
+        return; // Don't proceed if no SAP code is entered
+      }
+      
+      // Reset error state if validation passes
+      this.sapError = false;
+
+      axios.post('civilfindInSAP/', { CardCode: this.formData.SAPId })
+        .then(response => {
+          this.formData.FullName = response.data.FullName
+          this.formData.SAPId = response.data.SAPId
+          this.formData.NIT = response.data.NIT
+          this.formData.Document = response.data.Document
+        })
+        .catch(error => {
+          if (error.response.status === 404) {
+            this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio no existe\n\t- El Socio de Negocio no es Provedor')
+          }
+          if (error.response.status === 401) {
+            this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio no esta habilitado para su regional')
+          }
+        })
+    },
+    ResetForm () {
+      this.formData.FullName = null
+      this.formData.NIT = null
+      this.formData.Document = null
+      this.formData.Abr = ''
+      this.sapError = false // Reset errors when form is reset
+      this.sedeError = false
+    },
+    ResetPerson () {
+      this.formData.Document = null
+    },
+    send () {
+      // Validate SAP code
+      if (!this.formData.SAPId || this.formData.SAPId.trim() === '') {
+        this.sapError = true;
+        return; // Don't proceed if no SAP code is entered
+      }
+      
+      // Validate sede selection
+      if (!this.formData.Abr) {
+        this.sedeError = true;
+        return; // Don't proceed if no sede is selected
+      }
+      
+      // Reset error states if validation passes
+      this.sapError = false;
+      this.sedeError = false;
+
+      const payload = {
+        SAPId: this.formData.SAPId,
+        Abr: this.formData.Abr
+      }
+      axios.post('civil/', payload)
+        .then(response => {
+          this.successMessage()
+          this.formData.SAPId = null
+          this.$store.dispatch('crud/loadData', this.url2)
+          this.ResetForm()
+        })
+        .catch(error => {
+          if (error.response.status === 401) {
+            this.errorMessage('Su usuario no tiene permisos para usar este socio de negocio')
+          }
+          if (error.response.status === 409) {
+            this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio ya existe')
+          }
+        })
+    }
   }
+}
 </script>
 <style>
 </style>

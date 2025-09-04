@@ -24,7 +24,13 @@
         "no-unused-vars": "warn",
         "constructor-super": "warn",
         "valid-typeof": "warn",
-        "new-cap": 0
+        "new-cap": 0,
+        "space-before-function-paren": 0,
+        "brace-style": "off",
+        "semi": 0,
+        "no-trailing-spaces": 0,
+        "indent": "off",
+        "comma-dangle": "off"
     },
     // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
     "extends": "standard",

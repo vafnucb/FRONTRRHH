@@ -519,7 +519,7 @@
           cancelButtonClass: 'btn btn-danger btn-fill',
           buttonsStyling: false
         }).then(function () {
-          axios.delete('DeleteRecordPostgrado/' + index)
+          axios.delete('DeleteRecordPostgradoLote/' + index)
             .then(response => {
               swal({
                 title: 'Eliminado!',
