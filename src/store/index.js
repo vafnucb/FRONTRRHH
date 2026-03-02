@@ -4,6 +4,7 @@ import authModule from './modules/auth'
 import crudModule from './modules/crud'
 import distModule from './modules/distribution'
 import civModule from './modules/civil'
+import asig from './modules/asig/'
 
 Vue.use(Vuex)
 
@@ -12,6 +13,7 @@ export default new Vuex.Store({
     auth: authModule,
     crud: crudModule,
     dist: distModule,
-    civ: civModule
+    civ: civModule,
+    asig
   }
 })

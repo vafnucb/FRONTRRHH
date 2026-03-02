@@ -69,7 +69,26 @@
         </div>
       </div>
 
-      <data-tables :url="url2" :propsToSearch="propsToSearch" :tableColumns="tableColumns" :pagination="pagination" :actions="action" :fuente-p-d-f="fuente"></data-tables>
+      <data-tables
+  :url="url2"
+  :propsToSearch="propsToSearch"
+  :tableColumns="tableColumns"
+  :pagination="pagination"
+  :actions="action"
+  :fuente-p-d-f="fuente">
+
+  <!-- Slot que se inyecta en la columna de acciones -->
+  <template slot="buttons" slot-scope="scope">
+    <button
+      v-if="isDuplicate(scope.queriedData[scope.index])"
+      class="btn btn-xs"
+      :class="scope.queriedData[scope.index].IsEnabled ? 'btn-danger btn-fill' : 'btn-success btn-fill'"
+      @click="toggleCivil(scope.queriedData[scope.index])">
+      {{ scope.queriedData[scope.index].IsEnabled ? 'Deshabilitar' : 'Habilitar' }}
+    </button>
+  </template>
+</data-tables>
+
     </div>
   </div>
 </template>
@@ -93,7 +112,7 @@ export default {
         Abr: ''
       },
       branchAbrs: ['LPZ', 'SCZ', 'CBB', 'TJA', 'ORU', 'EPC', 'SRE', 'TEO', 'UCE'],
-      action: false,
+      action: true,
       url2: '/CivilbyBranch/0',
       propsToSearch: ['Id', 'FullName', 'Abr', 'Category', 'SAPId', 'NIT'],
       tableColumns: [
@@ -129,6 +148,36 @@ export default {
         perPageOptions: [5, 10, 20],
         total: 0
       }
+    }
+  },
+  computed: {
+    // Mapa de Ids que son duplicados (mismo FullName + BranchesId)
+    duplicateIds () {
+      const rows = this.$store.state.crud.data || []
+      const groups = {}
+
+      rows.forEach(r => {
+        // FullName + BranchesId definen a la persona en la sede
+        const fullName = (r.FullName || '').toUpperCase().trim()
+        const branchId = r.BranchesId || ''
+        const key = fullName + '|' + branchId
+
+        if (!groups[key]) {
+          groups[key] = []
+        }
+        groups[key].push(r)
+      })
+
+      const dup = {}
+      Object.keys(groups).forEach(key => {
+        if (groups[key].length > 1) {
+          groups[key].forEach(r => {
+            dup[r.Id] = true
+          })
+        }
+      })
+
+      return dup
     }
   },
   methods: {
@@ -223,7 +272,52 @@ export default {
             this.errorMessage('Socio de Negocio no valido:\n\t- El Socio de Negocio ya existe')
           }
         })
-    }
+    },
+    isDuplicate (row) {
+      return !!this.duplicateIds[row.Id]
+    },
+
+    // NUEVO: habilitar / deshabilitar
+    toggleCivil (row) {
+  console.log('toggleCivil CLICKED, row:', row)
+
+  // Solo permitir si realmente es duplicado
+  if (!this.isDuplicate(row)) {
+    console.warn('No es duplicado, no se hace nada')
+    this.errorMessage('Solo se pueden (des)habilitar registros duplicados en la misma sede.')
+    return
+  }
+
+  const newStatus = !row.IsEnabled
+  console.log('Nuevo estado que se enviará:', newStatus)
+
+  // Confirmación simple del navegador (para descartar problemas con sweetalert2)
+  if (!window.confirm(`¿Seguro que deseas ${newStatus ? 'habilitar' : 'deshabilitar'} a ${row.FullName} en la sede ${row.Abr}?`)) {
+    console.log('Usuario canceló en window.confirm')
+    return
+  }
+
+  axios.post('CivilChangeStatus', {
+    Id: row.Id,
+    IsEnabled: newStatus
+  })
+    .then(() => {
+      console.log('Respuesta OK de civil/ChangeStatus')
+      this.successMessage()
+      this.$store.dispatch('crud/loadData', this.url2)
+    })
+    .catch(error => {
+      console.error('Error en civil/ChangeStatus:', error)
+      if (error.response && error.response.status === 401) {
+        this.errorMessage('No tiene permisos para modificar este registro.')
+      } else if (error.response && error.response.status === 404) {
+        this.errorMessage('El registro ya no existe.')
+      } else {
+        this.errorMessage('Ocurrió un error al cambiar el estado.')
+      }
+    })
+}
+
   }
 }
 </script>

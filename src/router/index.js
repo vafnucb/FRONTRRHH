@@ -92,6 +92,15 @@ import TipoTarea from 'src/modules/AsesoriaDocente/Admin/TipoTarea'
 import Modalidades from 'src/modules/AsesoriaDocente/Admin/Modalidades'
 import Interregional from 'src/modules/Interregional'
 import BajaAdmin from 'src/modules/Contract/Admin/BajaAdmin'
+
+// Isaac3
+import Assignments from 'src/modules/ContratosIndependientes/Assignments.vue'
+import ContratosIndependientes from 'src/modules/ContratosIndependientes/index'
+import SchedulePayments from 'src/modules/ContratosIndependientes/SchedulePayments.vue'
+import ProgramPayment from 'src/modules/ContratosIndependientes/ProgramPayment.vue'
+import ExecutedPayments from 'src/modules/ContratosIndependientes/ExecutedPayments.vue'
+
+
 // import store from '../store'
 import RRHHSearch from 'src/modules/RRHHSearch'
 import BusquedaGrupal from 'src/modules/RRHHSearch/BusquedaGrupal.vue'
@@ -451,6 +460,32 @@ let Menu = {
       name: 'Búsqueda Avanzada',
       component: BusqAvanzadaPost
     },
+    {
+      path: '/Asignaciones/',
+      name: 'Asignaciones',
+      component: Assignments
+    },
+    {
+      path: '/Contratos/',
+      name: 'Contratos',
+      component: ContratosIndependientes
+    },
+    {
+      path: '/PagosPlanificados/',
+      name: 'PagosPlanificados',
+      component: SchedulePayments
+    },
+    {
+      path: '/PagosAprobados/',
+      name: 'PagosAprobados',
+      component: ExecutedPayments
+    },
+    {
+      path: '/ProgramarPago/',
+      name: 'ProgramacionPagos',
+      component: ProgramPayment
+    },
+   
     {
       path: '/BusquedaFechas/',
       name: 'Búsqueda Fechas',

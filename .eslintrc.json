@@ -30,7 +30,9 @@
         "semi": 0,
         "no-trailing-spaces": 0,
         "indent": "off",
-        "comma-dangle": "off"
+        "comma-dangle": "off",
+        "no-multi-spaces": "off",
+        "no-use-before-define": "off"
     },
     // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
     "extends": "standard",
