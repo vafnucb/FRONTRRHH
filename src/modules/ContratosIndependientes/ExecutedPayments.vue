@@ -65,6 +65,18 @@
 
                                     <div class="col-md-2">
                                         <div class="form-group">
+                                            <label>Tipo Docente</label>
+                                            <el-select v-model="filters.tipoDocente" placeholder="Seleccione tipo"
+                                                clearable @change="onTipoDocenteChange">
+                                                <el-option value="INDEPENDIENTE_CON_FACTURA" label="Con Factura (0%)"></el-option>
+                                                <el-option value="INDEPENDIENTE_SIN_FACTURA" label="Sin Factura (16%)"></el-option>
+                                                <el-option value="EXTRANJERO" label="Extranjero (12.5%)"></el-option>
+                                            </el-select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
                                             <label>Buscar</label>
                                             <input type="search" class="form-control" placeholder="CI, nombre..."
                                                 v-model="searchQuery">
@@ -106,7 +118,7 @@
 
                                 <!-- TABLE -->
                                 <div class="table-wrapper">
-                                    <el-table :data="filteredPagos" v-loading="loading" border style="width: 100%"
+                                  <el-table ref="pendientesTable" :data="filteredPagos" v-loading="loading" border style="width: 100%"
                                         @selection-change="handleSelectionChange">
 
                                         <el-table-column type="selection" width="55" align="center">
@@ -398,7 +410,8 @@ export default {
         branchesId: null,
         periodoId: null,
         mes: null,
-        anio: null
+        anio: null,
+        tipoDocente: null
       },
       
       // HISTORICO
@@ -445,19 +458,25 @@ export default {
   
   computed: {
     filteredPagos () {
-      if (!this.searchQuery) {
-        return this.pagos
+      let result = this.pagos
+
+      if (this.filters.tipoDocente) {
+        result = result.filter(p => p.TipoDocente === this.filters.tipoDocente)
       }
-      
-      const query = this.searchQuery.toUpperCase().trim()
-      return this.pagos.filter(p => {
-        return (
-          (p.CiDocente && p.CiDocente.toUpperCase().includes(query)) ||
-          (p.NombreCompleto && p.NombreCompleto.toUpperCase().includes(query)) ||
-          (p.NumeroContrato && p.NumeroContrato.toUpperCase().includes(query)) ||
-          (p.Sigla && p.Sigla.toUpperCase().includes(query))
-        )
-      })
+
+      if (this.searchQuery) {
+        const query = this.searchQuery.toUpperCase().trim()
+        result = result.filter(p => {
+          return (
+            (p.CiDocente && p.CiDocente.toUpperCase().includes(query)) ||
+            (p.NombreCompleto && p.NombreCompleto.toUpperCase().includes(query)) ||
+            (p.NumeroContrato && p.NumeroContrato.toUpperCase().includes(query)) ||
+            (p.Sigla && p.Sigla.toUpperCase().includes(query))
+          )
+        })
+      }
+
+      return result
     },
     
     totalMontoContrato () {
@@ -532,6 +551,13 @@ export default {
     
     handleSelectionChange (selection) {
       this.selectedPagos = selection
+    },
+
+    onTipoDocenteChange () {
+      this.selectedPagos = []
+      if (this.$refs.pendientesTable) {
+        this.$refs.pendientesTable.clearSelection()
+      }
     },
     
     aprobarSeleccionados () {
