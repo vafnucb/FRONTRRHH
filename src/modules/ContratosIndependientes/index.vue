@@ -93,6 +93,15 @@
               </div>
             </div>
 
+            <!-- REPORT BUTTONS -->
+            <div class="row" style="margin-bottom: 15px;" v-if="contratos.length > 0">
+              <div class="col-md-12 text-right">
+                <button class="btn btn-info btn-fill btn-sm" @click="downloadAllContractsReport" :disabled="loading">
+                  <i class="fa fa-file-word-o"></i> Descargar Reporte General
+                </button>
+              </div>
+            </div>
+
             <!-- TABLE -->
             <div class="table-wrapper">
               <el-table
@@ -168,6 +177,12 @@
                         title="Ver detalle">
                         <i class="fa fa-eye"></i>
                       </button>
+                      <button
+                        class="btn btn-primary btn-xs btn-simple"
+                        @click="downloadContratoReport(scope.row)"
+                        title="Descargar reporte Word">
+                        <i class="fa fa-download"></i>
+                      </button>
                       
                     </div>
                   </template>
@@ -216,6 +231,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import ContratoDetailModal from './Components/ContratoDetailModal.vue'
+import { generateSingleContractReport, generateAllContractsReport, downloadWordFile } from './utils/ContratosWordReport'
 
 export default {
   name: 'Contratos',
@@ -384,6 +400,31 @@ export default {
   this.selectedContratoId = contrato.Id
   this.showDetailModal = true
 },
+downloadContratoReport (contrato) {
+      // Fetch full details then generate report
+      axios.get(`/AsigContratos/GetDetalle/${contrato.Id}`, {
+        headers: { token: localStorage.getItem('token') }
+      })
+        .then(response => {
+          const contratoData = response.data.Contrato
+          const asignaciones = response.data.Asignaciones || []
+          const html = generateSingleContractReport(contratoData, asignaciones)
+          downloadWordFile(html, `Contrato_${contratoData.NumeroContrato || contrato.Id}.doc`)
+        })
+        .catch(error => {
+          console.error('Error generando reporte:', error)
+          Message({
+            message: 'Error al generar el reporte del contrato',
+            type: 'error',
+            duration: 3000
+          })
+        })
+    },
+
+    downloadAllContractsReport () {
+      const html = generateAllContractsReport(this.contratos, this.filters, this.branches, this.periodos)
+      downloadWordFile(html, `Reporte_Contratos_${Date.now()}.doc`)
+    },
     
     editContrato (contrato) {
       console.log('Edit contrato:', contrato)

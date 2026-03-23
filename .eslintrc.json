@@ -32,7 +32,8 @@
         "indent": "off",
         "comma-dangle": "off",
         "no-multi-spaces": "off",
-        "no-use-before-define": "off"
+        "no-use-before-define": "off",
+        "eol-last": "off"
     },
     // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
     "extends": "standard",
