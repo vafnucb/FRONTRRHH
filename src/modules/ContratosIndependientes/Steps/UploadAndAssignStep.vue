@@ -1147,7 +1147,7 @@ selectedTotalAmount () {
       token: localStorage.getItem('token')
     }
   })
-    .then(() => {
+  .then((response) => {
       this.selectedIds = []
       this.contractNumber = ''
       this.observaciones = ''  // NEW: Clear observaciones
@@ -1160,7 +1160,7 @@ selectedTotalAmount () {
       }
 
       // Show warning if present
-    if (response.data.Warning) {
+    if (response.data && response.data.Warning) {
       setTimeout(() => {
         this.notification = {
           type: 'warning',
