@@ -219,14 +219,14 @@
 
                                   <!-- ACTIONS -->
                                   <div class="row" style="margin-top: 20px;" v-if="selectedPagos.length > 0">
-                                      <div class="col-md-12 text-center">
-                                          <button class="btn btn-success btn-fill btn-lg"
-                                              @click="aprobarSeleccionados">
-                                              <i class="fa fa-check"></i>
-                                              Aprobar Seleccionados ({{ selectedPagos.length }})
-                                          </button>
-                                      </div>
-                                  </div>
+                                        <div class="col-md-12 text-center">
+                                            <button class="btn btn-success btn-fill btn-lg"
+                                                @click="aprobarSeleccionados">
+                                                <i class="fa fa-check"></i>
+                                                Aprobar Seleccionados ({{ selectedPagos.length }})
+                                            </button>
+                                        </div>
+                                    </div>
                               </div>
 
                               <!-- EMPTY STATE -->
@@ -303,6 +303,15 @@
                                           <input type="date" class="form-control"
                                               v-model="filtersHistorico.fechaHasta" @change="loadHistorico">
                                       </div>
+                                  </div>
+                              </div>
+
+                              <!-- HISTORICO ACTIONS -->
+                              <div class="row" style="margin-bottom: 15px;" v-if="pagosHistorico.length > 0">
+                                  <div class="col-md-12 text-right">
+                                      <button class="btn btn-danger btn-fill btn-sm" @click="downloadHistoricoPDF" :disabled="loadingHistorico || generatingPDF">
+                                          <i class="fa fa-file-text-o"></i> Descargar PDF
+                                      </button>
                                   </div>
                               </div>
 
@@ -408,6 +417,8 @@
 
 <script>
 import axios from 'axios'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 import { Message, MessageBox, Tabs, TabPane, Pagination } from 'element-ui'
 import DetalleEjecucionModal from './Components/EjecucionDetailModal.vue'
 
@@ -434,6 +445,7 @@ data () {
     showDetailModal: false,
     selectedPagoId: null,
     showExcelValues: false,
+    generatingPDF: false,
     
     filters: {
       branchesId: null,
@@ -657,6 +669,7 @@ methods: {
           type: 'success',
           duration: 3000
         })
+        this.generatePDFForIds(pagosIds)
         
         this.loading = false
         this.loadPagos()
@@ -768,6 +781,166 @@ axios.post('/EjecucionPagos/RechazarPago', {
     })
   })
 },
+// PDF METHODS
+generatePDFForIds (pagosIds) {
+      this.generatingPDF = true
+      axios.post('/EjecucionPagos/GetValoresExcelLote', {
+        PagosIds: pagosIds
+      }, {
+        headers: { token: localStorage.getItem('token') }
+      })
+        .then(function (response) {
+          var data = response.data || []
+          this.buildAndDownloadPDF(data, 'Pagos_Aprobados_' + Date.now() + '.pdf')
+          this.generatingPDF = false
+        }.bind(this))
+        .catch(function (error) {
+          console.error('Error generando PDF:', error)
+          Message({
+            message: 'No se pudo generar el PDF',
+            type: 'error',
+            duration: 3000
+          })
+          this.generatingPDF = false
+        }.bind(this))
+    },
+
+    downloadHistoricoPDF () {
+      var ids = this.pagosHistorico.map(function (p) { return p.PagoEjecutadoId })
+      if (ids.length === 0) {
+        Message({ message: 'No hay pagos para exportar', type: 'warning', duration: 3000 })
+        return
+      }
+      this.generatePDFForIds(ids)
+    },
+
+    buildAndDownloadPDF (data, filename) {
+      var doc = new jsPDF('landscape')
+
+      // Header
+      doc.setFontSize(16)
+      doc.setFontStyle('bold')
+      doc.text('Universidad Católica Boliviana "San Pablo"', 148, 15, null, null, 'center')
+      doc.setFontSize(12)
+      doc.text('Reporte de Pagos Aprobados', 148, 23, null, null, 'center')
+      doc.setFontSize(8)
+      doc.setFontStyle('normal')
+      var now = new Date()
+      doc.text('Fecha: ' + now.toLocaleDateString('es-BO') + ' ' + now.toLocaleTimeString('es-BO'), 280, 10, null, null, 'right')
+      doc.text('Total registros: ' + data.length, 280, 15, null, null, 'right')
+
+      // Calculate totals
+      var totalContrato = 0
+      var totalIUE = 0
+      var totalIT = 0
+      var totalIUEExt = 0
+      var totalPagar = 0
+
+      data.forEach(function (row) {
+        totalContrato += row.MontoContrato || 0
+        totalIUE += row.MontoIUE || 0
+        totalIT += row.MontoIT || 0
+        totalIUEExt += row.IUEExterior || 0
+        totalPagar += row.MontoAPagar || 0
+      })
+
+      // Table headers (16 columns)
+      var headers = [
+        'Cod. Socio',
+        'Nombre Socio',
+        'Cod. Dep.',
+        'PEI/PO',
+        'Nombre Servicio',
+        'Periodo',
+        'Sigla',
+        'Paralelo',
+        'Cod. Paralelo SAP',
+        'Cuenta',
+        'Monto Contrato',
+        'Monto IUE',
+        'Monto IT',
+        'IUE Exterior',
+        'Monto a Pagar',
+        'Observaciones'
+      ]
+
+      // Table body
+      var body = data.map(function (row) {
+        return [
+          row.CodigoSocio || '',
+          row.NombreSocio || '',
+          row.CodDependencia || '',
+          row.PEIPO || '',
+          row.NombreDelServicio || '',
+          row.PeriodoAcademico || '',
+          row.SiglaAsignatura || '',
+          row.Paralelo || '',
+          row.CodigoParaleloSAP || '',
+          row.CuentaAsignada || '',
+          row.MontoContrato ? row.MontoContrato.toFixed(2) : '0.00',
+          row.MontoIUE ? row.MontoIUE.toFixed(2) : '0.00',
+          row.MontoIT ? row.MontoIT.toFixed(2) : '0.00',
+          row.IUEExterior ? row.IUEExterior.toFixed(2) : '0.00',
+          row.MontoAPagar ? row.MontoAPagar.toFixed(2) : '0.00',
+          row.Observaciones || ''
+        ]
+      })
+
+      // Add totals row
+      body.push([
+        '', '', '', '', '', '', '', '', '',
+        'TOTALES:',
+        totalContrato.toFixed(2),
+        totalIUE.toFixed(2),
+        totalIT.toFixed(2),
+        totalIUEExt.toFixed(2),
+        totalPagar.toFixed(2),
+        ''
+      ])
+
+      doc.autoTable({
+        startY: 30,
+        head: [headers],
+        body: body,
+        theme: 'grid',
+        styles: {
+          fontSize: 5.5,
+          cellPadding: 1.5
+        },
+        headStyles: {
+          fillColor: [26, 35, 126],
+          fontSize: 5.5,
+          halign: 'center'
+        },
+        columnStyles: {
+          0: { cellWidth: 18 },
+          1: { cellWidth: 28 },
+          2: { cellWidth: 14 },
+          3: { cellWidth: 12 },
+          4: { cellWidth: 22 },
+          5: { cellWidth: 16 },
+          6: { cellWidth: 14 },
+          7: { cellWidth: 12 },
+          8: { cellWidth: 18 },
+          9: { cellWidth: 16 },
+          10: { cellWidth: 18, halign: 'right' },
+          11: { cellWidth: 16, halign: 'right' },
+          12: { cellWidth: 14, halign: 'right' },
+          13: { cellWidth: 16, halign: 'right' },
+          14: { cellWidth: 18, halign: 'right' },
+          15: { cellWidth: 25 }
+        },
+        didParseCell: function (data) {
+          // Style totals row
+          if (data.row.index === body.length - 1) {
+            data.cell.styles.fontStyle = 'bold'
+            data.cell.styles.fillColor = [232, 245, 233]
+          }
+        }
+      })
+
+      doc.save(filename)
+    },
   
   // HISTORICO METHODS
   loadHistorico () {
