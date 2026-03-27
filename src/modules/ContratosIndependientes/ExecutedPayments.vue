@@ -138,7 +138,7 @@
                                           </span>
                                           <span v-else class="tipo-docente-active">
                                               <i class="fa fa-check-circle"></i>
-                                              Mostrando pagos: <strong>{{ formatTipoDocente(filters.tipoDocente) }}</strong>
+                                              Mostrando pagos: {{ formatTipoDocente(filters.tipoDocente) }}
                                               — {{ filteredPagos.length }} pago(s)
                                           </span>
                                       </div>

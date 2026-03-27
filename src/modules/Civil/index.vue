@@ -77,7 +77,6 @@
   :actions="action"
   :fuente-p-d-f="fuente">
 
-  <!-- Slot que se inyecta en la columna de acciones -->
   <template slot="buttons" slot-scope="scope">
     <button
       v-if="isDuplicate(scope.queriedData[scope.index])"
@@ -86,8 +85,47 @@
       @click="toggleCivil(scope.queriedData[scope.index])">
       {{ scope.queriedData[scope.index].IsEnabled ? 'Deshabilitar' : 'Habilitar' }}
     </button>
+    <button
+      class="btn btn-xs btn-info btn-fill"
+      @click="openBankModal(scope.queriedData[scope.index])"
+      style="margin-left: 4px;">
+      <i class="fa fa-university"></i> Banco
+    </button>
   </template>
 </data-tables>
+
+<!-- BANK INFO MODAL -->
+<div v-if="showBankModal" class="modal fade in" style="display: block; background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" @click="closeBankModal">&times;</button>
+        <h4 class="modal-title"><i class="fa fa-university"></i> Datos Bancarios</h4>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 15px; color: #666;">
+          <strong>{{ bankForm.CivilName }}</strong> (ID: {{ bankForm.CivilId }})
+        </p>
+        <div class="form-group">
+          <label>Nombre del Banco</label>
+          <input type="text" class="form-control" v-model="bankForm.BankName" 
+            placeholder="Ej: Banco Mercantil Santa Cruz" :disabled="bankLoading">
+        </div>
+        <div class="form-group">
+          <label>Número de Cuenta</label>
+          <input type="text" class="form-control" v-model="bankForm.BankAccountNumber" 
+            placeholder="Ej: 4500-123456-001" :disabled="bankLoading">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" @click="closeBankModal" :disabled="bankLoading">Cancelar</button>
+        <button type="button" class="btn btn-success btn-fill" @click="saveBankInfo" :disabled="bankLoading">
+          <i class="fa fa-save"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
     </div>
   </div>
@@ -115,6 +153,15 @@ export default {
       action: true,
       url2: '/CivilbyBranch/0',
       propsToSearch: ['Id', 'FullName', 'Abr', 'Category', 'SAPId', 'NIT'],
+      showBankModal: false,
+      bankForm: {
+        CivilId: null,
+        CivilName: '',
+        BankName: '',
+        BankAccountNumber: ''
+      },
+      bankLoading: false,
+      bankExtras: {},
       tableColumns: [
         {
           prop: 'Id',
@@ -140,6 +187,16 @@ export default {
           prop: 'NIT',
           label: 'NIT',
           minWidth: 100
+        },
+        {
+          prop: 'BankName',
+          label: 'Banco',
+          minWidth: 80
+        },
+        {
+          prop: 'BankAccountNumber',
+          label: 'Nro. Cuenta',
+          minWidth: 80
         }
       ],
       pagination: {
@@ -273,6 +330,54 @@ export default {
           }
         })
     },
+    openBankModal (row) {
+      this.bankForm.CivilId = row.Id
+      this.bankForm.CivilName = row.FullName || ''
+      this.bankForm.BankName = row.BankName || ''
+      this.bankForm.BankAccountNumber = row.BankAccountNumber || ''
+      this.showBankModal = true
+
+      // Load latest from server
+      this.bankLoading = true
+      axios.get('/CivilExtra/' + row.Id)
+        .then(function (response) {
+          this.bankForm.BankName = response.data.BankName || ''
+          this.bankForm.BankAccountNumber = response.data.BankAccountNumber || ''
+          this.bankLoading = false
+        }.bind(this))
+        .catch(function () {
+          this.bankLoading = false
+        }.bind(this))
+    },
+
+    closeBankModal () {
+      this.showBankModal = false
+      this.bankForm = { CivilId: null, CivilName: '', BankName: '', BankAccountNumber: '' }
+    },
+
+    saveBankInfo () {
+      this.bankLoading = true
+      axios.post('/CivilExtra/Update', {
+        CivilId: this.bankForm.CivilId,
+        BankName: this.bankForm.BankName,
+        BankAccountNumber: this.bankForm.BankAccountNumber
+      })
+        .then(function () {
+          this.bankLoading = false
+          this.closeBankModal()
+          this.successMessage()
+          // Reload table
+          this.$store.dispatch('crud/loadData', this.url2)
+        }.bind(this))
+        .catch(function (error) {
+          this.bankLoading = false
+          var msg = error.response && error.response.data && error.response.data.Message
+            ? error.response.data.Message
+            : 'Error al guardar los datos bancarios.'
+          this.errorMessage(msg)
+        }.bind(this))
+    },
+
     isDuplicate (row) {
       return !!this.duplicateIds[row.Id]
     },

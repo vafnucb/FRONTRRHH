@@ -1150,7 +1150,7 @@ selectedTotalAmount () {
   .then((response) => {
       this.selectedIds = []
       this.contractNumber = ''
-      this.observaciones = ''  // NEW: Clear observaciones
+      this.observaciones = ''
       this.reloadKey += 1
       this.pagination.currentPage = 1
 
