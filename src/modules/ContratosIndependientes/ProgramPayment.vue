@@ -288,7 +288,8 @@
                             <td>{{ asig.NumeroContrato }}</td>
                             <td class="text-right"><strong>Bs. {{ formatMoney(asig.MontoTotal) }}</strong></td>
                             <td class="text-center">
-                              <button class="btn btn-xs btn-info btn-simple" @click="toggleExpand(asig.Id)">
+                              <button class="btn btn-xs btn-info btn-simple" @click="toggleExpand(asig.Id)"
+                                :disabled="asig.TienePagosProgramados">
                                 <i :class="isExpanded(asig.Id) ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
                               </button>
                             </td>
