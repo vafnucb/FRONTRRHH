@@ -209,6 +209,10 @@
                 <label>Sigla:</label>
                 <p>{{ pago.Sigla }}</p>
               </div>
+              <div class="col-md-3" v-if="pago.NombreMateria">
+                <label>Materia:</label>
+                <p><strong>{{ pago.NombreMateria }}</strong></p>
+              </div>
               <div class="col-md-2">
                 <label>Paralelo:</label>
                 <p>{{ pago.Paralelo }}</p>

@@ -101,6 +101,12 @@
                 width="100"
                 sortable>
               </el-table-column>
+
+              <el-table-column
+                prop="NombreMateria"
+                label="Materia"
+                min-width="100">
+              </el-table-column>
   
               <el-table-column
                 prop="Paralelo"
