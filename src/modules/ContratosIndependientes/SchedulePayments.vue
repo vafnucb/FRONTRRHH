@@ -70,9 +70,12 @@
 
               </div>
               <div class="col-md-6">
-                <div class="pull-right">
+                <div class="pull-right" style="display: flex; align-items: center; gap: 10px;">
                   <input type="search" class="form-control input-sm" placeholder="Buscar por CI, nombre, contrato..."
                     v-model="searchQuery" style="width: 300px;">
+                  <button type="button" class="btn btn-danger btn-fill btn-sm" @click="downloadPDF" :disabled="loading">
+                    <i class="fa fa-file-text-o"></i> PDF
+                  </button>
                 </div>
               </div>
             </div>
@@ -138,6 +141,9 @@
                   </el-table-column>
 
                   <el-table-column prop="Paralelo" label="Paralelo" min-width="70">
+                  </el-table-column>
+
+                  <el-table-column prop="NombreMateria" label="Materia" min-width="100">
                   </el-table-column>
 
                   <!-- Tipo Docente (Inline Editable) -->
@@ -257,6 +263,8 @@
 
 <script>
 import axios from 'axios'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 import { Select, Option, Table, TableColumn, Pagination, Tooltip, MessageBox } from 'element-ui'
 import DetailModal from './Components/DetailModal.vue'
 import EditModal from './Components/EditModal.vue'
@@ -345,7 +353,8 @@ export default {
           (pago.NombreCompleto && pago.NombreCompleto.toLowerCase().includes(query)) ||
           (pago.Sigla && pago.Sigla.toLowerCase().includes(query)) ||
           (pago.CodUnidadOrganizacional && pago.CodUnidadOrganizacional.toLowerCase().includes(query)) ||
-          (pago.UnidadOrganizacional && pago.UnidadOrganizacional.toLowerCase().includes(query))
+          (pago.UnidadOrganizacional && pago.UnidadOrganizacional.toLowerCase().includes(query)) ||
+          (pago.NombreMateria && pago.NombreMateria.toLowerCase().includes(query))
         )
       })
     },
@@ -772,6 +781,112 @@ export default {
     
     onPaymentUpdated () {
       this.buscarPagos()
+    },
+    downloadPDF () {
+      var data = this.filteredPagos
+      if (!data || data.length === 0) {
+        this.$message.warning('No hay datos para exportar')
+        return
+      }
+
+      // Get filter names for title
+      var sedeName = ''
+      if (this.filters.branchId) {
+        var sede = this.sedes.find(function (s) { return s.Id === this.filters.branchId }.bind(this))
+        if (sede) sedeName = sede.Name
+      }
+      var mesName = this.getNombreMes(this.filters.mes)
+      var anio = this.filters.anio
+
+      var doc = new jsPDF('landscape')
+
+      // Header
+      doc.setFontSize(16)
+      doc.setFontStyle('bold')
+      doc.text('Universidad Católica Boliviana "San Pablo"', 148, 15, null, null, 'center')
+      doc.setFontSize(12)
+      doc.text('Pagos Programados', 148, 23, null, null, 'center')
+      doc.setFontSize(10)
+      doc.setFontStyle('normal')
+      doc.text(sedeName + ' - ' + mesName + ' ' + anio, 148, 30, null, null, 'center')
+      doc.setFontSize(8)
+      var now = new Date()
+      doc.text('Fecha: ' + now.toLocaleDateString('es-BO') + ' ' + now.toLocaleTimeString('es-BO'), 280, 10, null, null, 'right')
+      doc.text('Total registros: ' + data.length, 280, 15, null, null, 'right')
+
+      // Calculate totals
+      var totalMonto = 0
+      data.forEach(function (row) {
+        totalMonto += row.Monto || 0
+      })
+
+      // Table headers
+      var headers = [
+        'Docente',
+        'Sigla',
+        'Paralelo',
+        'Materia',
+        'Cod U.O.',
+        'Unidad Organizacional',
+        'Hrs/Mes',
+        'Monto'
+      ]
+
+      // Table body
+      var body = data.map(function (row) {
+        // Calculate HorasMes from the assignment if available
+        return [
+          row.NombreCompleto || '',
+          row.Sigla || '',
+          row.Paralelo || '',
+          row.NombreMateria || '',
+          row.CodUnidadOrganizacional || '',
+          row.UnidadOrganizacional || '',
+          '', // HorasMes not available in this endpoint
+          row.Monto ? row.Monto.toFixed(2) : '0.00'
+        ]
+      })
+
+      // Add totals row
+      body.push([
+        '', '', '', '', '', '',
+        'TOTAL:',
+        totalMonto.toFixed(2)
+      ])
+
+      doc.autoTable({
+        startY: 36,
+        head: [headers],
+        body: body,
+        theme: 'grid',
+        styles: {
+          fontSize: 7,
+          cellPadding: 2
+        },
+        headStyles: {
+          fillColor: [26, 35, 126],
+          fontSize: 7,
+          halign: 'center'
+        },
+        columnStyles: {
+          0: { cellWidth: 50 },
+          1: { cellWidth: 20 },
+          2: { cellWidth: 20 },
+          3: { cellWidth: 45 },
+          4: { cellWidth: 18 },
+          5: { cellWidth: 50 },
+          6: { cellWidth: 25, halign: 'right' },
+          7: { cellWidth: 30, halign: 'right' }
+        },
+        didParseCell: function (cellData) {
+          if (cellData.row.index === body.length - 1) {
+            cellData.cell.styles.fontStyle = 'bold'
+            cellData.cell.styles.fillColor = [232, 245, 233]
+          }
+        }
+      })
+
+      doc.save('Pagos_Programados_' + sedeName + '_' + mesName + '_' + anio + '.pdf')
     }
   }
 }

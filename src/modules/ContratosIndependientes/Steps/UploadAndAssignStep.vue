@@ -20,25 +20,25 @@
       <div class="col-md-8 col-md-offset-2">
         <div class="uploader text-center">
           <!-- Si ya hay archivo cargado, mostrar éxito + botón limpiar -->
-<div v-if="fileUploaded" class="uploader-success">
-  <i class="fa fa-check-circle uploader-check-icon" aria-hidden="true"></i>
-  <span class="uploader-success-text">Archivo cargado correctamente.</span>
-  
-  <!-- UPDATED: Changed from "Eliminar archivo" to "Limpiar pantalla" -->
-  <button type="button" class="btn btn-wd btn-warning" @click="deleteFile">
-    <span class="btn-label">
-      <i class="fa fa-eraser"></i>
-    </span>
-    Limpiar pantalla
-  </button>
-  
-  <!-- NEW: Explanatory message -->
-  <p style="margin-top: 10px; font-size: 12px; color: #666;">
-    <i class="fa fa-info-circle"></i>
-    Limpiar la pantalla no borrará el lote de asignaciones.<br>
-    Para borrarlo, hágalo desde la lista de lotes.
-  </p>
-</div>
+          <div v-if="fileUploaded" class="uploader-success">
+            <i class="fa fa-check-circle uploader-check-icon" aria-hidden="true"></i>
+            <span class="uploader-success-text">Archivo cargado correctamente.</span>
+
+            <!-- UPDATED: Changed from "Eliminar archivo" to "Limpiar pantalla" -->
+            <button type="button" class="btn btn-wd btn-warning" @click="deleteFile">
+              <span class="btn-label">
+                <i class="fa fa-eraser"></i>
+              </span>
+              Limpiar pantalla
+            </button>
+
+            <!-- NEW: Explanatory message -->
+            <p style="margin-top: 10px; font-size: 12px; color: #666;">
+              <i class="fa fa-info-circle"></i>
+              Limpiar la pantalla no borrará el lote de asignaciones.<br>
+              Para borrarlo, hágalo desde la lista de lotes.
+            </p>
+          </div>
 
           <!-- Si NO hay archivo cargado, mostrar input -->
           <div v-else class="uploader-input-wrapper">
@@ -66,31 +66,30 @@
       </div>
     </div>
 
-    <!-- NOTIFICATION -->
-<div class="row" v-if="notification.message" style="margin-top: 20px;">
-  <div class="col-md-10 col-md-offset-1">
-    <div 
-      class="alert alert-dismissible" 
-      :class="{
-        'alert-danger': notification.type === 'error',
-        'alert-success': notification.type === 'success',
-        'alert-warning': notification.type === 'warning'
-      }" 
-      role="alert">
-      <button type="button" class="close" @click="notification = { type: '', message: '' }">
-        <span>&times;</span>
-      </button>
-      <i :class="{
-        'fa fa-exclamation-triangle': notification.type === 'error' || notification.type === 'warning',
-        'fa fa-check-circle': notification.type === 'success'
-      }" style="margin-right: 8px;"></i>
-      <strong v-if="notification.type === 'error'">Error:</strong>
-      <strong v-else-if="notification.type === 'warning'">Advertencia:</strong>
-      <strong v-else>Éxito:</strong>
-      {{ notification.message }}
+    <!-- UPLOAD NOTIFICATION (shows even when table is not loaded) -->
+    <div class="row" v-if="notification.message && !fileUploaded" style="margin-top: 20px;">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="alert alert-dismissible" :class="{
+            'alert-danger': notification.type === 'error',
+            'alert-success': notification.type === 'success',
+            'alert-warning': notification.type === 'warning'
+          }" role="alert">
+          <button type="button" class="close" @click="notification = { type: '', message: '' }">
+            <span>&times;</span>
+          </button>
+          <i :class="{
+            'fa fa-exclamation-triangle': notification.type === 'error' || notification.type === 'warning',
+            'fa fa-check-circle': notification.type === 'success'
+          }" style="margin-right: 8px;"></i>
+          <strong v-if="notification.type === 'error'">Error:</strong>
+          <strong v-else-if="notification.type === 'warning'">Advertencia:</strong>
+          <strong v-else>Éxito:</strong>
+          {{ notification.message }}
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+
+
 
     <!-- TABLA DE ASIGNACIONES - THIS ONLY SHOWS WHEN FILE IS UPLOADED -->
     <div v-if="fileUploaded && fileId" class="table-section">
@@ -327,6 +326,21 @@
             </div>
           </div>
 
+          <!-- CONTRACT WARNING NOTIFICATION -->
+          <div class="row" v-if="contractWarning" style="margin-top: 20px;">
+            <div class="col-md-10 col-md-offset-1">
+              <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" @click="contractWarning = ''">
+                  <span>&times;</span>
+                </button>
+                <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                <strong>Advertencia:</strong>
+                {{ contractWarning }}
+              </div>
+            </div>
+          </div>
+
+
           <!-- ACCIONES MASIVAS -->
           <div class="row mass-actions">
             <div class="col-md-12">
@@ -343,11 +357,11 @@
             </div>
 
             <div class="col-md-2">
-  <label>Filas seleccionadas</label>
-  <p class="form-control-static">
-    <strong>{{ selectedRowsData.length }}</strong> registro(s)
-  </p>
-</div>
+              <label>Filas seleccionadas</label>
+              <p class="form-control-static">
+                <strong>{{ selectedRowsData.length }}</strong> registro(s)
+              </p>
+            </div>
             <div class="col-md-2">
               <label>Monto total</label>
               <p class="form-control-static">
@@ -454,7 +468,8 @@ export default {
       },
       
       selectedIds: [],
-      contractNumber: ''
+      contractNumber: '',
+      contractWarning: ''
     }
   },
   
@@ -1120,6 +1135,7 @@ selectedTotalAmount () {
       this.selectedIds = []
       this.reloadKey = 0
       this.tableData = []
+      this.contractWarning = ''
       if (this.$refs.file) {
         this.$refs.file.value = ''
       }
@@ -1139,7 +1155,7 @@ selectedTotalAmount () {
     fileId: this.fileId,
     contractNumber: this.contractNumber,
     assignmentIds: this.selectedIds,
-    observaciones: this.observaciones  // NEW
+    observaciones: this.observaciones
   }
 
   axios.post('/AsignacionesMasivas/AssignContractNumber', payload, {
@@ -1159,15 +1175,11 @@ selectedTotalAmount () {
         message: 'Número de contrato asignado correctamente.'
       }
 
-      // Show warning if present
-    if (response.data && response.data.Warning) {
-      setTimeout(() => {
-        this.notification = {
-          type: 'warning',
-          message: response.data.Warning
-        }
-      }, 3000) // Show warning after success message
-    }
+      if (response.data && response.data.Warning) {
+        this.contractWarning = response.data.Warning
+      } else {
+        this.contractWarning = ''
+      }
     })
     .catch(error => {
       console.error('Error asignando número de contrato:', error)
