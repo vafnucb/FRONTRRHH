@@ -589,7 +589,7 @@ export default {
     return
   }
   
-  // NEW: Clear exceptions when months configuration changes
+  // Clear exceptions when months configuration changes
   if (this.excepciones.length > 0) {
     this.excepciones = []
     Message({

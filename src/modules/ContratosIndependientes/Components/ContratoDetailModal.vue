@@ -29,14 +29,6 @@
                 <label>Período:</label>
                 <p>{{ contrato.PeriodoId }}</p>
               </div>
-              <div class="col-md-2">
-                <label>Estado:</label>
-                <p>
-                  <span :class="getEstadoBadgeClass(contrato.Estado)">
-                    {{ contrato.Estado }}
-                  </span>
-                </p>
-              </div>
             </div>
             
             <div class="row" style="margin-top: 15px;">
@@ -332,15 +324,6 @@
         return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
       },
       
-      getEstadoBadgeClass (estado) {
-        const classes = {
-          'PENDIENTE': 'label label-warning',
-          'APROBADO': 'label label-info',
-          'PAGADO': 'label label-success',
-          'CANCELADO': 'label label-danger'
-        }
-        return classes[estado] || 'label label-default'
-      },
       
       onClose () {
         this.dialogVisible = false

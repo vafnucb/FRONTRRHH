@@ -46,21 +46,6 @@
                 </div>
               </div>
 
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label>Estado</label>
-                  <el-select
-                    v-model="filters.estado"
-                    placeholder="Todos los estados"
-                    clearable
-                    @change="loadContratos">
-                    <el-option value="PENDIENTE" label="Pendiente"></el-option>
-                    <el-option value="APROBADO" label="Aprobado"></el-option>
-                    <el-option value="PAGADO" label="Pagado"></el-option>
-                    <el-option value="CANCELADO" label="Cancelado"></el-option>
-                  </el-select>
-                </div>
-              </div>
 
               <div class="col-md-3">
                 <div class="form-group">
@@ -143,17 +128,6 @@
                   label="Asignaciones"
                   width="120"
                   align="center">
-                </el-table-column>
-
-                <el-table-column
-                  label="Estado"
-                  width="120"
-                  align="center">
-                  <template slot-scope="scope">
-                    <span :class="getEstadoBadgeClass(scope.row.Estado)">
-                      {{ scope.row.Estado }}
-                    </span>
-                  </template>
                 </el-table-column>
 
                 <el-table-column
@@ -256,8 +230,7 @@ export default {
       
       filters: {
         branchesId: null,
-        periodoId: null,
-        estado: null
+        periodoId: null
       }
     }
   },
@@ -304,10 +277,6 @@ export default {
       
       if (this.filters.periodoId) {
         params.periodoId = this.filters.periodoId
-      }
-      
-      if (this.filters.estado) {
-        params.estado = this.filters.estado
       }
       
       axios.get('/AsigContratos/GetContratos', {
@@ -452,15 +421,6 @@ downloadContratoReport (contrato) {
       return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     },
     
-    getEstadoBadgeClass (estado) {
-      const classes = {
-        'PENDIENTE': 'label label-warning',
-        'APROBADO': 'label label-info',
-        'PAGADO': 'label label-success',
-        'CANCELADO': 'label label-danger'
-      }
-      return classes[estado] || 'label label-default'
-    }
   },
   
   created () {

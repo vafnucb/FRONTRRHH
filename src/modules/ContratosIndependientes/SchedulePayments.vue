@@ -390,7 +390,7 @@ export default {
     },
     
     isAllSelected () {
-      const seleccionables = this.paginatedData.filter(p => this.puedeSeleccionar(p))
+      const seleccionables = this.filteredPagos.filter(p => this.puedeSeleccionar(p))
       if (seleccionables.length === 0) return false
       return seleccionables.every(p => this.selectedIds.includes(p.PagoId))
     }
@@ -565,7 +565,7 @@ export default {
     },
     
     toggleSelectAll () {
-      const seleccionables = this.paginatedData.filter(p => this.puedeSeleccionar(p))
+      const seleccionables = this.filteredPagos.filter(p => this.puedeSeleccionar(p))
       
       if (this.isAllSelected) {
         // Deselect all
@@ -576,7 +576,7 @@ export default {
           }
         })
       } else {
-        // Select all
+        // Select all across all pages
         seleccionables.forEach(pago => {
           if (!this.selectedIds.includes(pago.PagoId)) {
             this.selectedIds.push(pago.PagoId)
@@ -688,20 +688,57 @@ export default {
     },
     
     eliminarPago (pago) {
-      MessageBox.confirm(
-        `¿Está seguro que desea eliminar este pago?\n\nDocente: ${pago.NombreCompleto}\nMonto: Bs. ${pago.Monto.toFixed(2)}\nMes: ${this.getNombreMes(pago.MesPago)} ${pago.AnioPago}`,
-        'Confirmar eliminación',
-        {
-          confirmButtonText: 'Sí, eliminar',
-          cancelButtonText: 'Cancelar',
-          type: 'warning',
-          center: true
-        }
-      ).then(() => {
-        this.confirmarEliminacion(pago.PagoId)
-      }).catch(() => {
-        console.log('Eliminación cancelada')
-      })
+      if (this.loading) return
+      
+      // Force close any open tooltips by blurring the button
+      if (document.activeElement) {
+        document.activeElement.blur()
+      }
+      
+      // Small delay to let tooltip close before opening MessageBox
+      setTimeout(() => {
+        MessageBox.confirm(
+          '¿Está seguro que desea eliminar este pago?\n\nDocente: ' + pago.NombreCompleto + '\nMonto: Bs. ' + pago.Monto.toFixed(2) + '\nMes: ' + this.getNombreMes(pago.MesPago) + ' ' + pago.AnioPago,
+          'Confirmar eliminación',
+          {
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            type: 'warning',
+            center: true
+          }
+        ).then(() => {
+          this.loading = true
+          
+          axios.post('/ProgramacionPagos/DeletePago', {
+            PagoId: pago.PagoId
+          }, {
+            headers: {
+              token: localStorage.getItem('token')
+            }
+          })
+            .then(() => {
+              this.pagos = this.pagos.filter(p => p.PagoId !== pago.PagoId)
+              var idx = this.selectedIds.indexOf(pago.PagoId)
+              if (idx > -1) {
+                this.selectedIds.splice(idx, 1)
+              }
+              this.loading = false
+              this.$message.success('Pago eliminado correctamente')
+            })
+            .catch(error => {
+              console.error('Error eliminando pago:', error)
+              this.loading = false
+              
+              var errorMsg = error.response && error.response.data && error.response.data.Message
+                ? error.response.data.Message
+                : 'Error al eliminar el pago'
+              
+              this.$message.error(errorMsg)
+            })
+        }).catch(() => {
+          console.log('Eliminación cancelada')
+        })
+      }, 100)
     },
     
     confirmarEliminacion (pagoId) {
@@ -714,7 +751,13 @@ export default {
       })
         .then(() => {
           this.$message.success('Pago eliminado correctamente')
-          this.buscarPagos()
+          // Remove from local data immediately
+          this.pagos = this.pagos.filter(p => p.PagoId !== pagoId)
+          // Remove from selected if it was selected
+          var idx = this.selectedIds.indexOf(pagoId)
+          if (idx > -1) {
+            this.selectedIds.splice(idx, 1)
+          }
         })
         .catch(error => {
           console.error('Error eliminando pago:', error)
