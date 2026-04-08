@@ -127,7 +127,7 @@ export default {
     nombre: proceso.PeriodoId
   })
 
-  // ADD THIS LINE - Store the proceso state
+  // Store the proceso state
   this.$store.commit('asig/setState', proceso.State)
 
   if (this.$refs.uploadStep) {
