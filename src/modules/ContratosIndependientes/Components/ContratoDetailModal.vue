@@ -181,6 +181,53 @@
               </div>
             </div>
           </div>
+
+          <!-- Payment Schedule per Assignment -->
+          <template v-for="asig in asignaciones">
+            <div v-if="asig.PagosProgramados && asig.PagosProgramados.length > 0" :key="'pagos-' + asig.Id" style="margin-top: 20px;">
+              <h5 class="section-title" style="font-size: 14px;">
+                <i class="fa fa-calendar-check-o"></i> Calendario de Pagos — {{ asig.Sigla }} {{ asig.Paralelo }} ({{ asig.NombreCompleto }})
+              </h5>
+              
+              <table class="table table-bordered table-sm" style="font-size: 12px;">
+                <thead>
+                  <tr style="background-color: #e3f2fd;">
+                    <th width="8%" class="text-center">#</th>
+                    <th width="25%">Mes / Año</th>
+                    <th width="15%" class="text-right">Monto</th>
+                    <th width="12%" class="text-center">%</th>
+                    <th width="15%" class="text-center">Tipo</th>
+                    <th width="15%" class="text-center">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(pago, idx) in asig.PagosProgramados" :key="pago.Id">
+                    <td class="text-center">{{ idx + 1 }}°</td>
+                    <td><strong>{{ getMonthName(pago.MesPago) }} {{ pago.AnioPago }}</strong></td>
+                    <td class="text-right">Bs. {{ formatMoney(pago.Monto) }}</td>
+                    <td class="text-center">{{ pago.Porcentaje ? pago.Porcentaje.toFixed(2) : '0.00' }}%</td>
+                    <td class="text-center">
+                      <span v-if="pago.EsExcepcion" class="label label-warning" style="font-size: 10px;">Excepción</span>
+                      <span v-else class="label label-info" style="font-size: 10px;">Estándar</span>
+                    </td>
+                    <td class="text-center">
+                      <span :class="getEstadoPagoBadge(pago.Estado)" style="font-size: 10px;">{{ pago.Estado || 'PENDIENTE' }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr style="background-color: #e8f5e9;">
+                    <td colspan="2" class="text-right"><strong>Total:</strong></td>
+                    <td class="text-right"><strong>Bs. {{ formatMoney(getTotalPagos(asig.PagosProgramados)) }}</strong></td>
+                    <td class="text-center"><strong>{{ getTotalPorcentaje(asig.PagosProgramados) }}%</strong></td>
+                    <td colspan="2"></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </template>
+
+          <hr>
   
           <!-- Summary -->
           <div class="summary-box">
@@ -324,6 +371,29 @@
         return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
       },
       
+      getMonthName (mes) {
+        var meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+        return mes >= 1 && mes <= 12 ? meses[mes] : ''
+      },
+
+      getEstadoPagoBadge (estado) {
+        var badges = {
+          'PENDIENTE': 'label label-default',
+          'ENVIADO': 'label label-info',
+          'APROBADO': 'label label-success',
+          'RECHAZADO': 'label label-danger'
+        }
+        return badges[estado] || 'label label-default'
+      },
+
+      getTotalPagos (pagos) {
+        return pagos.reduce(function (sum, p) { return sum + (p.Monto || 0) }, 0)
+      },
+
+      getTotalPorcentaje (pagos) {
+        return pagos.reduce(function (sum, p) { return sum + (p.Porcentaje || 0) }, 0).toFixed(2)
+      },
       
       onClose () {
         this.dialogVisible = false

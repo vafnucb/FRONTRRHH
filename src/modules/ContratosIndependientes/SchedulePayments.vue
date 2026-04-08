@@ -98,11 +98,13 @@
                 <el-table :data="paginatedData" v-loading="loading" border style="width: 100%"
                   :default-sort="{ prop: 'NumeroContrato', order: 'ascending' }">
 
-                  <!-- Selection Checkbox -->
-                  <el-table-column width="60" align="center" label="Sel." fixed="left">
+                 <!-- Selection Checkbox -->
+                 <el-table-column width="60" align="center" fixed="left">
                     <template slot="header">
                       <input type="checkbox" @change="toggleSelectAll" :checked="isAllSelected"
-                        :disabled="!hayPagosSeleccionables" title="Seleccionar todos los listos para enviar">
+                        :disabled="!hayPagosSeleccionables" 
+                        title="Seleccionar/deseleccionar todos"
+                        style="cursor: pointer; width: 16px; height: 16px;">
                     </template>
                     <template slot-scope="scope">
                       <input type="checkbox" :value="scope.row.PagoId" v-model="selectedIds"
@@ -842,7 +844,7 @@ export default {
           row.NombreMateria || '',
           row.CodUnidadOrganizacional || '',
           row.UnidadOrganizacional || '',
-          '', // HorasMes not available in this endpoint
+          row.HorasMes ? row.HorasMes.toFixed(2) : '0.00',
           row.Monto ? row.Monto.toFixed(2) : '0.00'
         ]
       })
