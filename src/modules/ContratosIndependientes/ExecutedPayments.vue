@@ -220,6 +220,11 @@
                                   <!-- ACTIONS -->
                                   <div class="row" style="margin-top: 20px;" v-if="selectedPagos.length > 0">
                                         <div class="col-md-12 text-center">
+                                            <button class="btn btn-danger btn-fill btn-lg" style="margin-right: 15px;"
+                                                @click="previewPDF" :disabled="generatingPDF">
+                                                <i class="fa fa-file-text-o"></i>
+                                                Vista Previa PDF ({{ selectedPagos.length }})
+                                            </button>
                                             <button class="btn btn-success btn-fill btn-lg"
                                                 @click="aprobarSeleccionados">
                                                 <i class="fa fa-check"></i>
@@ -782,6 +787,15 @@ axios.post('/EjecucionPagos/RechazarPago', {
   })
 },
 // PDF METHODS
+
+previewPDF () {
+      var pagosIds = this.selectedPagos.map(function (p) { return p.PagoEjecutadoId }).filter(function (id) { return id != null })
+      if (pagosIds.length === 0) {
+        Message({ message: 'No se pudieron obtener los IDs de los pagos seleccionados', type: 'error', duration: 3000 })
+        return
+      }
+      this.generatePDFForIds(pagosIds)
+    },
 generatePDFForIds (pagosIds) {
       this.generatingPDF = true
       axios.post('/EjecucionPagos/GetValoresExcelLote', {
@@ -790,8 +804,10 @@ generatePDFForIds (pagosIds) {
         headers: { token: localStorage.getItem('token') }
       })
         .then(function (response) {
-          var data = response.data || []
-          this.buildAndDownloadPDF(data, 'Pagos_Aprobados_' + Date.now() + '.pdf')
+          var result = response.data || {}
+          var data = result.Pagos || result || []
+          var branchName = result.BranchName || ''
+          this.buildAndDownloadPDF(data, 'Pagos_Aprobados_' + Date.now() + '.pdf', branchName)
           this.generatingPDF = false
         }.bind(this))
         .catch(function (error) {
@@ -814,7 +830,7 @@ generatePDFForIds (pagosIds) {
       this.generatePDFForIds(ids)
     },
 
-    buildAndDownloadPDF (data, filename) {
+    buildAndDownloadPDF (data, filename, branchName) {
       var doc = new jsPDF('landscape')
 
       // Header
@@ -822,7 +838,7 @@ generatePDFForIds (pagosIds) {
       doc.setFontStyle('bold')
       doc.text('Universidad Católica Boliviana "San Pablo"', 148, 15, null, null, 'center')
       doc.setFontSize(12)
-      doc.text('Reporte de Pagos Aprobados', 148, 23, null, null, 'center')
+      doc.text(branchName || 'Reporte de Pagos Aprobados', 148, 23, null, null, 'center')
       doc.setFontSize(8)
       doc.setFontStyle('normal')
       var now = new Date()
@@ -831,67 +847,61 @@ generatePDFForIds (pagosIds) {
 
       // Calculate totals
       var totalContrato = 0
-      var totalIUE = 0
+      var totalRCIVA = 0
       var totalIT = 0
       var totalIUEExt = 0
       var totalPagar = 0
 
       data.forEach(function (row) {
         totalContrato += row.MontoContrato || 0
-        totalIUE += row.MontoIUE || 0
+        totalRCIVA += row.MontoIUE || 0
         totalIT += row.MontoIT || 0
         totalIUEExt += row.IUEExterior || 0
         totalPagar += row.MontoAPagar || 0
       })
 
-      // Table headers (16 columns)
+      // Table headers (11 columns)
       var headers = [
-        'Cod. Socio',
-        'Nombre Socio',
-        'Cod. Dep.',
-        'Nombre Servicio',
+        'Nombre del Docente',
+        'Unidad Organizacional',
         'Periodo',
         'Sigla',
         'Paralelo',
-        'Cod. Paralelo SAP',
+        'Materia',
         'Monto Contrato',
-        'Monto IUE',
+        'Monto RCIVA',
         'Monto IT',
         'IUE Exterior',
-        'Monto a Pagar',
-        'Observaciones'
+        'Monto a Pagar'
       ]
 
       // Table body
       var body = data.map(function (row) {
         return [
-          row.CodigoSocio || '',
-          row.NombreSocio || '',
-          row.CodDependencia || '',
+        row.NombreSocio || '',
+          row.UnidadOrganizacional || '',
           row.NombreDelServicio || '',
           row.PeriodoAcademico || '',
           row.SiglaAsignatura || '',
           row.Paralelo || '',
-          row.CodigoParaleloSAP || '',
+          row.NombreMateria || '',
           row.MontoContrato ? row.MontoContrato.toFixed(2) : '0.00',
           row.MontoIUE ? row.MontoIUE.toFixed(2) : '0.00',
           row.MontoIT ? row.MontoIT.toFixed(2) : '0.00',
           row.IUEExterior ? row.IUEExterior.toFixed(2) : '0.00',
-          row.MontoAPagar ? row.MontoAPagar.toFixed(2) : '0.00',
-          row.Observaciones || ''
+          row.MontoAPagar ? row.MontoAPagar.toFixed(2) : '0.00'
         ]
       })
 
       // Add totals row
       body.push([
-        '', '', '', '', '', '', '',
+        '', '', '', '', '',
         'TOTALES:',
         totalContrato.toFixed(2),
-        totalIUE.toFixed(2),
+        totalRCIVA.toFixed(2),
         totalIT.toFixed(2),
         totalIUEExt.toFixed(2),
-        totalPagar.toFixed(2),
-        ''
+        totalPagar.toFixed(2)
       ])
 
       doc.autoTable({
@@ -900,32 +910,28 @@ generatePDFForIds (pagosIds) {
         body: body,
         theme: 'grid',
         styles: {
-          fontSize: 5.5,
+          fontSize: 6.5,
           cellPadding: 1.5
         },
         headStyles: {
           fillColor: [26, 35, 126],
-          fontSize: 5.5,
+          fontSize: 6.5,
           halign: 'center'
         },
         columnStyles: {
-          0: { cellWidth: 20 },
-          1: { cellWidth: 32 },
-          2: { cellWidth: 16 },
-          3: { cellWidth: 24 },
-          4: { cellWidth: 18 },
-          5: { cellWidth: 16 },
-          6: { cellWidth: 14 },
-          7: { cellWidth: 20 },
+          0: { cellWidth: 35 },
+          1: { cellWidth: 35 },
+          2: { cellWidth: 20 },
+          3: { cellWidth: 18 },
+          4: { cellWidth: 16 },
+          5: { cellWidth: 30 },
+          6: { cellWidth: 22, halign: 'right' },
+          7: { cellWidth: 22, halign: 'right' },
           8: { cellWidth: 20, halign: 'right' },
-          9: { cellWidth: 18, halign: 'right' },
-          10: { cellWidth: 16, halign: 'right' },
-          11: { cellWidth: 18, halign: 'right' },
-          12: { cellWidth: 20, halign: 'right' },
-          13: { cellWidth: 28 }
+          9: { cellWidth: 22, halign: 'right' },
+          10: { cellWidth: 22, halign: 'right' }
         },
         didParseCell: function (data) {
-          // Style totals row
           if (data.row.index === body.length - 1) {
             data.cell.styles.fontStyle = 'bold'
             data.cell.styles.fillColor = [232, 245, 233]
