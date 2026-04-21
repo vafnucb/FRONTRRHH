@@ -204,7 +204,14 @@
                   <tr v-for="(pago, idx) in asig.PagosProgramados" :key="pago.Id">
                     <td class="text-center">{{ idx + 1 }}°</td>
                     <td><strong>{{ getMonthName(pago.MesPago) }} {{ pago.AnioPago }}</strong></td>
-                    <td class="text-right">Bs. {{ formatMoney(pago.Monto) }}</td>
+                    <td class="text-right">
+                      <span v-if="pago.MontoOriginal && pago.MontoOriginal !== pago.Monto">
+                        <span style="text-decoration: line-through; color: #999; font-size: 10px;">Bs. {{ formatMoney(pago.MontoOriginal) }}</span>
+                        <br>
+                        <strong style="color: #E65100;">Bs. {{ formatMoney(pago.Monto) }}</strong>
+                      </span>
+                      <span v-else>Bs. {{ formatMoney(pago.Monto) }}</span>
+                    </td>
                     <td class="text-center">{{ pago.Porcentaje ? pago.Porcentaje.toFixed(2) : '0.00' }}%</td>
                     <td class="text-center">
                       <span v-if="pago.EsExcepcion" class="label label-warning" style="font-size: 10px;">Excepción</span>

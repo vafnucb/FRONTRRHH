@@ -127,20 +127,20 @@ function generateStyles () {
     // Assignments Table
     html += '<h2>Asignaciones (' + asignaciones.length + ')</h2>'
     html += '<table class="data-table">' +
-      '<thead><tr>' +
-        '<th>#</th>' +
-        '<th>CI</th>' +
-        '<th>Docente</th>' +
-        '<th>Sigla</th>' +
-        '<th>Paralelo</th>' +
-        '<th>C\u00f3d. Paralelo</th>' +
-        '<th>Hrs/Sem</th>' +
-        '<th>Hrs/Mes</th>' +
-        '<th>Costo/Hora</th>' +
-        '<th>Meses</th>' +
-        '<th>Monto Total</th>' +
-        '<th>Unidad Organizacional</th>' +
-      '</tr></thead><tbody>'
+    '<th>#</th>' +
+    '<th>CI</th>' +
+    '<th>Docente</th>' +
+    '<th>Sigla</th>' +
+    '<th>Paralelo</th>' +
+    '<th>Materia</th>' +
+    '<th>C\u00f3d. Paralelo</th>' +
+    '<th>Hrs/Sem</th>' +
+    '<th>Hrs/Mes</th>' +
+    '<th>Costo/Hora</th>' +
+    '<th>Meses</th>' +
+    '<th>Monto Total</th>' +
+    '<th>Unidad Organizacional</th>' +
+  '</tr></thead><tbody>'
   
     asignaciones.forEach(function (a, index) {
       html += '<tr>' +
@@ -149,6 +149,7 @@ function generateStyles () {
         '<td>' + (a.NombreCompleto || '-') + '</td>' +
         '<td>' + (a.Sigla || '-') + '</td>' +
         '<td class="text-center">' + (a.Paralelo || '-') + '</td>' +
+        '<td>' + (a.NombreMateria || '-') + '</td>' +
         '<td>' + (a.CodigoParalelo || '-') + '</td>' +
         '<td class="text-right">' + (a.HorasSemana ? a.HorasSemana.toFixed(2) : '0.00') + '</td>' +
         '<td class="text-right">' + (a.HorasMes ? a.HorasMes.toFixed(2) : '0.00') + '</td>' +

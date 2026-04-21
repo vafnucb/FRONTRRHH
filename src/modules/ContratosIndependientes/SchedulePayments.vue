@@ -62,6 +62,14 @@
             <!-- ACTION BUTTONS -->
             <div class="row" style="margin-top: 20px;" v-if="pagos.length > 0">
               <div class="col-md-6">
+                <button type="button" class="btn btn-fill" 
+                  :class="isAllSelected ? 'btn-default' : 'btn-info'"
+                  @click="toggleSelectAll"
+                  :disabled="!hayPagosSeleccionables || loading"
+                  style="margin-right: 10px;">
+                  <i :class="isAllSelected ? 'fa fa-square-o' : 'fa fa-check-square-o'"></i>
+                  {{ isAllSelected ? 'Deseleccionar Todo' : 'Seleccionar Todo (' + filteredPagos.filter(p => puedeSeleccionar(p)).length + ')' }}
+                </button>
                 <button type="button" class="btn btn-warning btn-fill" :disabled="selectedIds.length === 0 || loading"
                   @click.prevent="abrirModalEnvio">
                   <i class="fa fa-paper-plane"></i>
@@ -356,7 +364,9 @@ export default {
           (pago.Sigla && pago.Sigla.toLowerCase().includes(query)) ||
           (pago.CodUnidadOrganizacional && pago.CodUnidadOrganizacional.toLowerCase().includes(query)) ||
           (pago.UnidadOrganizacional && pago.UnidadOrganizacional.toLowerCase().includes(query)) ||
-          (pago.NombreMateria && pago.NombreMateria.toLowerCase().includes(query))
+          (pago.NombreMateria && pago.NombreMateria.toLowerCase().includes(query)) ||
+          (pago.Estado && pago.Estado.toLowerCase().includes(query)) ||
+          (pago.TipoDocente && pago.TipoDocente.toLowerCase().includes(query))
         )
       })
     },
