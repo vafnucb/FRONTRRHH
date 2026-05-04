@@ -145,6 +145,25 @@
                                   </div>
                               </div>
 
+                              <!-- SEARCH AND PDF -->
+                              <div class="row" style="margin-bottom: 15px;" v-if="pagos.length > 0">
+                                  <div class="col-md-6">
+                                      <button class="btn btn-danger btn-fill btn-sm" 
+                                          @click="previewPDF" 
+                                          :disabled="generatingPDF || selectedPagos.length === 0">
+                                          <i class="fa fa-file-text-o"></i>
+                                          Vista Previa PDF ({{ selectedPagos.length }})
+                                      </button>
+                                  </div>
+                                  <div class="col-md-6">
+                                      <div class="pull-right">
+                                          <input type="search" class="form-control input-sm" 
+                                              placeholder="Buscar por CI, nombre, contrato, sigla..."
+                                              v-model="searchQuery" style="width: 300px;">
+                                      </div>
+                                  </div>
+                              </div>
+
                               <!-- TABLE -->
                               <div class="table-wrapper">
                                 <el-table ref="pendientesTable" :data="filteredPagos" v-loading="loading" border style="width: 100%"
@@ -220,11 +239,6 @@
                                   <!-- ACTIONS -->
                                   <div class="row" style="margin-top: 20px;" v-if="selectedPagos.length > 0">
                                         <div class="col-md-12 text-center">
-                                            <button class="btn btn-danger btn-fill btn-lg" style="margin-right: 15px;"
-                                                @click="previewPDF" :disabled="generatingPDF">
-                                                <i class="fa fa-file-text-o"></i>
-                                                Vista Previa PDF ({{ selectedPagos.length }})
-                                            </button>
                                             <button class="btn btn-success btn-fill btn-lg"
                                                 @click="aprobarSeleccionados">
                                                 <i class="fa fa-check"></i>
@@ -313,7 +327,12 @@
 
                               <!-- HISTORICO ACTIONS -->
                               <div class="row" style="margin-bottom: 15px;" v-if="pagosHistorico.length > 0">
-                                  <div class="col-md-12 text-right">
+                                  <div class="col-md-6">
+                                      <input type="search" class="form-control input-sm" 
+                                          placeholder="Buscar por CI, nombre, contrato..."
+                                          v-model="searchQueryHistorico" style="width: 300px;">
+                                  </div>
+                                  <div class="col-md-6 text-right">
                                       <button class="btn btn-danger btn-fill btn-sm" @click="downloadHistoricoPDF" :disabled="loadingHistorico || generatingPDF">
                                           <i class="fa fa-file-text-o"></i> Descargar PDF
                                       </button>
@@ -322,7 +341,7 @@
 
                               <!-- TABLE HISTORICO -->
                               <div class="table-wrapper">
-                                  <el-table :data="pagosHistorico" v-loading="loadingHistorico" border
+                                <el-table :data="filteredHistorico" v-loading="loadingHistorico" border
                                       style="width: 100%">
 
                                       <el-table-column prop="NumeroContrato" label="N° Contrato" width="120">
@@ -384,8 +403,8 @@
                                   <!-- PAGINATION HISTORICO -->
                                   <div class="row" style="margin-top: 15px;" v-if="totalHistorico > 0">
                                       <div class="col-md-6">
-                                          <p class="text-muted">
-                                              Mostrando {{ pagosHistorico.length }} de {{ totalHistorico }} pago(s)
+                                        <p class="text-muted">
+                                              Mostrando {{ filteredHistorico.length }} de {{ totalHistorico }} pago(s)
                                               aprobado(s)
                                           </p>
                                       </div>
@@ -451,6 +470,7 @@ data () {
     selectedPagoId: null,
     showExcelValues: false,
     generatingPDF: false,
+    searchQueryHistorico: '',
     
     filters: {
       branchesId: null,
@@ -535,6 +555,20 @@ computed: {
   
   totalMontoReal () {
     return this.pagos.reduce((sum, p) => sum + (p.MontoReal || 0), 0)
+  },
+  filteredHistorico () {
+    if (!this.searchQueryHistorico) {
+      return this.pagosHistorico
+    }
+    var query = this.searchQueryHistorico.toUpperCase().trim()
+    return this.pagosHistorico.filter(function (p) {
+      return (
+        (p.CiDocente && p.CiDocente.toUpperCase().indexOf(query) > -1) ||
+        (p.NombreCompleto && p.NombreCompleto.toUpperCase().indexOf(query) > -1) ||
+        (p.NumeroContrato && p.NumeroContrato.toUpperCase().indexOf(query) > -1) ||
+        (p.TipoDocente && p.TipoDocente.toUpperCase().indexOf(query) > -1)
+      )
+    })
   }
 },
 
@@ -543,6 +577,7 @@ methods: {
     if (tab.name === 'historico' && this.pagosHistorico.length === 0) {
       this.loadHistorico()
     }
+    this.searchQueryHistorico = ''
   },
   
   // PENDIENTES METHODS
@@ -878,9 +913,8 @@ generatePDFForIds (pagosIds) {
       // Table body
       var body = data.map(function (row) {
         return [
-        row.NombreSocio || '',
+          row.NombreSocio || '',
           row.UnidadOrganizacional || '',
-          row.NombreDelServicio || '',
           row.PeriodoAcademico || '',
           row.SiglaAsignatura || '',
           row.Paralelo || '',

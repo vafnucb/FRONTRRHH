@@ -53,7 +53,7 @@
                   <input
                     type="search"
                     class="form-control"
-                    placeholder="N° Contrato, Sede..."
+                    placeholder="N° Contrato, Sede, Docente..."
                     v-model="searchQuery"
                     @input="handleSearch">
                 </div>
@@ -247,7 +247,8 @@ export default {
           (c.NumeroContrato && c.NumeroContrato.toUpperCase().includes(query)) ||
           (c.SedeNombre && c.SedeNombre.toUpperCase().includes(query)) ||
           (c.SedeAbr && c.SedeAbr.toUpperCase().includes(query)) ||
-          (c.PeriodoId && c.PeriodoId.toUpperCase().includes(query))
+          (c.PeriodoId && c.PeriodoId.toUpperCase().includes(query)) ||
+          (c.NombreDocente && c.NombreDocente.toUpperCase().includes(query))
         )
       })
     },
