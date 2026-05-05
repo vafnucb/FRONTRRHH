@@ -89,7 +89,7 @@
                                   <div class="col-md-3">
                                       <div class="stat-card">
                                           <i class="fa fa-file-text"></i>
-                                          <div class="stat-value">{{ pagos.length }}</div>
+                                          <div class="stat-value">{{ filteredPagos.length }}</div>
                                           <div class="stat-label">Pagos Pendientes</div>
                                       </div>
                                   </div>
@@ -192,6 +192,15 @@
                                               <span :class="getTipoDocenteBadge(scope.row.TipoDocente)">
                                                   {{ formatTipoDocente(scope.row.TipoDocente) }}
                                               </span>
+                                          </template>
+                                      </el-table-column>
+
+                                      <el-table-column label="Modificado" width="90" align="center">
+                                          <template slot-scope="scope">
+                                              <span v-if="scope.row.MontoModificado" class="label label-warning" title="El monto fue modificado respecto al original">
+                                                  <i class="fa fa-exclamation-circle"></i> Sí
+                                              </span>
+                                              <span v-else style="color: #ccc;">-</span>
                                           </template>
                                       </el-table-column>
 
@@ -389,9 +398,9 @@
 
                                       <el-table-column label="Acciones" width="120" align="center" fixed="right">
                                           <template slot-scope="scope">
-                                              <div class="action-buttons">
+                                            <div class="action-buttons">
                                                   <button class="btn btn-info btn-xs btn-simple"
-                                                      @click="viewDetalle(scope.row)" title="Ver detalle">
+                                                      @click="viewDetalleHistorico(scope.row)" title="Ver detalle">
                                                       <i class="fa fa-eye"></i>
                                                   </button>
 
@@ -546,15 +555,15 @@ computed: {
   },
   
   totalMontoContrato () {
-    return this.pagos.reduce((sum, p) => sum + (p.MontoContrato || 0), 0)
+    return this.filteredPagos.reduce((sum, p) => sum + (p.MontoContrato || 0), 0)
   },
   
   totalRetencion () {
-    return this.pagos.reduce((sum, p) => sum + (p.MontoRetencion || 0), 0)
+    return this.filteredPagos.reduce((sum, p) => sum + (p.MontoRetencion || 0), 0)
   },
   
   totalMontoReal () {
-    return this.pagos.reduce((sum, p) => sum + (p.MontoReal || 0), 0)
+    return this.filteredPagos.reduce((sum, p) => sum + (p.MontoReal || 0), 0)
   },
   filteredHistorico () {
     if (!this.searchQueryHistorico) {
