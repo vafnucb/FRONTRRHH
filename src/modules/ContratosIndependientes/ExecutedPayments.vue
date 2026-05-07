@@ -63,25 +63,7 @@
                                       </div>
                                   </div>
 
-                                  <div class="col-md-2">
-                                      <div class="form-group">
-                                          <label>Tipo Docente</label>
-                                          <el-select v-model="filters.tipoDocente" placeholder="Seleccione tipo"
-                                              clearable @change="onTipoDocenteChange">
-                                              <el-option value="INDEPENDIENTE_CON_FACTURA" label="Con Factura (0%)"></el-option>
-                                              <el-option value="INDEPENDIENTE_SIN_FACTURA" label="Sin Factura (16%)"></el-option>
-                                              <el-option value="EXTRANJERO" label="Extranjero (12.5%)"></el-option>
-                                          </el-select>
-                                      </div>
-                                  </div>
-
-                                  <div class="col-md-2">
-                                      <div class="form-group">
-                                          <label>Buscar</label>
-                                          <input type="search" class="form-control" placeholder="CI, nombre..."
-                                              v-model="searchQuery">
-                                      </div>
-                                  </div>
+                                  
                               </div>
 
                               <!-- SUMMARY -->
@@ -595,7 +577,7 @@ methods: {
     
     const params = {}
     
-    if (this.filters.branchesId) params.branchesId = this.filters.branchesId
+    if (this.filters.branchesId) params.branchId = this.filters.branchesId
     if (this.filters.periodoId) params.periodoId = this.filters.periodoId
     if (this.filters.mes) params.mes = this.filters.mes
     if (this.filters.anio) params.anio = this.filters.anio
@@ -866,7 +848,7 @@ generatePDFForIds (pagosIds) {
     },
 
     downloadHistoricoPDF () {
-      var ids = this.pagosHistorico.map(function (p) { return p.PagoEjecutadoId })
+      var ids = this.filteredHistorico.map(function (p) { return p.PagoEjecutadoId })
       if (ids.length === 0) {
         Message({ message: 'No hay pagos para exportar', type: 'warning', duration: 3000 })
         return
@@ -882,7 +864,7 @@ generatePDFForIds (pagosIds) {
       doc.setFontStyle('bold')
       doc.text('Universidad Católica Boliviana "San Pablo"', 148, 15, null, null, 'center')
       doc.setFontSize(12)
-      doc.text(branchName || 'Reporte de Pagos Aprobados', 148, 23, null, null, 'center')
+      doc.text('Reporte de Pagos Aprobados' + (branchName ? ' - ' + branchName : ''), 148, 23, null, null, 'center')
       doc.setFontSize(8)
       doc.setFontStyle('normal')
       var now = new Date()
