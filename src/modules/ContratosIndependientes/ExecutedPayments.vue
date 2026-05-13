@@ -63,7 +63,25 @@
                                       </div>
                                   </div>
 
-                                  
+                                  <div class="col-md-2">
+                                      <div class="form-group">
+                                          <label>Tipo Docente</label>
+                                          <el-select v-model="filters.tipoDocente" placeholder="Seleccione tipo"
+                                              clearable @change="onTipoDocenteChange">
+                                              <el-option value="INDEPENDIENTE_CON_FACTURA" label="Con Factura (0%)"></el-option>
+                                              <el-option value="INDEPENDIENTE_SIN_FACTURA" label="Sin Factura (16%)"></el-option>
+                                              <el-option value="EXTRANJERO" label="Extranjero (12.5%)"></el-option>
+                                          </el-select>
+                                      </div>
+                                  </div>
+
+                                  <div class="col-md-2">
+                                      <div class="form-group">
+                                          <label>Buscar</label>
+                                          <input type="search" class="form-control" placeholder="CI, nombre..."
+                                              v-model="searchQuery">
+                                      </div>
+                                  </div>
                               </div>
 
                               <!-- SUMMARY -->
@@ -395,7 +413,7 @@
                                   <div class="row" style="margin-top: 15px;" v-if="totalHistorico > 0">
                                       <div class="col-md-6">
                                         <p class="text-muted">
-                                              Mostrando {{ filteredHistorico.length }} de {{ totalHistorico }} pago(s)
+                                          Mostrando {{ pagosHistorico.length }} de {{ totalHistorico }} pago(s)
                                               aprobado(s)
                                           </p>
                                       </div>
@@ -462,6 +480,7 @@ data () {
     showExcelValues: false,
     generatingPDF: false,
     searchQueryHistorico: '',
+    searchHistoricoTimeout: null,
     
     filters: {
       branchesId: null,
@@ -548,18 +567,19 @@ computed: {
     return this.filteredPagos.reduce((sum, p) => sum + (p.MontoReal || 0), 0)
   },
   filteredHistorico () {
-    if (!this.searchQueryHistorico) {
-      return this.pagosHistorico
+    return this.pagosHistorico
+  }
+},
+
+watch: {
+  searchQueryHistorico: function (newVal, oldVal) {
+    if (this.searchHistoricoTimeout) {
+      clearTimeout(this.searchHistoricoTimeout)
     }
-    var query = this.searchQueryHistorico.toUpperCase().trim()
-    return this.pagosHistorico.filter(function (p) {
-      return (
-        (p.CiDocente && p.CiDocente.toUpperCase().indexOf(query) > -1) ||
-        (p.NombreCompleto && p.NombreCompleto.toUpperCase().indexOf(query) > -1) ||
-        (p.NumeroContrato && p.NumeroContrato.toUpperCase().indexOf(query) > -1) ||
-        (p.TipoDocente && p.TipoDocente.toUpperCase().indexOf(query) > -1)
-      )
-    })
+    this.searchHistoricoTimeout = setTimeout(function () {
+      this.paginationHistorico.currentPage = 1
+      this.loadHistorico()
+    }.bind(this), 500)
   }
 },
 
@@ -982,6 +1002,7 @@ generatePDFForIds (pagosIds) {
     if (this.filtersHistorico.anio) params.anio = this.filtersHistorico.anio
     if (this.filtersHistorico.fechaDesde) params.fechaDesde = this.filtersHistorico.fechaDesde
     if (this.filtersHistorico.fechaHasta) params.fechaHasta = this.filtersHistorico.fechaHasta
+    if (this.searchQueryHistorico) params.search = this.searchQueryHistorico
     
     axios.get('/EjecucionPagos/GetPagosAprobados', {
       params: params,
