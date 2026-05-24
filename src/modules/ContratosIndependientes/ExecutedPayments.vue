@@ -187,6 +187,12 @@
                                       <el-table-column prop="Paralelo" label="Paralelo" width="80" align="center">
                                       </el-table-column>
 
+                                      <el-table-column label="Mes/Año" width="120">
+                                          <template slot-scope="scope">
+                                              {{ getMonthName(scope.row.MesPago) }} {{ scope.row.AnioPago }}
+                                          </template>
+                                      </el-table-column>
+
                                       <el-table-column label="Tipo Docente" width="150">
                                           <template slot-scope="scope">
                                               <span :class="getTipoDocenteBadge(scope.row.TipoDocente)">
@@ -360,6 +366,21 @@
                                       </el-table-column>
 
                                       <el-table-column prop="CiDocente" label="CI" width="100">
+                                      </el-table-column>
+
+                                      <el-table-column prop="Sigla" label="Sigla" width="90">
+                                      </el-table-column>
+
+                                      <el-table-column prop="Paralelo" label="Paralelo" width="80" align="center">
+                                      </el-table-column>
+
+                                      <el-table-column label="Modificado" width="90" align="center">
+                                          <template slot-scope="scope">
+                                              <span v-if="scope.row.MontoModificado" class="label label-warning" title="El monto fue modificado respecto al original">
+                                                  <i class="fa fa-exclamation-circle"></i> Sí
+                                              </span>
+                                              <span v-else style="color: #ccc;">-</span>
+                                          </template>
                                       </el-table-column>
 
                                       <el-table-column label="Mes/Año" width="120">
@@ -914,6 +935,7 @@ generatePDFForIds (pagosIds) {
         'Sigla',
         'Paralelo',
         'Materia',
+        'Mes/Año',
         'Monto Contrato',
         'Monto RCIVA',
         'Monto IT',
@@ -923,6 +945,11 @@ generatePDFForIds (pagosIds) {
 
       // Table body
       var body = data.map(function (row) {
+        var mesNombre = ''
+        var mesesArr = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        if (row.MesPago && row.AnioPago) {
+          mesNombre = (mesesArr[row.MesPago] || '') + ' ' + row.AnioPago
+        }
         return [
           row.NombreSocio || '',
           row.UnidadOrganizacional || '',
@@ -930,6 +957,7 @@ generatePDFForIds (pagosIds) {
           row.SiglaAsignatura || '',
           row.Paralelo || '',
           row.NombreMateria || '',
+          mesNombre,
           row.MontoContrato ? row.MontoContrato.toFixed(2) : '0.00',
           row.MontoIUE ? row.MontoIUE.toFixed(2) : '0.00',
           row.MontoIT ? row.MontoIT.toFixed(2) : '0.00',
@@ -940,7 +968,7 @@ generatePDFForIds (pagosIds) {
 
       // Add totals row
       body.push([
-        '', '', '', '', '',
+        '', '', '', '', '', '',
         'TOTALES:',
         totalContrato.toFixed(2),
         totalRCIVA.toFixed(2),
@@ -964,17 +992,18 @@ generatePDFForIds (pagosIds) {
           halign: 'center'
         },
         columnStyles: {
-          0: { cellWidth: 35 },
-          1: { cellWidth: 35 },
-          2: { cellWidth: 20 },
-          3: { cellWidth: 18 },
-          4: { cellWidth: 16 },
-          5: { cellWidth: 30 },
-          6: { cellWidth: 22, halign: 'right' },
-          7: { cellWidth: 22, halign: 'right' },
+          0: { cellWidth: 32 },
+          1: { cellWidth: 32 },
+          2: { cellWidth: 18 },
+          3: { cellWidth: 16 },
+          4: { cellWidth: 14 },
+          5: { cellWidth: 26 },
+          6: { cellWidth: 18 },
+          7: { cellWidth: 20, halign: 'right' },
           8: { cellWidth: 20, halign: 'right' },
-          9: { cellWidth: 22, halign: 'right' },
-          10: { cellWidth: 22, halign: 'right' }
+          9: { cellWidth: 18, halign: 'right' },
+          10: { cellWidth: 20, halign: 'right' },
+          11: { cellWidth: 20, halign: 'right' }
         },
         didParseCell: function (data) {
           if (data.row.index === body.length - 1) {
