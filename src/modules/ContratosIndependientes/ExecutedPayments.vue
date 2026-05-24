@@ -322,6 +322,17 @@
                                           </el-select>
                                       </div>
                                   </div>
+                                  <div class="col-md-2">
+                                      <div class="form-group">
+                                          <label>Tipo Docente</label>
+                                          <el-select v-model="filtersHistorico.tipoDocente" placeholder="Todos"
+                                              clearable @change="loadHistorico">
+                                              <el-option value="INDEPENDIENTE_CON_FACTURA" label="Con Factura"></el-option>
+                                              <el-option value="INDEPENDIENTE_SIN_FACTURA" label="Sin Factura"></el-option>
+                                              <el-option value="EXTRANJERO" label="Extranjero"></el-option>
+                                          </el-select>
+                                      </div>
+                                  </div>
 
                                   <div class="col-md-2">
                                       <div class="form-group">
@@ -341,7 +352,7 @@
                               </div>
 
                               <!-- HISTORICO ACTIONS -->
-                              <div class="row" style="margin-bottom: 15px;" v-if="pagosHistorico.length > 0">
+                              <div class="row" style="margin-bottom: 15px;" v-if="pagosHistorico.length > 0 || searchQueryHistorico">
                                   <div class="col-md-6">
                                       <input type="search" class="form-control input-sm" 
                                           placeholder="Buscar por CI, nombre, contrato..."
@@ -517,13 +528,14 @@ data () {
     totalHistorico: 0,
     
     filtersHistorico: {
-      branchesId: null,
-      periodoId: null,
-      mes: null,
-      anio: null,
-      fechaDesde: null,
-      fechaHasta: null
-    },
+        branchesId: null,
+        periodoId: null,
+        mes: null,
+        anio: null,
+        tipoDocente: null,
+        fechaDesde: null,
+        fechaHasta: null
+      },
     
     paginationHistorico: {
       currentPage: 1,
@@ -1029,6 +1041,7 @@ generatePDFForIds (pagosIds) {
     if (this.filtersHistorico.periodoId) params.periodoId = this.filtersHistorico.periodoId
     if (this.filtersHistorico.mes) params.mes = this.filtersHistorico.mes
     if (this.filtersHistorico.anio) params.anio = this.filtersHistorico.anio
+    if (this.filtersHistorico.tipoDocente) params.tipoDocente = this.filtersHistorico.tipoDocente
     if (this.filtersHistorico.fechaDesde) params.fechaDesde = this.filtersHistorico.fechaDesde
     if (this.filtersHistorico.fechaHasta) params.fechaHasta = this.filtersHistorico.fechaHasta
     if (this.searchQueryHistorico) params.search = this.searchQueryHistorico
