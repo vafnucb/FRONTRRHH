@@ -44,10 +44,13 @@
             <span v-else>Desmarcar Todos</span>
           </button>
         </div>
-        <div class="col-md-2" v-if="origen === 'DEPEN' || origen === 'INDEP' || origen === 'EXT'">
+        <div class="col-md-2" v-if="origen === 'DEPEN' || origen === 'INDEP' || origen === 'EXT' || origen === 'FAC'">
           <button class="btn btn-info btn-wd" @click="UpdateState">Enviar a Aprobacion</button>
         </div>
-        <div class="col-md-2" v-if="origen === 'OR' || origen === 'FAC'">
+        <div class="col-md-3" v-if="origen === 'FAC'">
+          <button class="btn btn-warning btn-wd" @click="openAsignarFactura">Asignar Datos de Factura</button>
+        </div>
+        <div class="col-md-2" v-if="origen === 'OR'">
           <button class="btn btn-info btn-wd" @click="showDateForHistoricOR">Enviar a Historico</button>
         </div>
       </div>
@@ -130,11 +133,51 @@
         </div>
       </div>
     </template>
+    <template v-if="actions==='ASIGNARFACTURA'">
+      <h5 class="text-center">Asignar datos de factura a los {{ SelectedIds.length }} registro(s) seleccionado(s).</h5>
+      <div class="row">
+        <div class="col-md-3 el-col-md-offset-2 form-group">
+          <label>Razón Social</label>
+          <input type="text" class="form-control" v-model="factura.RazonSocial" placeholder="Razón Social"/>
+          <small v-if="facturaError.RazonSocial" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
+        </div>
+        <div class="col-md-3 form-group">
+          <label>NIT</label>
+          <input type="text" class="form-control" v-model="factura.NIT" placeholder="NIT"/>
+          <small v-if="facturaError.NIT" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
+        </div>
+        <div class="col-md-3 form-group">
+          <label>N° de Factura</label>
+          <input type="text" class="form-control" v-model="factura.NumeroFactura" placeholder="N° de Factura"/>
+          <small v-if="facturaError.NumeroFactura" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 el-col-md-offset-2 form-group">
+          <label>Fecha de Factura</label>
+          <div>
+            <date-picker v-model="factura.FechaFactura" :format="format2" :use-utc="true" placeholder="DD/MM/YYYY"></date-picker>
+          </div>
+          <small v-if="facturaError.FechaFactura" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 el-col-md-offset-3">
+          <button class="btn btn-danger btn-fill" @click="actions='LIST'">Cancelar</button>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-success btn-fill" @click="saveFactura">Guardar Factura</button>
+        </div>
+      </div>
+    </template>
 
   </div>
 </template>
 <script>
   import Datepicker from 'vuejs-datepicker'
+  import DatePicker from 'vue2-datepicker'
+  import 'vue2-datepicker/index.css'
+  import 'vue2-datepicker/locale/es'
   import { ModelSelect } from 'vue-search-select'
   import EditTutoria from '../ABM/RegistroTutorias'
   import axios from 'axios'
@@ -145,6 +188,7 @@
   export default {
     components: {
       Datepicker,
+      DatePicker,
       EditTutoria,
       ReporteProyecto,
       ModelSelect
@@ -157,6 +201,19 @@
         PDFcarrera: 'NO',
         mes: null,
         segmento: null,
+        format2: 'DD/MM/YYYY',
+        factura: {
+          RazonSocial: '',
+          NIT: '',
+          NumeroFactura: '',
+          FechaFactura: null
+        },
+        facturaError: {
+          RazonSocial: false,
+          NIT: false,
+          NumeroFactura: false,
+          FechaFactura: false
+        },
         segmentoOrigen: null,
         gestion: null,
         i: null,
@@ -216,6 +273,12 @@
             field: 'Ignored',
             label: 'Dup',
             minWidth: 10
+          },
+          {
+            prop: 'TieneFactura',
+            field: 'TieneFactura',
+            label: 'Factura',
+            minWidth: 40
           }
         ],
         pagination: {
@@ -297,6 +360,76 @@
       actualCarrera () {
         this.fakeLoad()
         this.aparezco = 'SI'
+      },
+      openAsignarFactura () {
+        if (this.SelectedIds.length < 1) {
+          swal({
+            title: 'Debe seleccionar al menos un registro.',
+            text: 'Marque los registros a los que desea asignar la factura.',
+            type: 'error',
+            confirmButtonClass: 'btn btn-info btn-fill',
+            buttonsStyling: false
+          })
+          return
+        }
+        this.factura.RazonSocial = ''
+        this.factura.NIT = ''
+        this.factura.NumeroFactura = ''
+        this.factura.FechaFactura = null
+        this.facturaError.RazonSocial = false
+        this.facturaError.NIT = false
+        this.facturaError.NumeroFactura = false
+        this.facturaError.FechaFactura = false
+        this.actions = 'ASIGNARFACTURA'
+      },
+      saveFactura () {
+        var vm = this
+        var isEmpty = function (val) {
+          return !val || val.toString().trim().length === 0
+        }
+        this.facturaError.RazonSocial = isEmpty(this.factura.RazonSocial)
+        this.facturaError.NIT = isEmpty(this.factura.NIT)
+        this.facturaError.NumeroFactura = isEmpty(this.factura.NumeroFactura)
+        this.facturaError.FechaFactura = !this.factura.FechaFactura
+        if (this.facturaError.RazonSocial || this.facturaError.NIT ||
+            this.facturaError.NumeroFactura || this.facturaError.FechaFactura) {
+          return
+        }
+        var d = new Date(this.factura.FechaFactura)
+        var mnth = ('0' + (d.getMonth() + 1)).slice(-2)
+        var day = ('0' + d.getDate()).slice(-2)
+        var isoDate = [d.getFullYear(), mnth, day].join('-')
+
+        var payload = {
+          Ids: vm.SelectedIds,
+          RazonSocial: vm.factura.RazonSocial,
+          NIT: vm.factura.NIT,
+          NumeroFactura: vm.factura.NumeroFactura,
+          FechaFactura: isoDate
+        }
+        axios.post('AsignarFacturaProyectos', payload, { headers: { token: localStorage.getItem('token') } })
+          .then(function (response) {
+            swal({
+              title: 'Buen trabajo!!',
+              text: response.data,
+              type: 'success',
+              confirmButtonClass: 'btn btn-success btn-fill',
+              buttonsStyling: false
+            }).then(function () {
+              location.reload()
+            })
+          })
+          .catch(function (error) {
+            swal({
+              title: 'Ups!',
+              text: (error.response && error.response.data && error.response.data.Message)
+                ? error.response.data.Message
+                : 'No se pudieron asignar los datos de factura.',
+              type: 'error',
+              confirmButtonClass: 'btn btn-info btn-fill',
+              buttonsStyling: false
+            })
+          })
       },
       showDateForHistoricOR () {
         var vm = this

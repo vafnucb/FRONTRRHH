@@ -704,26 +704,34 @@ export default {
         }))
       }
       
-      // Standard payments with precise calculation
+      // Standard payments using configured percentages
       const total = asignacion.MontoTotal
       const count = this.form.meses.length
-      
-      // Calculate per-payment (floor to 2 decimals)
-      const perPayment = Math.floor((total / count) * 100) / 100
-      const remainder = total - (perPayment * count)
-      
-      return this.form.meses.map((mes, index) => {
-        const isLast = index === count - 1
-        const monto = isLast ? perPayment + remainder : perPayment
-        
-        return {
+      var pagos = []
+      var sumaMontosAnteriores = 0
+
+      this.form.meses.forEach(function (mes, index) {
+        var isLast = index === count - 1
+        var monto
+
+        if (isLast) {
+          // Last payment gets the remainder to ensure exact total
+          monto = Math.round((total - sumaMontosAnteriores) * 100) / 100
+        } else {
+          monto = Math.round((total * mes.PorcentajePorDefecto / 100) * 100) / 100
+          sumaMontosAnteriores += monto
+        }
+
+        pagos.push({
           orden: mes.Orden,
           mes: mes.Mes,
           anio: mes.Anio,
           monto: monto,
           porcentaje: mes.PorcentajePorDefecto
-        }
+        })
       })
+
+      return pagos
     },
     
     toggleExpand (asigId) {

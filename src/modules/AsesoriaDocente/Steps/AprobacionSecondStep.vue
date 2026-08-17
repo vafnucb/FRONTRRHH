@@ -27,6 +27,9 @@
         <br>
         <br>
         <button class="btn btn-info" @click="windowDateEXT">Generar archivo CARRERA SARAI Extranjeros</button>
+        <br>
+        <br>
+        <button class="btn btn-warning" @click="windowDateFAC">Generar archivo CARRERA SARAI Con Factura</button>
     </div>
         </div>
 
@@ -283,6 +286,11 @@
       windowDateEXT () {
         this.action = 'MODIFY'
         this.fileUrl = 'FileExt?data='
+        this.file = 'CARRERA'
+      },
+      windowDateFAC () {
+        this.action = 'MODIFY'
+        this.fileUrl = 'ToCarreraFileFAC?data='
         this.file = 'CARRERA'
       },
       toPregrado () {

@@ -324,7 +324,7 @@
     this.tutoria.IUE = 0
     this.tutoria.IT = 0
     this.tutoria.IUEExterior = 0
-    this.tutoria.TotalNeto = parseFloat(((this.totalBruto || 0)).toFixed(2))
+    this.tutoria.TotalNeto = parseFloat((Number(this.totalBruto) || 0).toFixed(2))
     return this.tutoria.TotalNeto
   }
         if (this.extranjero) {
@@ -519,27 +519,6 @@
         }
       },
       actualCat (teacher) {
-        /*
-        for (var i = 0; i < this.teacherArray.length; i++) {
-          // si es dependiente y el valor iguala, entonces se guarda en el CUNI, sino en el BP
-          // resetea el otro identificador, para no guardar el identificador de un docente seleccionado antes
-          if (this.dependiente && this.teacherArray[i]['value'] === this.teacherIdentifier) {
-            this.tutoria.TeacherBP = ''
-            this.tutoria.TeacherCUNI = this.teacherArray[i]['value']
-            this.tutoria.TeacherFullName = this.teacherArray[i]['name']
-            this.tutoria.Categoría = this.teacherArray[i]['Categoria']
-            this.tutoria.MontoHora = this.teacherArray[i]['Precio']
-          }
-          if (!this.dependiente && this.teacherArray[i]['value'] === this.teacherIdentifier) {
-            this.tutoria.TeacherCUNI = ''
-            this.tutoria.TeacherBP = this.teacherArray[i]['value']
-            this.tutoria.TeacherFullName = this.teacherArray[i]['name']
-            this.tutoria.Categoría = this.teacherArray[i]['Categoria']
-            this.tutoria.MontoHora = this.teacherArray[i]['Precio']
-          }
-        }
-        return this.tutoria.Categoría
-        */
         axios.get('DocentesList/' + teacher)
           .then(response => {
             this.infoTeacher = response.data

@@ -28,6 +28,9 @@
         <br>
         <br>
         <button class="btn btn-info" @click="windowDateEXT">Generar archivo SARAI Extranjeros</button>
+        <br>
+        <br>
+        <button class="btn btn-warning" @click="windowDateFAC">Generar archivo SARAI Con Factura</button>
     </div>
       </div>
     </template>
@@ -266,6 +269,12 @@
         setTimeout(() => {
           this.$store.commit('crud/loadSetter', false)
         }, 2000)
+      },
+      windowDateFAC () {
+        this.action = 'MODIFY'
+        this.fileUrl = 'ToProyectosFileFAC?data='
+        this.file = 'PROYECTOS'
+        this.title = 'SARAI/'
       },
       actualCarrera () {
         this.fakeLoad()
