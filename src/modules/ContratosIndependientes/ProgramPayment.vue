@@ -394,7 +394,7 @@
                       </ul>
                     </div>
 
-                    <!-- NEW: Show exceptions summary -->
+                    <!--Show exceptions summary -->
                     <div v-if="excepciones.length > 0" style="margin-top: 20px;">
                       <strong>Excepciones configuradas:</strong>
                       <ul style="margin-top: 10px;">

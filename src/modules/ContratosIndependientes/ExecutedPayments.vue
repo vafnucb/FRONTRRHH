@@ -210,6 +210,15 @@
                                           </template>
                                       </el-table-column>
 
+                                      <el-table-column label="Factura" width="90" align="center" v-if="filters.tipoDocente === 'INDEPENDIENTE_CON_FACTURA'">
+                                          <template slot-scope="scope">
+                                              <span v-if="scope.row.TieneFactura" class="label label-success">
+                                                  <i class="fa fa-check"></i> Sí
+                                              </span>
+                                              <span v-else class="label label-danger">No</span>
+                                          </template>
+                                      </el-table-column>
+
                                       <el-table-column label="Monto Bruto" width="120" align="right">
                                           <template slot-scope="scope">
                                               Bs. {{ formatMoney(scope.row.MontoContrato) }}
@@ -254,6 +263,12 @@
                                   <!-- ACTIONS -->
                                   <div class="row" style="margin-top: 20px;" v-if="selectedPagos.length > 0">
                                         <div class="col-md-12 text-center">
+                                            <button v-if="filters.tipoDocente === 'INDEPENDIENTE_CON_FACTURA'"
+                                                class="btn btn-warning btn-fill btn-lg"
+                                                @click="openAsignarFactura" style="margin-right: 10px;">
+                                                <i class="fa fa-file-text"></i>
+                                                Asignar Datos de Factura ({{ selectedPagos.length }})
+                                            </button>
                                             <button class="btn btn-success btn-fill btn-lg"
                                                 @click="aprobarSeleccionados">
                                                 <i class="fa fa-check"></i>
@@ -477,6 +492,40 @@
       <detalle-ejecucion-modal :show.sync="showDetailModal" :pago-id="selectedPagoId"
           :show-excel-values="showExcelValues">
       </detalle-ejecucion-modal>
+<!-- MODAL: Asignar Datos de Factura -->
+<el-dialog title="Asignar Datos de Factura" :visible.sync="showFacturaModal" width="600px">
+          <div class="row">
+              <div class="col-md-12 form-group">
+                  <label>Razón Social</label>
+                  <input type="text" class="form-control" v-model="facturaForm.RazonSocial" placeholder="Razón Social">
+              </div>
+              <div class="col-md-6 form-group">
+                  <label>NIT</label>
+                  <input type="text" class="form-control" v-model="facturaForm.NIT" placeholder="NIT">
+              </div>
+              <div class="col-md-6 form-group">
+                  <label>N° de Factura</label>
+                  <input type="text" class="form-control" v-model="facturaForm.NumeroFactura" placeholder="N° de Factura">
+              </div>
+              <div class="col-md-6 form-group">
+                  <label>Fecha de Factura</label>
+                  <input type="date" class="form-control" v-model="facturaForm.FechaFactura">
+              </div>
+              <div class="col-md-6 form-group">
+                  <label>Código de Autorización</label>
+                  <input type="text" class="form-control" v-model="facturaForm.CodigoAutorizacion" placeholder="Código de Autorización">
+              </div>
+              <div class="col-md-6 form-group">
+                  <label>Monto</label>
+                  <input type="number" step="0.01" class="form-control" v-model.number="facturaForm.Monto" placeholder="Monto">
+              </div>
+          </div>
+          <span slot="footer" class="dialog-footer">
+              <button class="btn btn-default" @click="showFacturaModal = false">Cancelar</button>
+              <button class="btn btn-success btn-fill" @click="guardarFactura">Guardar Factura</button>
+          </span>
+      </el-dialog>
+
   </div>
 </template>
 
@@ -484,8 +533,8 @@
 import axios from 'axios'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
-import { Message, MessageBox, Tabs, TabPane, Pagination } from 'element-ui'
 import DetalleEjecucionModal from './Components/EjecucionDetailModal.vue'
+import { Message, MessageBox, Tabs, TabPane, Pagination, Dialog } from 'element-ui'
 
 export default {
 name: 'AprobacionPagos',
@@ -493,7 +542,8 @@ components: {
   DetalleEjecucionModal,
   'el-tabs': Tabs,
   'el-tab-pane': TabPane,
-  'el-pagination': Pagination
+  'el-pagination': Pagination,
+  'el-dialog': Dialog
 },
 data () {
   const currentYear = new Date().getFullYear()
@@ -513,7 +563,15 @@ data () {
     generatingPDF: false,
     searchQueryHistorico: '',
     searchHistoricoTimeout: null,
-    
+    showFacturaModal: false,
+    facturaForm: {
+      RazonSocial: '',
+      NIT: '',
+      NumeroFactura: '',
+      FechaFactura: null,
+      CodigoAutorizacion: '',
+      Monto: null
+    },
     filters: {
       branchesId: null,
       periodoId: null,
@@ -655,6 +713,51 @@ methods: {
         this.loading = false
       })
   },
+  openAsignarFactura () {
+    if (this.selectedPagos.length === 0) {
+      Message({ message: 'Debe seleccionar al menos un pago', type: 'warning', duration: 3000 })
+      return
+    }
+    this.facturaForm.RazonSocial = ''
+    this.facturaForm.NIT = ''
+    this.facturaForm.NumeroFactura = ''
+    this.facturaForm.FechaFactura = null
+    this.showFacturaModal = true
+    this.facturaForm.CodigoAutorizacion = ''
+    this.facturaForm.Monto = null
+  },
+
+    guardarFactura () {
+    if (!this.facturaForm.RazonSocial || !this.facturaForm.NIT ||
+        !this.facturaForm.NumeroFactura || !this.facturaForm.FechaFactura ||
+        !this.facturaForm.CodigoAutorizacion ||
+        this.facturaForm.Monto === null || this.facturaForm.Monto === '' || this.facturaForm.Monto <= 0) {
+      Message({ message: 'Todos los campos de la factura son obligatorios', type: 'warning', duration: 3000 })
+      return
+    }
+    var ids = this.selectedPagos.map(p => p.PagoEjecutadoId).filter(id => id != null)
+    axios.post('/EjecucionPagos/AsignarFacturaParalelo', {
+      Ids: ids,
+      RazonSocial: this.facturaForm.RazonSocial,
+      NIT: this.facturaForm.NIT,
+      NumeroFactura: this.facturaForm.NumeroFactura,
+      FechaFactura: this.facturaForm.FechaFactura,
+      CodigoAutorizacion: this.facturaForm.CodigoAutorizacion,
+      Monto: this.facturaForm.Monto
+    }, {
+      headers: { token: localStorage.getItem('token') }
+    })
+      .then(response => {
+        Message({ message: response.data.Message || 'Factura asignada', type: 'success', duration: 3000 })
+        this.showFacturaModal = false
+        this.loadPagos()
+      })
+      .catch(error => {
+        const msg = error.response && error.response.data && error.response.data.Message
+          ? error.response.data.Message : 'Error al asignar la factura'
+        Message({ message: msg, type: 'error', duration: 5000 })
+      })
+  },
   
   loadBranches () {
     axios.get('/branches/', {
@@ -683,6 +786,11 @@ methods: {
     if (this.$refs.pendientesTable) {
       this.$refs.pendientesTable.clearSelection()
     }
+    this.$nextTick(() => {
+      if (this.$refs.pendientesTable) {
+        this.$refs.pendientesTable.doLayout()
+      }
+    })
   },
   
   aprobarSeleccionados () {

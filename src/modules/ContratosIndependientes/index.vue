@@ -90,7 +90,7 @@
             <!-- TABLE -->
             <div class="table-wrapper">
               <el-table
-                :data="filteredContratos"
+              :data="contratos"
                 v-loading="loading"
                 border
                 style="width: 100%">
@@ -268,8 +268,11 @@ export default {
       this.loading = true
       
       const params = {
-        page: this.currentPage,
-        pageSize: this.pageSize
+      page: this.currentPage,
+      pageSize: this.pageSize,
+      search: this.searchQuery
+          ? this.searchQuery.trim()
+          : ''
       }
       
       if (this.filters.branchesId) {
@@ -301,7 +304,7 @@ export default {
           this.currentPage = data.Page || 1
           
           // Calculate total amount
-          this.calculateTotals()
+          this.montoTotalGeneral = Number(data.MontoTotalGeneral || 0)
           
           this.loading = false
         })
@@ -350,13 +353,12 @@ export default {
     },
     
     handleSearch () {
-      // Debounce search
       if (this.searchTimeout) {
         clearTimeout(this.searchTimeout)
       }
-      
+
       this.searchTimeout = setTimeout(() => {
-        // Search is done client-side on filteredContratos
+        this.loadContratos(true)
       }, 300)
     },
     

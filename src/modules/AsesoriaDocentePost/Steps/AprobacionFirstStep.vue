@@ -542,7 +542,9 @@
                   })
                   .catch(error => swal({
                     title: 'Hubo un problema al enviar los registros',
-                    text: error,
+                    text: (error.response && error.response.data && error.response.data.Message)
+                      ? error.response.data.Message
+                      : 'No se pudieron enviar los registros a aprobación.',
                     type: 'error',
                     confirmButtonClass: 'btn btn-info btn-fill',
                     buttonsStyling: false
