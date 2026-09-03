@@ -133,15 +133,12 @@
         </div>
       </div>
     </template>
-    <template v-if="actions==='ASIGNARFACTURA'">
+
+
+        <template v-if="actions==='ASIGNARFACTURA'">
       <h5 class="text-center">Asignar datos de factura a los {{ SelectedIds.length }} registro(s) seleccionado(s).</h5>
       <div class="row">
         <div class="col-md-3 el-col-md-offset-2 form-group">
-          <label>Razón Social</label>
-          <input type="text" class="form-control" v-model="factura.RazonSocial" placeholder="Razón Social"/>
-          <small v-if="facturaError.RazonSocial" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
-        </div>
-        <div class="col-md-3 form-group">
           <label>NIT</label>
           <input type="text" class="form-control" v-model="factura.NIT" placeholder="NIT"/>
           <small v-if="facturaError.NIT" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
@@ -151,14 +148,42 @@
           <input type="text" class="form-control" v-model="factura.NumeroFactura" placeholder="N° de Factura"/>
           <small v-if="facturaError.NumeroFactura" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
         </div>
+        <div class="col-md-3 form-group" style="display: flex; align-items: flex-end;">
+          <button class="btn btn-info btn-fill" @click="buscarFactura" :disabled="buscandoFactura">
+            <i class="fa fa-search"></i> Buscar en SAP
+          </button>
+        </div>
+      </div>
+      <div class="row" v-if="buscandoFactura">
+        <div class="col-md-12" style="text-align: center; padding: 10px;">
+          <i class="fa fa-spinner fa-spin" style="font-size: 32px; color: #2196F3;"></i>
+          <p style="margin-top: 8px; color: #666;">Buscando factura en SAP...</p>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-3 el-col-md-offset-2 form-group">
+          <label>Razón Social</label>
+          <input type="text" class="form-control" v-model="factura.RazonSocial" placeholder="Razón Social"/>
+          <small v-if="facturaError.RazonSocial" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
+        </div>
+        <div class="col-md-3 form-group">
           <label>Fecha de Factura</label>
           <div>
             <date-picker v-model="factura.FechaFactura" :format="format2" :use-utc="true" placeholder="DD/MM/YYYY"></date-picker>
           </div>
           <small v-if="facturaError.FechaFactura" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
+        </div>
+        <div class="col-md-3 form-group">
+          <label>Código de Autorización</label>
+          <input type="text" class="form-control" v-model="factura.CodigoAutorizacion" placeholder="Código de Autorización"/>
+          <small v-if="facturaError.CodigoAutorizacion" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 el-col-md-offset-2 form-group">
+          <label>Monto</label>
+          <input type="number" step="0.01" class="form-control" v-model.number="factura.Monto" placeholder="Monto"/>
+          <small v-if="facturaError.Monto" class="form-text text-muted text-danger">*Debe ingresar un monto mayor a 0.</small>
         </div>
       </div>
       <div class="row">
@@ -206,14 +231,20 @@
           RazonSocial: '',
           NIT: '',
           NumeroFactura: '',
-          FechaFactura: null
+          FechaFactura: null,
+          CodigoAutorizacion: '',
+          Monto: null
         },
         facturaError: {
           RazonSocial: false,
           NIT: false,
           NumeroFactura: false,
-          FechaFactura: false
+          FechaFactura: false,
+          CodigoAutorizacion: false,
+          Monto: false
         },
+        buscandoFactura: false,
+        facturaEncontradaEnSap: false,
         segmentoOrigen: null,
         gestion: null,
         i: null,
@@ -376,10 +407,16 @@
         this.factura.NIT = ''
         this.factura.NumeroFactura = ''
         this.factura.FechaFactura = null
+        this.factura.CodigoAutorizacion = ''
+        this.factura.Monto = null
         this.facturaError.RazonSocial = false
         this.facturaError.NIT = false
         this.facturaError.NumeroFactura = false
         this.facturaError.FechaFactura = false
+        this.facturaError.CodigoAutorizacion = false
+        this.facturaError.Monto = false
+        this.facturaEncontradaEnSap = false
+        this.buscandoFactura = false
         this.actions = 'ASIGNARFACTURA'
       },
       saveFactura () {
@@ -391,8 +428,11 @@
         this.facturaError.NIT = isEmpty(this.factura.NIT)
         this.facturaError.NumeroFactura = isEmpty(this.factura.NumeroFactura)
         this.facturaError.FechaFactura = !this.factura.FechaFactura
+        this.facturaError.CodigoAutorizacion = isEmpty(this.factura.CodigoAutorizacion)
+        this.facturaError.Monto = (this.factura.Monto === null || this.factura.Monto === '' || this.factura.Monto <= 0)
         if (this.facturaError.RazonSocial || this.facturaError.NIT ||
-            this.facturaError.NumeroFactura || this.facturaError.FechaFactura) {
+            this.facturaError.NumeroFactura || this.facturaError.FechaFactura ||
+            this.facturaError.CodigoAutorizacion || this.facturaError.Monto) {
           return
         }
         var d = new Date(this.factura.FechaFactura)
@@ -405,7 +445,10 @@
           RazonSocial: vm.factura.RazonSocial,
           NIT: vm.factura.NIT,
           NumeroFactura: vm.factura.NumeroFactura,
-          FechaFactura: isoDate
+          FechaFactura: isoDate,
+          CodigoAutorizacion: vm.factura.CodigoAutorizacion,
+          Monto: vm.factura.Monto,
+          EncontradaEnSap: vm.facturaEncontradaEnSap
         }
         axios.post('AsignarFacturaProyectos', payload, { headers: { token: localStorage.getItem('token') } })
           .then(function (response) {
@@ -430,6 +473,41 @@
               buttonsStyling: false
             })
           })
+      },
+      buscarFactura () {
+        var vm = this
+        var isEmpty = function (val) {
+          return !val || val.toString().trim().length === 0
+        }
+        if (isEmpty(this.factura.NIT) || isEmpty(this.factura.NumeroFactura)) {
+          swal({
+            title: 'Datos incompletos',
+            text: 'Debe ingresar NIT y N° de Factura para buscar.',
+            type: 'warning',
+            confirmButtonClass: 'btn btn-info btn-fill',
+            buttonsStyling: false
+          })
+          return
+        }
+        this.buscandoFactura = true
+        // === STUB TEMPORAL ===
+        // Reemplazar por axios.get('BuscarFactura', { params: { nit, numero } }) cuando exista la tabla SAP.
+        setTimeout(function () {
+          vm.factura.RazonSocial = 'EMPRESA DE PRUEBA S.R.L.'
+          vm.factura.FechaFactura = new Date(2026, 5, 15)
+          vm.factura.CodigoAutorizacion = '1234567890123456'
+          vm.factura.Monto = 4278.00
+          vm.facturaEncontradaEnSap = true
+          vm.buscandoFactura = false
+          swal({
+            title: 'Factura encontrada (DEMO)',
+            text: 'Se autocompletaron los datos de la factura.',
+            type: 'success',
+            confirmButtonClass: 'btn btn-success btn-fill',
+            buttonsStyling: false
+          })
+        }, 1200)
+        // === FIN STUB ===
       },
       showDateForHistoricOR () {
         var vm = this

@@ -166,7 +166,7 @@
 
                               <!-- TABLE -->
                               <div class="table-wrapper">
-                                <el-table ref="pendientesTable" :data="filteredPagos" v-loading="loading" border style="width: 100%"
+                                <el-table ref="pendientesTable" :key="filters.tipoDocente || 'none'" :data="filteredPagos" v-loading="loading" border style="width: 100%"
                                       @selection-change="handleSelectionChange">
 
                                       <el-table-column v-if="filters.tipoDocente" type="selection" width="55" align="center">
@@ -492,6 +492,7 @@
       <detalle-ejecucion-modal :show.sync="showDetailModal" :pago-id="selectedPagoId"
           :show-excel-values="showExcelValues">
       </detalle-ejecucion-modal>
+
 <!-- MODAL: Asignar Datos de Factura -->
 <el-dialog title="Asignar Datos de Factura" :visible.sync="showFacturaModal" width="600px">
           <div class="row">
@@ -499,13 +500,23 @@
                   <label>Razón Social</label>
                   <input type="text" class="form-control" v-model="facturaForm.RazonSocial" placeholder="Razón Social">
               </div>
-              <div class="col-md-6 form-group">
+                            <div class="col-md-6 form-group">
                   <label>NIT</label>
                   <input type="text" class="form-control" v-model="facturaForm.NIT" placeholder="NIT">
               </div>
               <div class="col-md-6 form-group">
                   <label>N° de Factura</label>
                   <input type="text" class="form-control" v-model="facturaForm.NumeroFactura" placeholder="N° de Factura">
+              </div>
+              <div class="col-md-12 form-group" style="text-align: right;">
+                  <button class="btn btn-info btn-sm" @click="buscarFactura" :disabled="buscandoFactura">
+                      <i class="fa fa-search"></i>
+                      Buscar en SAP
+                  </button>
+              </div>
+              <div class="col-md-12" v-if="buscandoFactura" style="text-align: center; padding: 10px;">
+                  <i class="el-icon-loading" style="font-size: 32px; color: #409EFF;"></i>
+                  <p style="margin-top: 8px; color: #666;">Buscando factura en SAP...</p>
               </div>
               <div class="col-md-6 form-group">
                   <label>Fecha de Factura</label>
@@ -572,6 +583,8 @@ data () {
       CodigoAutorizacion: '',
       Monto: null
     },
+    buscandoFactura: false,
+    facturaEncontradaEnSap: false,
     filters: {
       branchesId: null,
       periodoId: null,
@@ -725,6 +738,7 @@ methods: {
     this.showFacturaModal = true
     this.facturaForm.CodigoAutorizacion = ''
     this.facturaForm.Monto = null
+    this.facturaEncontradaEnSap = false
   },
 
     guardarFactura () {
@@ -743,7 +757,8 @@ methods: {
       NumeroFactura: this.facturaForm.NumeroFactura,
       FechaFactura: this.facturaForm.FechaFactura,
       CodigoAutorizacion: this.facturaForm.CodigoAutorizacion,
-      Monto: this.facturaForm.Monto
+      Monto: this.facturaForm.Monto,
+      EncontradaEnSap: this.facturaEncontradaEnSap
     }, {
       headers: { token: localStorage.getItem('token') }
     })
@@ -757,6 +772,32 @@ methods: {
           ? error.response.data.Message : 'Error al asignar la factura'
         Message({ message: msg, type: 'error', duration: 5000 })
       })
+  },
+
+  buscarFactura () {
+    // Validación: solo los campos de búsqueda (NIT + N° Factura)
+    if (!this.facturaForm.NIT || !this.facturaForm.NumeroFactura) {
+      Message({ message: 'Debe ingresar NIT y N° de Factura para buscar', type: 'warning', duration: 3000 })
+      return
+    }
+
+    this.buscandoFactura = true
+
+    // === STUB TEMPORAL ===
+    // Simula la búsqueda en SAP con un retardo y valores de ejemplo.
+    // Cuando tengamos la tabla/columnas de SAP, reemplazar este bloque por:
+    //   axios.get('/EjecucionPagos/BuscarFactura', { params: { nit: this.facturaForm.NIT, numero: this.facturaForm.NumeroFactura }, headers: {...} })
+    //     .then(r => { if (r.data.Found) { autofill + tipo Electronica } else { tipo Manual } })
+    setTimeout(() => {
+      this.facturaForm.RazonSocial = 'EMPRESA DE PRUEBA S.R.L.'
+      this.facturaForm.FechaFactura = '2026-06-15'
+      this.facturaForm.CodigoAutorizacion = '1234567890123456'
+      this.facturaForm.Monto = 4278.00
+      this.facturaEncontradaEnSap = true      // <-- found in SAP -> ELECTRONICA
+      this.buscandoFactura = false
+      Message({ message: 'Datos de factura encontrados (DEMO)', type: 'success', duration: 3000 })
+    }, 1200)
+    // === FIN STUB ===
   },
   
   loadBranches () {
