@@ -220,10 +220,13 @@
             {Id: 'PROYECTOS', Name: 'Proyectos'}]
         },
         selectTipoDocente: {
-          select: '',
-          values: [{Id: 'INDEP', Name: 'Independiente'},
-            {Id: 'EXT', Name: 'Extranjero'}]
-        },
+  select: '',
+  values: [
+    {Id: 'INDEP', Name: 'Independiente'},
+    {Id: 'EXT', Name: 'Extranjero'},
+    {Id: 'FAC', Name: 'Con Factura'}
+  ]
+},
         modelValidations: {
           segmento: {
             required: true

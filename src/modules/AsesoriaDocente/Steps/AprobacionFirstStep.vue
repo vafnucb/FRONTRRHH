@@ -13,7 +13,8 @@
             <input type="checkbox"
                    :value="props.queriedData[props.index].Id"
                    v-model="SelectedIds"
-                   v-on:click="UpdateIds"/>
+                   v-on:click="UpdateIds"
+                   v-on:change="capturarFila(props.queriedData[props.index])"/>
           </el-tooltip>
         </template>
       </data-tables>
@@ -129,6 +130,14 @@
 
     <template v-if="actions==='ASIGNARFACTURA'">
       <h5 class="text-center">Asignar datos de factura a los {{ SelectedIds.length }} registro(s) seleccionado(s).</h5>
+      <div class="row">
+        <div class="col-md-8 el-col-md-offset-2">
+          <div style="padding: 8px 12px; background: #f5f7fa; border-radius: 4px; font-size: 13px; margin-bottom: 10px;">
+            <div><strong>Docente:</strong> {{ selectedRows.length ? selectedRows[0].TeacherFullName : '' }}</div>
+            <div><strong>Monto total:</strong> Bs. {{ montoTotalSeleccionado }}</div>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-3 el-col-md-offset-2 form-group">
           <label>NIT</label>
@@ -382,6 +391,7 @@
         i: null,
         actions: 'LIST',
         SelectedIds: [],
+        selectedRows: [],
         tutoriaLoaded: false,
         initialview: 'year',
         format: 'dd-MM-yyyy',
@@ -521,6 +531,15 @@
         }
       }
     },
+
+    computed: {
+      montoTotalSeleccionado () {
+      var total = this.selectedRows.reduce(function (s, r) {
+        return s + (parseFloat(r.TotalNeto) || 0)
+      }, 0)
+      return total.toFixed(2)
+    },
+    },
     props: {
       // INDEPENDIENTE, DEPENDIENTE, OR
       origen: {
@@ -570,6 +589,21 @@
             buttonsStyling: false
           })
           return
+        }
+                // Validar mismo docente (por nombre, chequeo suave; el backend valida por BP/CUNI)
+                if (this.selectedRows.length > 0) {
+          var primerDocente = this.selectedRows[0].TeacherFullName
+          var todosMismo = this.selectedRows.every(function (r) { return r.TeacherFullName === primerDocente })
+          if (!todosMismo) {
+            swal({
+              title: 'Docentes distintos',
+              text: 'Solo puede asignar factura a registros del mismo docente.',
+              type: 'warning',
+              confirmButtonClass: 'btn btn-info btn-fill',
+              buttonsStyling: false
+            })
+            return
+          }
         }
         // reset del formulario
         this.factura.RazonSocial = ''
@@ -675,6 +709,17 @@
           })
         }, 1200)
         // === FIN STUB ===
+      },
+      capturarFila (row) {
+        // Mantener selectedRows sincronizado con SelectedIds
+        var idx = this.selectedRows.findIndex(function (r) { return r.Id === row.Id })
+        if (this.SelectedIds.indexOf(row.Id) !== -1) {
+          // recién marcado -> agregar si no está
+          if (idx === -1) this.selectedRows.push(row)
+        } else {
+          // desmarcado -> quitar
+          if (idx !== -1) this.selectedRows.splice(idx, 1)
+        }
       },
       ToOR () {
         this.actions = 'OR'

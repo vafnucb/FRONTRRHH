@@ -494,13 +494,18 @@
       </detalle-ejecucion-modal>
 
 <!-- MODAL: Asignar Datos de Factura -->
-<el-dialog title="Asignar Datos de Factura" :visible.sync="showFacturaModal" width="600px">
+<el-dialog title="Asignar Datos de Factura" :visible.sync="showFacturaModal" width="600px" append-to-body>
           <div class="row">
-              <div class="col-md-12 form-group">
-                  <label>Razón Social</label>
-                  <input type="text" class="form-control" v-model="facturaForm.RazonSocial" placeholder="Razón Social">
+            <div class="row" style="margin-bottom: 15px;">
+              <div class="col-md-12">
+                  <div style="padding: 8px 12px; background: #f5f7fa; border-radius: 4px; font-size: 13px;">
+                      <div><strong>Docente:</strong> {{ selectedPagos.length ? selectedPagos[0].NombreCompleto : '' }}</div>
+                      <div><strong>Monto total:</strong> Bs. {{ formatMoney(montoTotalSeleccionado) }}</div>
+                  </div>
               </div>
-                            <div class="col-md-6 form-group">
+          </div>
+              
+              <div class="col-md-6 form-group">
                   <label>NIT</label>
                   <input type="text" class="form-control" v-model="facturaForm.NIT" placeholder="NIT">
               </div>
@@ -513,6 +518,10 @@
                       <i class="fa fa-search"></i>
                       Buscar en SAP
                   </button>
+              </div>
+              <div class="col-md-12 form-group">
+                  <label>Razón Social</label>
+                  <input type="text" class="form-control" v-model="facturaForm.RazonSocial" placeholder="Razón Social">
               </div>
               <div class="col-md-12" v-if="buscandoFactura" style="text-align: center; padding: 10px;">
                   <i class="el-icon-loading" style="font-size: 32px; color: #409EFF;"></i>
@@ -658,6 +667,10 @@ computed: {
 
     return result
   },
+
+  montoTotalSeleccionado () {
+    return this.selectedPagos.reduce(function (s, p) { return s + (p.MontoContrato || 0) }, 0)
+  },
   
   totalMontoContrato () {
     return this.filteredPagos.reduce((sum, p) => sum + (p.MontoContrato || 0), 0)
@@ -729,6 +742,13 @@ methods: {
   openAsignarFactura () {
     if (this.selectedPagos.length === 0) {
       Message({ message: 'Debe seleccionar al menos un pago', type: 'warning', duration: 3000 })
+      return
+    }
+    // Validar mismo docente (por CI)
+    var primerCi = this.selectedPagos[0].CiDocente
+    var todosMismoDocente = this.selectedPagos.every(function (p) { return p.CiDocente === primerCi })
+    if (!todosMismoDocente) {
+      Message({ message: 'Solo puede asignar factura a pagos del mismo docente.', type: 'warning', duration: 4000 })
       return
     }
     this.facturaForm.RazonSocial = ''
