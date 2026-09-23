@@ -535,8 +535,7 @@
           return
         }
         this.buscandoFactura = true
-        axios.get('BuscarFactura', {
-          params: { nit: this.factura.NIT, numero: this.factura.NumeroFactura },
+        axios.get('BuscarFacturaProyectos', { params: { nit: this.factura.NIT, numero: this.factura.NumeroFactura },
           headers: { token: localStorage.getItem('token') }
         })
           .then(function (response) {
