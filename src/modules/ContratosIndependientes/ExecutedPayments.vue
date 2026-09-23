@@ -521,7 +521,7 @@
               </div>
               <div class="col-md-12 form-group">
                   <label>Razón Social</label>
-                  <input type="text" class="form-control" v-model="facturaForm.RazonSocial" placeholder="Razón Social">
+                  <input type="text" class="form-control" v-model="facturaForm.RazonSocial" :readonly="facturaEncontradaEnSap" placeholder="Razón Social">
               </div>
               <div class="col-md-12" v-if="buscandoFactura" style="text-align: center; padding: 10px;">
                   <i class="el-icon-loading" style="font-size: 32px; color: #409EFF;"></i>
@@ -529,15 +529,15 @@
               </div>
               <div class="col-md-6 form-group">
                   <label>Fecha de Factura</label>
-                  <input type="date" class="form-control" v-model="facturaForm.FechaFactura">
+                  <input type="date" class="form-control"  v-model="facturaForm.FechaFactura" :readonly="facturaEncontradaEnSap">
               </div>
               <div class="col-md-6 form-group">
                   <label>Código de Autorización</label>
-                  <input type="text" class="form-control" v-model="facturaForm.CodigoAutorizacion" placeholder="Código de Autorización">
+                  <input type="text" class="form-control" v-model="facturaForm.CodigoAutorizacion" :readonly="facturaEncontradaEnSap" placeholder="Código de Autorización">
               </div>
               <div class="col-md-6 form-group">
                   <label>Monto</label>
-                  <input type="number" step="0.01" class="form-control" v-model.number="facturaForm.Monto" placeholder="Monto">
+                  <input type="number" step="0.01" class="form-control" v-model.number="facturaForm.Monto" :readonly="facturaEncontradaEnSap" placeholder="Monto">
               </div>
           </div>
           <span slot="footer" class="dialog-footer">
@@ -761,7 +761,9 @@ methods: {
     this.facturaEncontradaEnSap = false
   },
 
-    guardarFactura () {
+  guardarFactura () {
+    var vm = this
+    // required-fields validation (keep your existing block that returns on invalid)
     if (!this.facturaForm.RazonSocial || !this.facturaForm.NIT ||
         !this.facturaForm.NumeroFactura || !this.facturaForm.FechaFactura ||
         !this.facturaForm.CodigoAutorizacion ||
@@ -769,55 +771,80 @@ methods: {
       Message({ message: 'Todos los campos de la factura son obligatorios', type: 'warning', duration: 3000 })
       return
     }
-    var ids = this.selectedPagos.map(p => p.PagoEjecutadoId).filter(id => id != null)
-    axios.post('/EjecucionPagos/AsignarFacturaParalelo', {
-      Ids: ids,
-      RazonSocial: this.facturaForm.RazonSocial,
-      NIT: this.facturaForm.NIT,
-      NumeroFactura: this.facturaForm.NumeroFactura,
-      FechaFactura: this.facturaForm.FechaFactura,
-      CodigoAutorizacion: this.facturaForm.CodigoAutorizacion,
-      Monto: this.facturaForm.Monto,
-      EncontradaEnSap: this.facturaEncontradaEnSap
-    }, {
-      headers: { token: localStorage.getItem('token') }
-    })
-      .then(response => {
-        Message({ message: response.data.Message || 'Factura asignada', type: 'success', duration: 3000 })
-        this.showFacturaModal = false
-        this.loadPagos()
+
+    // Advertencia suave por Razón Social distinta al docente
+    var continuar = true
+    if (this.facturaEncontradaEnSap && this.selectedPagos.length > 0) {
+      var docente = (this.selectedPagos[0].NombreCompleto || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
+      var razon = (this.facturaForm.RazonSocial || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
+      if (docente !== razon) {
+        continuar = window.confirm('La Razón Social de la factura ("' + this.facturaForm.RazonSocial + '") no coincide con el docente ("' + this.selectedPagos[0].NombreCompleto + '"). ¿Desea continuar de todas formas?')
+      }
+    }
+
+    if (continuar) {
+      var ids = this.selectedPagos.map(p => p.PagoEjecutadoId).filter(id => id != null)
+      axios.post('/EjecucionPagos/AsignarFacturaParalelo', {
+        Ids: ids,
+        RazonSocial: this.facturaForm.RazonSocial,
+        NIT: this.facturaForm.NIT,
+        NumeroFactura: this.facturaForm.NumeroFactura,
+        FechaFactura: this.facturaForm.FechaFactura,
+        CodigoAutorizacion: this.facturaForm.CodigoAutorizacion,
+        Monto: this.facturaForm.Monto,
+        EncontradaEnSap: this.facturaEncontradaEnSap
+      }, {
+        headers: { token: localStorage.getItem('token') }
       })
-      .catch(error => {
-        const msg = error.response && error.response.data && error.response.data.Message
-          ? error.response.data.Message : 'Error al asignar la factura'
-        Message({ message: msg, type: 'error', duration: 5000 })
-      })
+        .then(function (response) {
+          Message({ message: response.data.Message || 'Factura asignada', type: 'success', duration: 3000 })
+          vm.showFacturaModal = false
+          vm.loadPagos()
+        })
+        .catch(function (error) {
+          var msg = error.response && error.response.data && error.response.data.Message
+            ? error.response.data.Message : 'Error al asignar la factura'
+          Message({ message: msg, type: 'error', duration: 5000 })
+        })
+    }
   },
 
   buscarFactura () {
-    // Validación: solo los campos de búsqueda (NIT + N° Factura)
+    var vm = this
     if (!this.facturaForm.NIT || !this.facturaForm.NumeroFactura) {
       Message({ message: 'Debe ingresar NIT y N° de Factura para buscar', type: 'warning', duration: 3000 })
       return
     }
-
     this.buscandoFactura = true
-
-    // === STUB TEMPORAL ===
-    // Simula la búsqueda en SAP con un retardo y valores de ejemplo.
-    // Cuando tengamos la tabla/columnas de SAP, reemplazar este bloque por:
-    //   axios.get('/EjecucionPagos/BuscarFactura', { params: { nit: this.facturaForm.NIT, numero: this.facturaForm.NumeroFactura }, headers: {...} })
-    //     .then(r => { if (r.data.Found) { autofill + tipo Electronica } else { tipo Manual } })
-    setTimeout(() => {
-      this.facturaForm.RazonSocial = 'EMPRESA DE PRUEBA S.R.L.'
-      this.facturaForm.FechaFactura = '2026-06-15'
-      this.facturaForm.CodigoAutorizacion = '1234567890123456'
-      this.facturaForm.Monto = 4278.00
-      this.facturaEncontradaEnSap = true      // <-- found in SAP -> ELECTRONICA
-      this.buscandoFactura = false
-      Message({ message: 'Datos de factura encontrados (DEMO)', type: 'success', duration: 3000 })
-    }, 1200)
-    // === FIN STUB ===
+    axios.get('/EjecucionPagos/BuscarFactura', {
+      params: { nit: this.facturaForm.NIT, numero: this.facturaForm.NumeroFactura },
+      headers: { token: localStorage.getItem('token') }
+    })
+      .then(function (response) {
+        vm.buscandoFactura = false
+        if (response.data && response.data.Found) {
+          // SAP gana: autollenar y marcar Electronica (campos quedan solo lectura)
+          vm.facturaForm.RazonSocial = response.data.RazonSocial || ''
+          vm.facturaForm.CodigoAutorizacion = response.data.CodigoAutorizacion || ''
+          vm.facturaForm.Monto = response.data.Monto
+          if (response.data.FechaFactura) {
+            vm.facturaForm.FechaFactura = response.data.FechaFactura.substring(0, 10) // YYYY-MM-DD para el input date
+          }
+          vm.facturaEncontradaEnSap = true
+          Message({ message: 'Factura encontrada en SAP', type: 'success', duration: 3000 })
+        } else {
+          // No encontrada: entrada manual
+          vm.facturaEncontradaEnSap = false
+          Message({ message: 'No se encontró la factura en SAP. Ingrese los datos manualmente.', type: 'info', duration: 4000 })
+        }
+      })
+      .catch(function (error) {
+        vm.buscandoFactura = false
+        vm.facturaEncontradaEnSap = false
+        var msg = error.response && error.response.data && error.response.data.Message
+          ? error.response.data.Message : 'Error al buscar la factura en SAP'
+        Message({ message: msg, type: 'error', duration: 5000 })
+      })
   },
   
   loadBranches () {

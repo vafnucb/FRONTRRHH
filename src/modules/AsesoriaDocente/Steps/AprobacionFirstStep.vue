@@ -164,26 +164,26 @@
       <div class="row">
         <div class="col-md-3 el-col-md-offset-2 form-group">
           <label>Razón Social</label>
-          <input type="text" class="form-control" v-model="factura.RazonSocial" placeholder="Razón Social"/>
+          <input type="text" class="form-control" v-model="factura.RazonSocial" :readonly="facturaEncontradaEnSap" placeholder="Razón Social"/>
           <small v-if="facturaError.RazonSocial" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
         </div>
         <div class="col-md-3 form-group">
           <label>Fecha de Factura</label>
           <div>
-            <date-picker v-model="factura.FechaFactura" :format="format2" :use-utc="true" placeholder="DD/MM/YYYY"></date-picker>
+            <date-picker v-model="factura.FechaFactura" :format="format2" :use-utc="true" :disabled="facturaEncontradaEnSap" placeholder="DD/MM/YYYY"></date-picker>
           </div>
           <small v-if="facturaError.FechaFactura" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
         </div>
         <div class="col-md-3 form-group">
           <label>Código de Autorización</label>
-          <input type="text" class="form-control" v-model="factura.CodigoAutorizacion" placeholder="Código de Autorización"/>
+          <input type="text" class="form-control" v-model="factura.CodigoAutorizacion" :readonly="facturaEncontradaEnSap" placeholder="Código de Autorización"/>
           <small v-if="facturaError.CodigoAutorizacion" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
         </div>
       </div>
       <div class="row">
         <div class="col-md-3 el-col-md-offset-2 form-group">
           <label>Monto</label>
-          <input type="number" step="0.01" class="form-control" v-model.number="factura.Monto" placeholder="Monto"/>
+          <input type="number" step="0.01" class="form-control" v-model.number="factura.Monto" :readonly="facturaEncontradaEnSap" placeholder="Monto"/>
           <small v-if="facturaError.Monto" class="form-text text-muted text-danger">*Debe ingresar un monto mayor a 0.</small>
         </div>
       </div>
@@ -642,6 +642,18 @@
         var day = ('0' + d.getDate()).slice(-2)
         var isoDate = [d.getFullYear(), mnth, day].join('-')
 
+        var continuar = true
+        if (this.facturaEncontradaEnSap && this.selectedRows.length > 0) {
+          var docente = (this.selectedRows[0].TeacherFullName || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
+          var razon = (this.factura.RazonSocial || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
+          if (docente !== razon) {
+            continuar = window.confirm('La Razón Social de la factura ("' + this.factura.RazonSocial + '") no coincide con el docente ("' + this.selectedRows[0].TeacherFullName + '"). ¿Desea continuar?')
+          }
+        }
+        if (!continuar) {
+          return
+        }
+
         var payload = {
           Ids: vm.SelectedIds,
           RazonSocial: vm.factura.RazonSocial,
@@ -678,8 +690,8 @@
       },
       buscarFactura () {
         var vm = this
-        // Validación: solo NIT + N° Factura (claves de búsqueda)
-        if (this.isEmptyBlanckOrNull(this.factura.NIT) || this.isEmptyBlanckOrNull(this.factura.NumeroFactura)) {
+        var isEmpty = function (val) { return !val || val.toString().trim().length === 0 }
+        if (isEmpty(this.factura.NIT) || isEmpty(this.factura.NumeroFactura)) {
           swal({
             title: 'Datos incompletos',
             text: 'Debe ingresar NIT y N° de Factura para buscar.',
@@ -690,25 +702,37 @@
           return
         }
         this.buscandoFactura = true
-        // === STUB TEMPORAL ===
-        // Reemplazar por: axios.get('BuscarFactura', { params: { nit, numero } }) cuando exista la tabla SAP.
-        // Si encuentra -> autollenar + facturaEncontradaEnSap=true; si no -> dejar manual.
-        setTimeout(function () {
-          vm.factura.RazonSocial = 'EMPRESA DE PRUEBA S.R.L.'
-          vm.factura.FechaFactura = new Date(2026, 5, 15)
-          vm.factura.CodigoAutorizacion = '1234567890123456'
-          vm.factura.Monto = 4278.00
-          vm.facturaEncontradaEnSap = true
-          vm.buscandoFactura = false
-          swal({
-            title: 'Factura encontrada (DEMO)',
-            text: 'Se autocompletaron los datos de la factura.',
-            type: 'success',
-            confirmButtonClass: 'btn btn-success btn-fill',
-            buttonsStyling: false
+        axios.get('BuscarFactura', {
+          params: { nit: this.factura.NIT, numero: this.factura.NumeroFactura },
+          headers: { token: localStorage.getItem('token') }
+        })
+          .then(function (response) {
+            vm.buscandoFactura = false
+            if (response.data && response.data.Found) {
+              vm.factura.RazonSocial = response.data.RazonSocial || ''
+              vm.factura.CodigoAutorizacion = response.data.CodigoAutorizacion || ''
+              vm.factura.Monto = response.data.Monto
+              if (response.data.FechaFactura) {
+                vm.factura.FechaFactura = new Date(response.data.FechaFactura)
+              }
+              vm.facturaEncontradaEnSap = true
+              swal({ title: 'Factura encontrada en SAP', type: 'success', confirmButtonClass: 'btn btn-success btn-fill', buttonsStyling: false })
+            } else {
+              vm.facturaEncontradaEnSap = false
+              swal({ title: 'No encontrada', text: 'No se encontró la factura en SAP. Ingrese los datos manualmente.', type: 'info', confirmButtonClass: 'btn btn-info btn-fill', buttonsStyling: false })
+            }
           })
-        }, 1200)
-        // === FIN STUB ===
+          .catch(function (error) {
+            vm.buscandoFactura = false
+            vm.facturaEncontradaEnSap = false
+            swal({
+              title: 'Ups!',
+              text: (error.response && error.response.data && error.response.data.Message) ? error.response.data.Message : 'Error al buscar la factura en SAP',
+              type: 'error',
+              confirmButtonClass: 'btn btn-info btn-fill',
+              buttonsStyling: false
+            })
+          })
       },
       capturarFila (row) {
         // Mantener selectedRows sincronizado con SelectedIds
