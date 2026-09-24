@@ -136,7 +136,9 @@
     </template>
 
 
-        <template v-if="actions==='ASIGNARFACTURA'">
+    <template v-if="actions==='ASIGNARFACTURA'">
+      <div class="factura-modal-overlay">
+        <div class="factura-modal-box">
       <h5 class="text-center">Asignar datos de factura a los {{ SelectedIds.length }} registro(s) seleccionado(s).</h5>
       <div class="row">
         <div class="col-md-8 el-col-md-offset-2">
@@ -170,7 +172,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-3 el-col-md-offset-2 form-group">
+        <div class="col-md-6 el-col-md-offset-2 form-group">
           <label>Razón Social</label>
           <input type="text" class="form-control" v-model="factura.RazonSocial" :readonly="facturaEncontradaEnSap" placeholder="Razón Social"/>
           <small v-if="facturaError.RazonSocial" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
@@ -182,13 +184,14 @@
           </div>
           <small v-if="facturaError.FechaFactura" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
         </div>
-        <div class="col-md-3 form-group">
+        
+      </div>
+      <div class="row">
+        <div class="col-md-5 el-col-md-offset-2 form-group">
           <label>Código de Autorización</label>
           <input type="text" class="form-control" v-model="factura.CodigoAutorizacion" :readonly="facturaEncontradaEnSap" placeholder="Código de Autorización"/>
           <small v-if="facturaError.CodigoAutorizacion" class="form-text text-muted text-danger">*Este valor no puede ser vacío.</small>
         </div>
-      </div>
-      <div class="row">
         <div class="col-md-3 el-col-md-offset-2 form-group">
           <label>Monto</label>
           <input type="number" step="0.01" class="form-control" v-model.number="factura.Monto" :readonly="facturaEncontradaEnSap" placeholder="Monto"/>
@@ -202,6 +205,8 @@
         <div class="col-md-2">
           <button class="btn btn-success btn-fill" @click="saveFactura">Guardar Factura</button>
         </div>
+      </div>
+    </div>
       </div>
     </template>
 
@@ -470,22 +475,41 @@
             this.facturaError.CodigoAutorizacion || this.facturaError.Monto) {
           return
         }
+        // ¿Coincide la Razón Social con el docente? (comparación por conjunto de palabras, cualquier orden)
+        var hayDesajuste = false
+        if (this.facturaEncontradaEnSap && this.selectedRows.length > 0) {
+          var docente = (this.selectedRows[0].TeacherFullName || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
+          var razon = (this.factura.RazonSocial || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
+          hayDesajuste = docente !== razon
+        }
+
+        if (hayDesajuste) {
+          swal({
+            title: '¿Esta seguro que la razón social es correcta?',
+            text: 'La Razón Social de la factura ("' + this.factura.RazonSocial + '") no coincide con el docente ("' + this.selectedRows[0].TeacherFullName + '").',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, continuar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonClass: 'btn btn-success btn-fill',
+            cancelButtonClass: 'btn btn-danger btn-fill',
+            buttonsStyling: false
+          }).then(function () {
+            vm.postFactura()
+          }, function (dismiss) {
+            // cancelado -> no hacer nada
+          })
+        } else {
+          this.postFactura()
+        }
+      },
+
+      postFactura () {
+        var vm = this
         var d = new Date(this.factura.FechaFactura)
         var mnth = ('0' + (d.getMonth() + 1)).slice(-2)
         var day = ('0' + d.getDate()).slice(-2)
         var isoDate = [d.getFullYear(), mnth, day].join('-')
-
-        var continuar = true
-        if (this.facturaEncontradaEnSap && this.selectedRows.length > 0) {
-          var docente = (this.selectedRows[0].TeacherFullName || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
-          var razon = (this.factura.RazonSocial || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
-          if (docente !== razon) {
-            continuar = window.confirm('La Razón Social de la factura ("' + this.factura.RazonSocial + '") no coincide con el docente ("' + this.selectedRows[0].TeacherFullName + '"). ¿Desea continuar?')
-          }
-        }
-        if (!continuar) {
-          return
-        }
 
         var payload = {
           Ids: vm.SelectedIds,
@@ -524,10 +548,10 @@
       buscarFactura () {
         var vm = this
         var isEmpty = function (val) { return !val || val.toString().trim().length === 0 }
-        if (isEmpty(this.factura.NIT) || isEmpty(this.factura.NumeroFactura)) {
+        if (isEmpty(this.factura.NIT) || isEmpty(this.factura.NumeroFactura) || !this.factura.FechaFactura) {
           swal({
             title: 'Datos incompletos',
-            text: 'Debe ingresar NIT y N° de Factura para buscar.',
+            text: 'Debe ingresar NIT, N° de Factura y Fecha de Factura para buscar.',
             type: 'warning',
             confirmButtonClass: 'btn btn-info btn-fill',
             buttonsStyling: false
@@ -538,20 +562,66 @@
         axios.get('BuscarFacturaProyectos', { params: { nit: this.factura.NIT, numero: this.factura.NumeroFactura },
           headers: { token: localStorage.getItem('token') }
         })
-          .then(function (response) {
+        .then(function (response) {
             vm.buscandoFactura = false
             if (response.data && response.data.Found) {
-              vm.factura.RazonSocial = response.data.RazonSocial || ''
-              vm.factura.CodigoAutorizacion = response.data.CodigoAutorizacion || ''
-              vm.factura.Monto = response.data.Monto
-              if (response.data.FechaFactura) {
-                vm.factura.FechaFactura = new Date(response.data.FechaFactura)
+              // Comparar fecha ingresada vs SAP (solo fecha, sin hora) antes de sobrescribir
+              var fechaSap = response.data.FechaFactura ? new Date(response.data.FechaFactura) : null
+              var fechaUsuario = vm.factura.FechaFactura ? new Date(vm.factura.FechaFactura) : null
+              var mismaFecha = true
+              if (fechaSap && fechaUsuario) {
+                mismaFecha = fechaSap.getFullYear() === fechaUsuario.getFullYear() &&
+                             fechaSap.getMonth() === fechaUsuario.getMonth() &&
+                             fechaSap.getDate() === fechaUsuario.getDate()
               }
-              vm.facturaEncontradaEnSap = true
-              swal({ title: 'Factura encontrada en SAP', type: 'success', confirmButtonClass: 'btn btn-success btn-fill', buttonsStyling: false })
+
+              var aplicarSap = function () {
+                vm.factura.RazonSocial = response.data.RazonSocial || ''
+                vm.factura.CodigoAutorizacion = response.data.CodigoAutorizacion || ''
+                vm.factura.Monto = response.data.Monto
+                if (fechaSap) vm.factura.FechaFactura = fechaSap
+                vm.facturaEncontradaEnSap = true
+                swal({ title: 'Factura encontrada en SAP', type: 'success', confirmButtonClass: 'btn btn-success btn-fill', buttonsStyling: false })
+              }
+
+              if (!mismaFecha) {
+                var fmt = function (d) { return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear() }
+                swal({
+                  title: 'Fecha distinta',
+                  text: 'La fecha que ingresó (' + fmt(fechaUsuario) + ') no coincide con la de SAP (' + fmt(fechaSap) + '). Se usará la fecha de SAP. ¿Desea continuar?',
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonText: 'Sí, usar fecha de SAP',
+                  cancelButtonText: 'Cancelar',
+                  confirmButtonClass: 'btn btn-success btn-fill',
+                  cancelButtonClass: 'btn btn-danger btn-fill',
+                  buttonsStyling: false
+                }).then(function () {
+                  aplicarSap()
+                }, function (dismiss) {
+                  // cancelado: no autollenar, el usuario puede revisar su fecha
+                })
+              } else {
+                aplicarSap()
+              }
             } else {
-              vm.facturaEncontradaEnSap = false
-              swal({ title: 'No encontrada', text: 'No se encontró la factura en SAP. Ingrese los datos manualmente.', type: 'info', confirmButtonClass: 'btn btn-info btn-fill', buttonsStyling: false })
+              // No encontrada: confirmar entrada manual
+              swal({
+                title: 'Factura no encontrada',
+                text: 'La factura no fue encontrada, ¿desea poner los datos manualmente?',
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, ingresar manualmente',
+                cancelButtonText: 'No',
+                confirmButtonClass: 'btn btn-success btn-fill',
+                cancelButtonClass: 'btn btn-danger btn-fill',
+                buttonsStyling: false
+              }).then(function () {
+                // Sí: entrada manual -> campos quedan editables, facturaEncontradaEnSap ya es false
+                vm.facturaEncontradaEnSap = false
+              }, function (dismiss) {
+                // No: no hacer nada, el usuario puede corregir NIT/Número/Fecha y volver a buscar
+              })
             }
           })
           .catch(function (error) {
@@ -1049,4 +1119,23 @@
   input[type=radio] {
     margin: 0 10px 0 10px;
   }
+  .factura-modal-overlay {
+  position: fixed;
+  top: 0; left: 260px; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+.factura-modal-box {
+  background: #fff;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
 </style>

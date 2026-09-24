@@ -513,6 +513,10 @@
                   <label>N° de Factura</label>
                   <input type="text" class="form-control" v-model="facturaForm.NumeroFactura" placeholder="N° de Factura">
               </div>
+              <div class="col-md-6 form-group">
+                  <label>Fecha de Factura</label>
+                  <input type="date" class="form-control"  v-model="facturaForm.FechaFactura" :readonly="facturaEncontradaEnSap">
+              </div>
               <div class="col-md-12 form-group" style="text-align: right;">
                   <button class="btn btn-info btn-sm" @click="buscarFactura" :disabled="buscandoFactura">
                       <i class="fa fa-search"></i>
@@ -527,10 +531,7 @@
                   <i class="el-icon-loading" style="font-size: 32px; color: #409EFF;"></i>
                   <p style="margin-top: 8px; color: #666;">Buscando factura en SAP...</p>
               </div>
-              <div class="col-md-6 form-group">
-                  <label>Fecha de Factura</label>
-                  <input type="date" class="form-control"  v-model="facturaForm.FechaFactura" :readonly="facturaEncontradaEnSap">
-              </div>
+              
               <div class="col-md-6 form-group">
                   <label>Código de Autorización</label>
                   <input type="text" class="form-control" v-model="facturaForm.CodigoAutorizacion" :readonly="facturaEncontradaEnSap" placeholder="Código de Autorización">
@@ -762,8 +763,6 @@ methods: {
   },
 
   guardarFactura () {
-    var vm = this
-    // required-fields validation (keep your existing block that returns on invalid)
     if (!this.facturaForm.RazonSocial || !this.facturaForm.NIT ||
         !this.facturaForm.NumeroFactura || !this.facturaForm.FechaFactura ||
         !this.facturaForm.CodigoAutorizacion ||
@@ -772,47 +771,65 @@ methods: {
       return
     }
 
-    // Advertencia suave por Razón Social distinta al docente
-    var continuar = true
+    // ¿Coincide la Razón Social con el docente? (conjunto de palabras, cualquier orden)
+    var hayDesajuste = false
     if (this.facturaEncontradaEnSap && this.selectedPagos.length > 0) {
       var docente = (this.selectedPagos[0].NombreCompleto || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
       var razon = (this.facturaForm.RazonSocial || '').toUpperCase().split(/\s+/).filter(Boolean).sort().join(' ')
-      if (docente !== razon) {
-        continuar = window.confirm('La Razón Social de la factura ("' + this.facturaForm.RazonSocial + '") no coincide con el docente ("' + this.selectedPagos[0].NombreCompleto + '"). ¿Desea continuar de todas formas?')
-      }
+      hayDesajuste = docente !== razon
     }
 
-    if (continuar) {
-      var ids = this.selectedPagos.map(p => p.PagoEjecutadoId).filter(id => id != null)
-      axios.post('/EjecucionPagos/AsignarFacturaParalelo', {
-        Ids: ids,
-        RazonSocial: this.facturaForm.RazonSocial,
-        NIT: this.facturaForm.NIT,
-        NumeroFactura: this.facturaForm.NumeroFactura,
-        FechaFactura: this.facturaForm.FechaFactura,
-        CodigoAutorizacion: this.facturaForm.CodigoAutorizacion,
-        Monto: this.facturaForm.Monto,
-        EncontradaEnSap: this.facturaEncontradaEnSap
-      }, {
-        headers: { token: localStorage.getItem('token') }
+    if (hayDesajuste) {
+      MessageBox.confirm(
+        'La Razón Social de la factura ("' + this.facturaForm.RazonSocial + '") no coincide con el docente ("' + this.selectedPagos[0].NombreCompleto + '"). ¿Desea continuar de todas formas?',
+        '¿Es la razón social correcta?',
+        {
+          confirmButtonText: 'Sí, continuar',
+          cancelButtonText: 'Cancelar',
+          type: 'warning',
+          center: true
+        }
+      ).then(() => {
+        this.postFactura()
+      }).catch(() => {
+        // cancelado -> no hacer nada
       })
-        .then(function (response) {
-          Message({ message: response.data.Message || 'Factura asignada', type: 'success', duration: 3000 })
-          vm.showFacturaModal = false
-          vm.loadPagos()
-        })
-        .catch(function (error) {
-          var msg = error.response && error.response.data && error.response.data.Message
-            ? error.response.data.Message : 'Error al asignar la factura'
-          Message({ message: msg, type: 'error', duration: 5000 })
-        })
+    } else {
+      this.postFactura()
     }
+  },
+
+  postFactura () {
+    var vm = this
+    var ids = this.selectedPagos.map(p => p.PagoEjecutadoId).filter(id => id != null)
+    axios.post('/EjecucionPagos/AsignarFacturaParalelo', {
+      Ids: ids,
+      RazonSocial: this.facturaForm.RazonSocial,
+      NIT: this.facturaForm.NIT,
+      NumeroFactura: this.facturaForm.NumeroFactura,
+      FechaFactura: this.facturaForm.FechaFactura,
+      CodigoAutorizacion: this.facturaForm.CodigoAutorizacion,
+      Monto: this.facturaForm.Monto,
+      EncontradaEnSap: this.facturaEncontradaEnSap
+    }, {
+      headers: { token: localStorage.getItem('token') }
+    })
+      .then(function (response) {
+        Message({ message: response.data.Message || 'Factura asignada', type: 'success', duration: 3000 })
+        vm.showFacturaModal = false
+        vm.loadPagos()
+      })
+      .catch(function (error) {
+        var msg = error.response && error.response.data && error.response.data.Message
+          ? error.response.data.Message : 'Error al asignar la factura'
+        Message({ message: msg, type: 'error', duration: 5000 })
+      })
   },
 
   buscarFactura () {
     var vm = this
-    if (!this.facturaForm.NIT || !this.facturaForm.NumeroFactura) {
-      Message({ message: 'Debe ingresar NIT y N° de Factura para buscar', type: 'warning', duration: 3000 })
+    if (!this.facturaForm.NIT || !this.facturaForm.NumeroFactura || !this.facturaForm.FechaFactura) {
+      Message({ message: 'Debe ingresar NIT, N° de Factura y la Fecha Factura para buscar', type: 'warning', duration: 3000 })
       return
     }
     this.buscandoFactura = true
@@ -820,30 +837,45 @@ methods: {
       params: { nit: this.facturaForm.NIT, numero: this.facturaForm.NumeroFactura },
       headers: { token: localStorage.getItem('token') }
     })
-      .then(function (response) {
+    .then(function (response) {
         vm.buscandoFactura = false
         if (response.data && response.data.Found) {
-          // SAP gana: autollenar y marcar Electronica (campos quedan solo lectura)
-          vm.facturaForm.RazonSocial = response.data.RazonSocial || ''
-          vm.facturaForm.CodigoAutorizacion = response.data.CodigoAutorizacion || ''
-          vm.facturaForm.Monto = response.data.Monto
-          if (response.data.FechaFactura) {
-            vm.facturaForm.FechaFactura = response.data.FechaFactura.substring(0, 10) // YYYY-MM-DD para el input date
+          var fechaSap = response.data.FechaFactura ? new Date(response.data.FechaFactura) : null
+          var fechaUsuario = vm.facturaForm.FechaFactura ? new Date(vm.facturaForm.FechaFactura) : null
+          var mismaFecha = true
+          if (fechaSap && fechaUsuario) {
+            mismaFecha = fechaSap.getFullYear() === fechaUsuario.getFullYear() &&
+                         fechaSap.getMonth() === fechaUsuario.getMonth() &&
+                         fechaSap.getDate() === fechaUsuario.getDate()
           }
-          vm.facturaEncontradaEnSap = true
-          Message({ message: 'Factura encontrada en SAP', type: 'success', duration: 3000 })
+
+          var aplicarSap = function () {
+            vm.facturaForm.RazonSocial = response.data.RazonSocial || ''
+            vm.facturaForm.CodigoAutorizacion = response.data.CodigoAutorizacion || ''
+            vm.facturaForm.Monto = response.data.Monto
+            if (fechaSap) {
+              vm.facturaForm.FechaFactura = response.data.FechaFactura.substring(0, 10) // YYYY-MM-DD para el input date
+            }
+            vm.facturaEncontradaEnSap = true
+            Message({ message: 'Factura encontrada en SAP', type: 'success', duration: 3000 })
+          }
+
+          if (!mismaFecha) {
+            var fmt = function (d) { return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear() }
+            MessageBox.confirm(
+              'La fecha que ingresó (' + fmt(fechaUsuario) + ') no coincide con la de SAP (' + fmt(fechaSap) + '). Se usará la fecha de SAP. ¿Desea continuar?',
+              'Fecha distinta',
+              { confirmButtonText: 'Sí, usar fecha de SAP', cancelButtonText: 'Cancelar', type: 'warning', center: true }
+            ).then(() => {
+              aplicarSap()
+            }).catch(() => {})
+          } else {
+            aplicarSap()
+          }
         } else {
-          // No encontrada: entrada manual
           vm.facturaEncontradaEnSap = false
-          Message({ message: 'No se encontró la factura en SAP. Ingrese los datos manualmente.', type: 'info', duration: 4000 })
+          MessageBox.confirm('La factura no fue encontrada, ¿desea poner los datos manualmente?', 'Factura no encontrada', { confirmButtonText: 'Sí, ingresar manualmente', cancelButtonText: 'No', type: 'warning', center: true }).then(() => { vm.facturaEncontradaEnSap = false }).catch(() => {})
         }
-      })
-      .catch(function (error) {
-        vm.buscandoFactura = false
-        vm.facturaEncontradaEnSap = false
-        var msg = error.response && error.response.data && error.response.data.Message
-          ? error.response.data.Message : 'Error al buscar la factura en SAP'
-        Message({ message: msg, type: 'error', duration: 5000 })
       })
   },
   
