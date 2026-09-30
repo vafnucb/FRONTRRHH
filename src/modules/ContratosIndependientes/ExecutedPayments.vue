@@ -540,6 +540,10 @@
                   <label>Monto</label>
                   <input type="number" step="0.01" class="form-control" v-model.number="facturaForm.Monto" :readonly="facturaEncontradaEnSap" placeholder="Monto">
               </div>
+              <div class="col-md-6 form-group">
+                  <label>Crédito Fiscal (13%)</label>
+                  <input type="text" class="form-control" :value="creditoFiscalMostrar" readonly>
+              </div>
           </div>
           <span slot="footer" class="dialog-footer">
               <button class="btn btn-default" @click="showFacturaModal = false">Cancelar</button>
@@ -591,6 +595,7 @@ data () {
       NumeroFactura: '',
       FechaFactura: null,
       CodigoAutorizacion: '',
+      CreditoFiscal: null,
       Monto: null
     },
     buscandoFactura: false,
@@ -684,6 +689,17 @@ computed: {
   totalMontoReal () {
     return this.filteredPagos.reduce((sum, p) => sum + (p.MontoReal || 0), 0)
   },
+
+    // computed
+    creditoFiscalMostrar () {
+    if (this.facturaEncontradaEnSap) {
+      return this.facturaForm.CreditoFiscal || 0
+    }
+    // Manual: 13% del monto ingresado (para mostrar; el backend recalcula por registro)
+    var m = Number(this.facturaForm.Monto) || 0
+    return Math.round(m * 0.13 * 100) / 100
+  },
+
   filteredHistorico () {
     return this.pagosHistorico
   }
@@ -799,7 +815,7 @@ methods: {
     }
   },
 
-  postFactura () {
+  postFactura (confirmarDuplicado) {
     var vm = this
     var ids = this.selectedPagos.map(p => p.PagoEjecutadoId).filter(id => id != null)
     axios.post('/EjecucionPagos/AsignarFacturaParalelo', {
@@ -810,22 +826,32 @@ methods: {
       FechaFactura: this.facturaForm.FechaFactura,
       CodigoAutorizacion: this.facturaForm.CodigoAutorizacion,
       Monto: this.facturaForm.Monto,
-      EncontradaEnSap: this.facturaEncontradaEnSap
-    }, {
-      headers: { token: localStorage.getItem('token') }
-    })
+      CreditoFiscal: this.facturaForm.CreditoFiscal,
+      EncontradaEnSap: this.facturaEncontradaEnSap,
+      ConfirmarDuplicado: confirmarDuplicado === true
+    }, { headers: { token: localStorage.getItem('token') } })
       .then(function (response) {
         Message({ message: response.data.Message || 'Factura asignada', type: 'success', duration: 3000 })
         vm.showFacturaModal = false
         vm.loadPagos()
       })
       .catch(function (error) {
-        var msg = error.response && error.response.data && error.response.data.Message
-          ? error.response.data.Message : 'Error al asignar la factura'
-        Message({ message: msg, type: 'error', duration: 5000 })
+        if (error.response && error.response.status === 409 && error.response.data && error.response.data.Duplicado) {
+          MessageBox.confirm(
+            error.response.data.Message,
+            'Factura duplicada',
+            { confirmButtonText: 'Sí, continuar', cancelButtonText: 'Cancelar', type: 'warning', center: true }
+          ).then(() => {
+            vm.postFactura(true)   // reenviar confirmado
+          }).catch(() => {})
+        } else {
+          var msg = error.response && error.response.data && error.response.data.Message
+            ? error.response.data.Message : 'Error al asignar la factura'
+          Message({ message: msg, type: 'error', duration: 5000 })
+        }
       })
   },
-
+  
   buscarFactura () {
     var vm = this
     if (!this.facturaForm.NIT || !this.facturaForm.NumeroFactura || !this.facturaForm.FechaFactura) {
@@ -840,19 +866,18 @@ methods: {
     .then(function (response) {
         vm.buscandoFactura = false
         if (response.data && response.data.Found) {
-          var fechaSap = response.data.FechaFactura ? new Date(response.data.FechaFactura) : null
-          var fechaUsuario = vm.facturaForm.FechaFactura ? new Date(vm.facturaForm.FechaFactura) : null
+          var fechaSapStr = response.data.FechaFactura ? response.data.FechaFactura.substring(0, 10) : null
+          var fechaUsuarioStr = vm.facturaForm.FechaFactura ? vm.facturaForm.FechaFactura.substring(0, 10) : null
           var mismaFecha = true
-          if (fechaSap && fechaUsuario) {
-            mismaFecha = fechaSap.getFullYear() === fechaUsuario.getFullYear() &&
-                         fechaSap.getMonth() === fechaUsuario.getMonth() &&
-                         fechaSap.getDate() === fechaUsuario.getDate()
+          if (fechaSapStr && fechaUsuarioStr) {
+            mismaFecha = (fechaSapStr === fechaUsuarioStr)
           }
 
           var aplicarSap = function () {
             vm.facturaForm.RazonSocial = response.data.RazonSocial || ''
             vm.facturaForm.CodigoAutorizacion = response.data.CodigoAutorizacion || ''
             vm.facturaForm.Monto = response.data.Monto
+            vm.facturaForm.CreditoFiscal = response.data.CreditoFiscal
             if (fechaSap) {
               vm.facturaForm.FechaFactura = response.data.FechaFactura.substring(0, 10) // YYYY-MM-DD para el input date
             }

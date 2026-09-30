@@ -197,6 +197,10 @@
           <input type="number" step="0.01" class="form-control" v-model.number="factura.Monto" :readonly="facturaEncontradaEnSap" placeholder="Monto"/>
           <small v-if="facturaError.Monto" class="form-text text-muted text-danger">*Debe ingresar un monto mayor a 0.</small>
         </div>
+        <div class="col-md-3 form-group">
+          <label>Crédito Fiscal (13%)</label>
+          <input type="text" class="form-control" :value="creditoFiscalMostrar" readonly/>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-2 el-col-md-offset-3">
@@ -388,7 +392,14 @@
           return s + (parseFloat(r.TotalNeto) || 0)
         }, 0)
         return total.toFixed(2)
+      },
+      creditoFiscalMostrar () {
+      if (this.facturaEncontradaEnSap) {
+        return this.factura.CreditoFiscal || 0
       }
+      var m = Number(this.factura.Monto) || 0
+      return Math.round(m * 0.13 * 100) / 100
+    },
     },
     props: {
       // INDEPENDIENTE, DEPENDIENTE, OR
@@ -504,13 +515,12 @@
         }
       },
 
-      postFactura () {
+      postFactura (confirmarDuplicado) {
         var vm = this
         var d = new Date(this.factura.FechaFactura)
         var mnth = ('0' + (d.getMonth() + 1)).slice(-2)
         var day = ('0' + d.getDate()).slice(-2)
         var isoDate = [d.getFullYear(), mnth, day].join('-')
-
         var payload = {
           Ids: vm.SelectedIds,
           RazonSocial: vm.factura.RazonSocial,
@@ -519,7 +529,9 @@
           FechaFactura: isoDate,
           CodigoAutorizacion: vm.factura.CodigoAutorizacion,
           Monto: vm.factura.Monto,
-          EncontradaEnSap: vm.facturaEncontradaEnSap
+          CreditoFiscal: vm.factura.CreditoFiscal,
+          EncontradaEnSap: vm.facturaEncontradaEnSap,
+          ConfirmarDuplicado: confirmarDuplicado === true
         }
         axios.post('AsignarFacturaProyectos', payload, { headers: { token: localStorage.getItem('token') } })
           .then(function (response) {
@@ -529,20 +541,32 @@
               type: 'success',
               confirmButtonClass: 'btn btn-success btn-fill',
               buttonsStyling: false
-            }).then(function () {
-              location.reload()
-            })
+            }).then(function () { location.reload() })
           })
           .catch(function (error) {
-            swal({
-              title: 'Ups!',
-              text: (error.response && error.response.data && error.response.data.Message)
-                ? error.response.data.Message
-                : 'No se pudieron asignar los datos de factura.',
-              type: 'error',
-              confirmButtonClass: 'btn btn-info btn-fill',
-              buttonsStyling: false
-            })
+            if (error.response && error.response.status === 409 && error.response.data && error.response.data.Duplicado) {
+              swal({
+                title: 'Factura duplicada',
+                text: error.response.data.Message,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, continuar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonClass: 'btn btn-success btn-fill',
+                cancelButtonClass: 'btn btn-danger btn-fill',
+                buttonsStyling: false
+              }).then(function () {
+                vm.postFactura(true)
+              }, function (dismiss) {})
+            } else {
+              swal({
+                title: 'Ups!',
+                text: (error.response && error.response.data && error.response.data.Message) ? error.response.data.Message : 'No se pudieron asignar los datos de factura.',
+                type: 'error',
+                confirmButtonClass: 'btn btn-info btn-fill',
+                buttonsStyling: false
+              })
+            }
           })
       },
       buscarFactura () {
@@ -570,9 +594,9 @@
               var fechaUsuario = vm.factura.FechaFactura ? new Date(vm.factura.FechaFactura) : null
               var mismaFecha = true
               if (fechaSap && fechaUsuario) {
-                mismaFecha = fechaSap.getFullYear() === fechaUsuario.getFullYear() &&
-                             fechaSap.getMonth() === fechaUsuario.getMonth() &&
-                             fechaSap.getDate() === fechaUsuario.getDate()
+                mismaFecha = fechaSap.getUTCFullYear() === fechaUsuario.getUTCFullYear() &&
+                             fechaSap.getUTCMonth() === fechaUsuario.getUTCMonth() &&
+                             fechaSap.getUTCDate() === fechaUsuario.getUTCDate()
               }
 
               var aplicarSap = function () {
@@ -585,7 +609,7 @@
               }
 
               if (!mismaFecha) {
-                var fmt = function (d) { return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear() }
+                var fmt = function (d) { return ('0' + d.getUTCDate()).slice(-2) + '/' + ('0' + (d.getUTCMonth() + 1)).slice(-2) + '/' + d.getUTCFullYear() }
                 swal({
                   title: 'Fecha distinta',
                   text: 'La fecha que ingresó (' + fmt(fechaUsuario) + ') no coincide con la de SAP (' + fmt(fechaSap) + '). Se usará la fecha de SAP. ¿Desea continuar?',
@@ -627,6 +651,7 @@
           .catch(function (error) {
             vm.buscandoFactura = false
             vm.facturaEncontradaEnSap = false
+            vm.factura.CreditoFiscal = response.data.CreditoFiscal
             swal({
               title: 'Ups!',
               text: (error.response && error.response.data && error.response.data.Message) ? error.response.data.Message : 'Error al buscar la factura en SAP',
