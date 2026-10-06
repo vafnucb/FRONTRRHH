@@ -1205,7 +1205,11 @@ generatePDFForIds (pagosIds) {
         'Monto RCIVA',
         'Monto IT',
         'IUE Exterior',
-        'Monto a Pagar'
+        'Monto a Pagar',
+        'NIT',
+        'N° Factura',
+        'Id Factura',
+        'Tipo'
       ]
 
       // Table body
@@ -1227,7 +1231,11 @@ generatePDFForIds (pagosIds) {
           row.MontoIUE ? row.MontoIUE.toFixed(2) : '0.00',
           row.MontoIT ? row.MontoIT.toFixed(2) : '0.00',
           row.IUEExterior ? row.IUEExterior.toFixed(2) : '0.00',
-          row.MontoAPagar ? row.MontoAPagar.toFixed(2) : '0.00'
+          row.MontoAPagar ? row.MontoAPagar.toFixed(2) : '0.00',
+          row.FacturaNIT || '',
+          row.FacturaNumero || '',
+          row.FacturaInvoiceId || '',
+          row.FacturaTipo || ''
         ]
       })
 
@@ -1239,7 +1247,8 @@ generatePDFForIds (pagosIds) {
         totalRCIVA.toFixed(2),
         totalIT.toFixed(2),
         totalIUEExt.toFixed(2),
-        totalPagar.toFixed(2)
+        totalPagar.toFixed(2),
+        '', '', '', ''
       ])
 
       doc.autoTable({
@@ -1268,7 +1277,11 @@ generatePDFForIds (pagosIds) {
           8: { cellWidth: 20, halign: 'right' },
           9: { cellWidth: 18, halign: 'right' },
           10: { cellWidth: 20, halign: 'right' },
-          11: { cellWidth: 20, halign: 'right' }
+          11: { cellWidth: 20, halign: 'right' },
+          12: { cellWidth: 20 },
+          13: { cellWidth: 22 },
+          14: { cellWidth: 14, halign: 'center' },
+          15: { cellWidth: 10, halign: 'center' }
         },
         didParseCell: function (data) {
           if (data.row.index === body.length - 1) {

@@ -184,8 +184,15 @@ export default {
   },
 
   mostrarErroresValidacion (validacion) {
-    // Build error message text (not HTML)
     let errorMessage = 'No se puede finalizar el proceso:\n\n'
+
+    // Mensajes detallados del backend (contratos ya existentes, advertencias de paralelo, etc.)
+    if (validacion.Errors && validacion.Errors.length > 0) {
+      validacion.Errors.forEach(err => {
+        errorMessage += `${err}\n`
+      })
+      errorMessage += '\n'
+    }
 
     if (validacion.AsignacionesSinContrato && validacion.AsignacionesSinContrato.length > 0) {
       errorMessage += `❌ ${validacion.AsignacionesSinContrato.length} asignación(es) sin número de contrato\n`
@@ -199,10 +206,10 @@ export default {
     }
 
     MessageBox.alert(errorMessage, 'Errores de validación', {
-        confirmButtonText: 'Entendido',
-        type: 'error',
-        center: false
-      })
+      confirmButtonText: 'Entendido',
+      type: 'error',
+      center: false
+    })
   },
 
   confirmarFinalizacion (fileId) {
