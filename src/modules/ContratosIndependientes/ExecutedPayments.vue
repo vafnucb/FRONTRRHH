@@ -269,6 +269,12 @@
                                                 <i class="fa fa-file-text"></i>
                                                 Asignar Datos de Factura ({{ selectedPagos.length }})
                                             </button>
+                                            <button v-if="filters.tipoDocente === 'INDEPENDIENTE_CON_FACTURA'"
+                                                class="btn btn-danger btn-fill btn-lg"
+                                                @click="eliminarFactura" style="margin-right: 10px;">
+                                                <i class="fa fa-trash"></i>
+                                                Eliminar Datos de Factura ({{ selectedPagos.length }})
+                                            </button>
                                             <button class="btn btn-success btn-fill btn-lg"
                                                 @click="aprobarSeleccionados">
                                                 <i class="fa fa-check"></i>
@@ -903,6 +909,32 @@ methods: {
         }
       })
   },
+  eliminarFactura () {
+    if (this.selectedPagos.length === 0) {
+      Message({ message: 'Debe seleccionar al menos un pago', type: 'warning', duration: 3000 })
+      return
+    }
+    var vm = this
+    var ids = this.selectedPagos.map(function (p) { return p.PagoEjecutadoId }).filter(function (id) { return id != null })
+    MessageBox.confirm(
+      '¿Está seguro de eliminar los datos de factura de ' + ids.length + ' pago(s)? Esta acción no se puede deshacer.',
+      'Eliminar datos de factura',
+      { confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar', type: 'warning', center: true }
+    ).then(function () {
+      axios.post('/EjecucionPagos/EliminarFacturaParalelo', { Ids: ids }, {
+        headers: { token: localStorage.getItem('token') }
+      })
+        .then(function (response) {
+          Message({ message: response.data.Message || 'Datos de factura eliminados', type: 'success', duration: 3000 })
+          vm.loadPagos()
+        })
+        .catch(function (error) {
+          var msg = error.response && error.response.data && error.response.data.Message
+            ? error.response.data.Message : 'Error al eliminar los datos de factura'
+          Message({ message: msg, type: 'error', duration: 5000 })
+        })
+    }).catch(function () {})
+  },
   
   loadBranches () {
     axios.get('/branches/', {
@@ -1208,7 +1240,6 @@ generatePDFForIds (pagosIds) {
         'Monto a Pagar',
         'NIT',
         'N° Factura',
-        'Id Factura',
         'Tipo'
       ]
 
@@ -1234,7 +1265,6 @@ generatePDFForIds (pagosIds) {
           row.MontoAPagar ? row.MontoAPagar.toFixed(2) : '0.00',
           row.FacturaNIT || '',
           row.FacturaNumero || '',
-          row.FacturaInvoiceId || '',
           row.FacturaTipo || ''
         ]
       })
@@ -1248,7 +1278,7 @@ generatePDFForIds (pagosIds) {
         totalIT.toFixed(2),
         totalIUEExt.toFixed(2),
         totalPagar.toFixed(2),
-        '', '', '', ''
+        '', '', ''
       ])
 
       doc.autoTable({
@@ -1266,22 +1296,21 @@ generatePDFForIds (pagosIds) {
           halign: 'center'
         },
         columnStyles: {
-          0: { cellWidth: 32 },
-          1: { cellWidth: 32 },
-          2: { cellWidth: 18 },
-          3: { cellWidth: 16 },
-          4: { cellWidth: 14 },
+          0: { cellWidth: 30 },
+          1: { cellWidth: 23 },
+          2: { cellWidth: 12 },
+          3: { cellWidth: 14 },
+          4: { cellWidth: 12 },
           5: { cellWidth: 26 },
           6: { cellWidth: 18 },
           7: { cellWidth: 20, halign: 'right' },
-          8: { cellWidth: 20, halign: 'right' },
-          9: { cellWidth: 18, halign: 'right' },
-          10: { cellWidth: 20, halign: 'right' },
-          11: { cellWidth: 20, halign: 'right' },
-          12: { cellWidth: 20 },
-          13: { cellWidth: 22 },
-          14: { cellWidth: 14, halign: 'center' },
-          15: { cellWidth: 10, halign: 'center' }
+          8: { cellWidth: 13, halign: 'right' },
+          9: { cellWidth: 13, halign: 'right' },
+          10: { cellWidth: 13, halign: 'right' },
+          11: { cellWidth: 13, halign: 'right' },
+          12: { cellWidth: 17 },
+          13: { cellWidth: 13 },
+          14: { cellWidth: 8, halign: 'center' }
         },
         didParseCell: function (data) {
           if (data.row.index === body.length - 1) {

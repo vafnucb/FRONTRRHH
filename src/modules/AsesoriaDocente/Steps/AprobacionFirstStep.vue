@@ -40,6 +40,11 @@
         <div class="col-md-3" v-if="origen==='FAC'">
           <button class="btn btn-warning" @click="openAsignarFactura">Asignar Datos de Factura</button>
         </div>
+        <div>
+          <button class="btn btn-danger btn-fill" @click="eliminarFactura">
+            <i class="fa fa-trash"></i> Eliminar Datos de Factura
+          </button>
+        </div>
         <div class="col-md-2" v-if="origen==='OR'">
           <button class="btn btn-info" @click="showDateForHistoricOR">Enviar a Historico</button>
         </div>
@@ -828,6 +833,45 @@
             })
           })
       },
+
+      eliminarFactura () {
+        var vm = this
+        if (this.SelectedIds.length < 1) {
+          swal({ title: 'Debe seleccionar al menos un registro.', type: 'error', confirmButtonClass: 'btn btn-info btn-fill', buttonsStyling: false })
+          return
+        }
+        swal({
+          title: '¿Eliminar datos de factura?',
+          text: 'Se eliminarán los datos de factura de ' + this.SelectedIds.length + ' registro(s). Esta acción no se puede deshacer.',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar',
+          confirmButtonClass: 'btn btn-success btn-fill',
+          cancelButtonClass: 'btn btn-danger btn-fill',
+          buttonsStyling: false
+        }).then(function () {
+          axios.post('EliminarFactura', { Ids: vm.SelectedIds }, { headers: { token: localStorage.getItem('token') } })
+            .then(function (response) {
+              swal({
+                title: 'Listo!',
+                text: response.data,
+                type: 'success',
+                confirmButtonClass: 'btn btn-success btn-fill',
+                buttonsStyling: false
+              }).then(function () { location.reload() })
+            })
+            .catch(function (error) {
+              swal({
+                title: 'Ups!',
+                text: (error.response && error.response.data && error.response.data.Message) ? error.response.data.Message : 'No se pudieron eliminar los datos de factura.',
+                type: 'error',
+                confirmButtonClass: 'btn btn-info btn-fill',
+                buttonsStyling: false
+              })
+            })
+        }, function (dismiss) {})
+      },
       capturarFila (row) {
         // Mantener selectedRows sincronizado con SelectedIds
         var idx = this.selectedRows.findIndex(function (r) { return r.Id === row.Id })
@@ -1181,8 +1225,8 @@
       // Metodo para generar el reporte
       generatePDF () {
         // Para que sea largo
-        let doc = new jsPDF('landscape')
-        doc.setFontSize(8)
+        let doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' })
+        doc.setFontSize(10)
         doc.text('Fecha:' + this.formattedDate, 280, 10, null, null, 'right')
         doc.text('Fuente: ISAAC', 280, 15, null, null, 'right')
         var img = new Image()
@@ -1228,7 +1272,7 @@
           let tableBody = []
           for (var tableIndex = index; tableIndex < index + tableLength; tableIndex++) {
             // Crear un array de arrays con los elementos que correspondan
-            tableBody.push([files[tableIndex].Docente, files[tableIndex].Origen, files[tableIndex].Modal, files[tableIndex].Tarea, files[tableIndex].Alumno, files[tableIndex].Acta + ' ', (files[tableIndex].Fecha), files[tableIndex].TipoPago, files[tableIndex].NumeroContrato, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup])
+            tableBody.push([files[tableIndex].Docente, files[tableIndex].Origen, files[tableIndex].Modal, files[tableIndex].Tarea, files[tableIndex].Alumno, files[tableIndex].Acta + ' ', (files[tableIndex].Fecha), files[tableIndex].TipoPago, files[tableIndex].NumeroContrato, files[tableIndex].Total_Bruto, files[tableIndex].Deduccion, files[tableIndex].IUE, files[tableIndex].IT, files[tableIndex].IUEExt, files[tableIndex].Total_Neto, files[tableIndex].Observaciones, files[tableIndex].Dup, files[tableIndex].FacturaNIT || '', files[tableIndex].FacturaNumero || '', files[tableIndex].FacturaTipo || ''])
           }
           // console.log('this is the body with results: ')
           // console.log(tableBody)
@@ -1237,7 +1281,7 @@
           // cargamos la tabla con el cuerpo para la carrera actual
           doc.autoTable({
             startY: doc.previousAutoTable.finalY,
-            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'Tipo Pago', 'N° Cont.', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'TotalNeto', 'Observaciones', 'Dup']],
+            head: [['Docente', 'Origen', 'Modal', 'Tarea', 'Alumno', 'Acta', 'Fecha', 'Tipo Pago', 'N° Cont.', 'Total Bruto', 'Dedu', 'RCIVA', 'IT', 'IUEExt', 'TotalNeto', 'Observaciones', 'Dup', 'NIT', 'N° Fact', 'Tipo']],
             body: tableBody,
             theme: 'grid',
             styles: {cellPadding: 0.5, fontSize: 8, cellWidth: 'wrap', valign: 'middle'},
@@ -1264,7 +1308,10 @@
               13: {cellWidth: 10},
               14: {cellWidth: 15},
               15: {cellWidth: 21},
-              16: {cellWidth: 8}
+              16: {cellWidth: 8},
+              17: {cellWidth: 17},
+              18: {cellWidth: 13},
+              19: {cellWidth: 8}
             }
           })
           // -------------------------------------Tabla con totales por carrera-----------------------------------------

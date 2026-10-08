@@ -178,6 +178,62 @@
 </div>
   
           <hr>
+
+                    <!-- Invoice Info (solo si tiene factura) -->
+                    <template v-if="pago.TieneFactura">
+                      <div class="section-header assignment">
+              <h5><i class="fa fa-file-text"></i> Información de la Factura</h5>
+            </div>
+            <div class="info-card">
+              <div class="row">
+                <div class="col-md-3">
+                  <label>Razón Social:</label>
+                  <p>{{ pago.FacturaRazonSocial || '-' }}</p>
+                </div>
+                <div class="col-md-3">
+                  <label>NIT:</label>
+                  <p>{{ pago.FacturaNIT || '-' }}</p>
+                </div>
+                <div class="col-md-3">
+                  <label>N° Factura:</label>
+                  <p>{{ pago.FacturaNumero || '-' }}</p>
+                </div>
+                <div class="col-md-3">
+                  <label>Fecha Factura:</label>
+                  <p>{{ pago.FacturaFecha ? formatDate(pago.FacturaFecha) : '-' }}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <label>Código de Autorización:</label>
+                  <p>{{ pago.FacturaCodigoAutorizacion || '-' }}</p>
+                </div>
+                <div class="col-md-3">
+                  <label>Importe:</label>
+                  <p class="amount-value">Bs. {{ formatMoney(pago.FacturaMonto) }}</p>
+                </div>
+                <div class="col-md-3">
+                  <label>Crédito Fiscal:</label>
+                  <p class="amount-value">Bs. {{ formatMoney(pago.FacturaCreditoFiscal) }}</p>
+                </div>
+                <div class="col-md-3">
+                  <label>Tipo:</label>
+                  <p>
+                    <span class="label label-info" v-if="pago.FacturaTipo === 'ELECTRONICA'">Electrónica</span>
+                    <span class="label label-warning" v-else-if="pago.FacturaTipo === 'MANUAL'">Manual</span>
+                    <span v-else>-</span>
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <label>Id Factura:</label>
+                  <p>{{ pago.FacturaInvoiceId || '-' }}</p>
+                </div>
+              </div>
+            </div>
+            <hr>
+          </template>
   
           <!-- Asignacion Info -->
           <div class="section-header assignment">

@@ -174,6 +174,61 @@
         </div>
       </div>
     </div>
+
+        <!-- Invoice Info (solo si tiene factura) -->
+        <div class="row" v-if="detail.FacturaRazonSocial || detail.FacturaNIT || detail.FacturaNumero">
+      <div class="col-md-12">
+        <h5 style="margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 8px;"><i class="fa fa-file-text"></i> Información de la Factura</h5>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>Razón Social</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaRazonSocial || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>NIT</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaNIT || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>N° Factura</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaNumero || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Fecha Factura</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaFecha || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>Código Autorización</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaCodigoAutorizacion || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Importe</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaMonto != null ? 'Bs. ' + detail.FacturaMonto : '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Crédito Fiscal</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaCreditoFiscal != null ? 'Bs. ' + detail.FacturaCreditoFiscal : '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Tipo</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaTipo === 'ELECTRONICA' ? 'Electrónica' : (detail.FacturaTipo === 'MANUAL' ? 'Manual' : '-') }}</div>
+        </div>
+      </div>
+    </div>
     
     <!-- Button Row -->
     <div class="row">
@@ -196,7 +251,7 @@
     data () {
       return {
         url: '/AsesoriaPostgrado/Estado',
-        propsToSearch: ['Id', 'Estado', 'Proyecto', 'Modulo', 'TeacherFullName', 'Origen'],
+        propsToSearch: ['Id', 'Estado', 'Proyecto', 'Modulo', 'TeacherFullName', 'Origen', 'TieneFacturaFlag'],
         tableColumns: [
           { prop: 'Id', label: '#', minWidth: 50 },
           { prop: 'Origen', label: 'Origen', minWidth: 70 },
@@ -205,7 +260,8 @@
           { prop: 'TeacherFullName', label: 'Docente', minWidth: 150 },
           { prop: 'Estado', label: 'Estado', minWidth: 100 },
           { prop: 'TotalBruto', label: 'Total Bruto', minWidth: 80 },
-          { prop: 'TotalNeto', label: 'Total Neto', minWidth: 80 }
+          { prop: 'TotalNeto', label: 'Total Neto', minWidth: 80 },
+          { prop: 'TieneFacturaFlag', label: 'Factura', minWidth: 90 }
           // { prop: 'UpdatedAt', label: 'Última modificación', minWidth: 100 }
         ],
         pagination: {
@@ -220,7 +276,7 @@
     },
     methods: {
       initWizard (id) {
-        axios.get(`/AsesoriaPostgrado/Estado?=${id}`).then(response => {
+        axios.get(`/AsesoriaPostgrado/Estado?id=${id}`).then(response => {
           this.detail = response.data
           this.showWizard = true
         }).catch(error => {

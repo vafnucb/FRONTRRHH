@@ -185,6 +185,61 @@
     </div>
     
 </div>
+
+    <!-- Invoice Info (solo si tiene factura) -->
+    <div class="row" v-if="detail.FacturaRazonSocial || detail.FacturaNIT || detail.FacturaNumero">
+      <div class="col-md-12">
+        <h5 style="margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 8px;"><i class="fa fa-file-text"></i> Información de la Factura</h5>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>Razón Social</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaRazonSocial || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>NIT</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaNIT || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>N° Factura</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaNumero || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Fecha Factura</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaFecha || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>Código Autorización</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaCodigoAutorizacion || '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Importe</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaMonto != null ? 'Bs. ' + detail.FacturaMonto : '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Crédito Fiscal</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaCreditoFiscal != null ? 'Bs. ' + detail.FacturaCreditoFiscal : '-' }}</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Tipo</label>
+          <div class="form-control form-control-static data-box">{{ detail.FacturaTipo === 'ELECTRONICA' ? 'Electrónica' : (detail.FacturaTipo === 'MANUAL' ? 'Manual' : '-') }}</div>
+        </div>
+      </div>
+    </div>
     
     <!-- Button Row -->
     <div class="row">
@@ -207,7 +262,7 @@
     data () {
       return {
         url: '/AsesoriaDocente/Estado',
-        propsToSearch: ['Id', 'TeacherFullName', 'StudentFullName', 'Estado', 'Carrera', 'Origen'],
+        propsToSearch: ['Id', 'TeacherFullName', 'StudentFullName', 'Estado', 'Carrera', 'Origen', 'TieneFacturaFlag'],
         tableColumns: [
           { prop: 'Id', label: '#', minWidth: 50 },
           { prop: 'Origen', label: 'Origen', minWidth: 60 },
@@ -217,7 +272,8 @@
           { prop: 'StudentFullName', label: 'Estudiante', minWidth: 200 },
           { prop: 'Estado', label: 'Estado', minWidth: 100 },
           { prop: 'TotalBruto', label: 'Total Bruto', minWidth: 90 },
-          { prop: 'TotalNeto', label: 'Total Neto', minWidth: 90 }
+          { prop: 'TotalNeto', label: 'Total Neto', minWidth: 90 },
+          { prop: 'TieneFacturaFlag', label: 'Factura', minWidth: 90 }
          // { prop: 'UpdatedAt', label: 'Último cambio', minWidth: 150, formatter: row => row.UpdatedAt ? `${String(new Date(row.UpdatedAt).getDate()).padStart(2, '0')}/${String(new Date(row.UpdatedAt).getMonth() + 1).padStart(2, '0')}/${new Date(row.UpdatedAt).getFullYear()} ${String(new Date(row.UpdatedAt).getHours()).padStart(2, '0')}:${String(new Date(row.UpdatedAt).getMinutes()).padStart(2, '0')}` : '' }
         ],
         pagination: { perPage: 10, currentPage: 1, perPageOptions: [10, 20, 50], total: 0 },
