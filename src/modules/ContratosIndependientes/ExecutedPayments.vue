@@ -861,7 +861,7 @@ methods: {
   buscarFactura () {
     var vm = this
     if (!this.facturaForm.NIT || !this.facturaForm.NumeroFactura || !this.facturaForm.FechaFactura) {
-      Message({ message: 'Debe ingresar NIT, N° de Factura y la Fecha Factura para buscar', type: 'warning', duration: 3000 })
+      Message({ message: 'Debe ingresar NIT, N° de Factura y Fecha de Factura para buscar', type: 'warning', duration: 3000 })
       return
     }
     this.buscandoFactura = true
@@ -869,7 +869,7 @@ methods: {
       params: { nit: this.facturaForm.NIT, numero: this.facturaForm.NumeroFactura },
       headers: { token: localStorage.getItem('token') }
     })
-    .then(function (response) {
+      .then(function (response) {
         vm.buscandoFactura = false
         if (response.data && response.data.Found) {
           var fechaSapStr = response.data.FechaFactura ? response.data.FechaFactura.substring(0, 10) : null
@@ -884,29 +884,44 @@ methods: {
             vm.facturaForm.CodigoAutorizacion = response.data.CodigoAutorizacion || ''
             vm.facturaForm.Monto = response.data.Monto
             vm.facturaForm.CreditoFiscal = response.data.CreditoFiscal
-            if (fechaSap) {
-              vm.facturaForm.FechaFactura = response.data.FechaFactura.substring(0, 10) // YYYY-MM-DD para el input date
+            if (fechaSapStr) {
+              vm.facturaForm.FechaFactura = fechaSapStr   // SAP gana: usar la fecha de SAP (YYYY-MM-DD)
             }
             vm.facturaEncontradaEnSap = true
             Message({ message: 'Factura encontrada en SAP', type: 'success', duration: 3000 })
           }
 
+          // Formatea YYYY-MM-DD -> DD/MM/YYYY para mostrar
+          var fmtStr = function (s) {
+            if (!s) return ''
+            var p = s.split('-')
+            return p[2] + '/' + p[1] + '/' + p[0]
+          }
+
           if (!mismaFecha) {
-            var fmt = function (d) { return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear() }
             MessageBox.confirm(
-              'La fecha que ingresó (' + fmt(fechaUsuario) + ') no coincide con la de SAP (' + fmt(fechaSap) + '). Se usará la fecha de SAP. ¿Desea continuar?',
+              'La fecha que ingresó (' + fmtStr(fechaUsuarioStr) + ') no coincide con la de SAP (' + fmtStr(fechaSapStr) + '). Se usará la fecha de SAP. ¿Desea continuar?',
               'Fecha distinta',
               { confirmButtonText: 'Sí, usar fecha de SAP', cancelButtonText: 'Cancelar', type: 'warning', center: true }
-            ).then(() => {
+            ).then(function () {
               aplicarSap()
-            }).catch(() => {})
+            }).catch(function () {})
           } else {
             aplicarSap()
           }
         } else {
           vm.facturaEncontradaEnSap = false
-          MessageBox.confirm('La factura no fue encontrada, ¿desea poner los datos manualmente?', 'Factura no encontrada', { confirmButtonText: 'Sí, ingresar manualmente', cancelButtonText: 'No', type: 'warning', center: true }).then(() => { vm.facturaEncontradaEnSap = false }).catch(() => {})
+          MessageBox.confirm('La factura no fue encontrada, ¿desea poner los datos manualmente?', 'Factura no encontrada',
+            { confirmButtonText: 'Sí, ingresar manualmente', cancelButtonText: 'No', type: 'warning', center: true })
+            .then(function () { vm.facturaEncontradaEnSap = false }).catch(function () {})
         }
+      })
+      .catch(function (error) {
+        vm.buscandoFactura = false
+        vm.facturaEncontradaEnSap = false
+        var msg = error.response && error.response.data && error.response.data.Message
+          ? error.response.data.Message : 'Error al buscar la factura en SAP'
+        Message({ message: msg, type: 'error', duration: 5000 })
       })
   },
   eliminarFactura () {
