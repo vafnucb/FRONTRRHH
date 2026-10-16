@@ -925,6 +925,12 @@
   font-size: 12px;
   margin-bottom: 10px;
 }
+.info-card p {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  margin-bottom: 0;
+}
 
 .monto-original {
   color: #999;

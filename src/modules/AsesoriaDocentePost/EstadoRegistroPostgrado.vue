@@ -318,10 +318,14 @@
   border-radius: 4px;
   padding: 6px 12px;
   min-height: 38px;
+  height: auto;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
   cursor: default;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
   </style>
