@@ -4,7 +4,17 @@
 
     <!--Lista de todas las tutorias, recibe todos los parámetros para el datatable-->
     <template class="col-md-12 card" v-if="actions==='LIST'">
-      <data-tables v-bind="{url, propsToSearch, tableColumns,pagination, fuentePDF: 'ISAAC II'}" id="datatable">
+      <div class="row" style="margin-bottom: 10px;" v-if="estado === 'VERIFICADO' && origen === 'FAC'">
+        <div class="col-md-3 col-md-offset-1">
+    <label>Factura</label>
+    <select class="form-control" v-model="filtroFactura">
+      <option value="TODOS">Todos</option>
+      <option value="CON">Con Factura</option>
+      <option value="SIN">Sin Factura</option>
+    </select>
+  </div>
+</div>
+      <data-tables :key="filtroFactura" v-bind="{url, propsToSearch, tableColumns, pagination, fuentePDF: 'ISAAC II'}" id="datatable">
         <template slot="buttons" slot-scope="props">
           <!--Botones para modificar o hacer otras acciones-->
           <el-tooltip class="item" effect="dark" content="Ver" placement="top">
@@ -278,7 +288,7 @@
         initialview: 'year',
         format: 'dd-MM-yyyy',
         opendate: new Date(1975, 5, 1),
-        url: '/AsesoriaPostgrado?by=' + this.estado + '-' + this.origen,
+        filtroFactura: 'TODOS',
         propsToSearch: ['Id', 'Proyecto', 'Modulo', 'TeacherFullName', 'TipoTarea', 'TotalNeto', 'TotalBruto'],
         tableColumns: [
           {
@@ -405,6 +415,12 @@
       var m = Number(this.factura.Monto) || 0
       return Math.round(m * 0.13 * 100) / 100
     },
+    url () {
+      var base = '/AsesoriaPostgrado?by=' + this.estado + '-' + this.origen
+      if (this.filtroFactura === 'CON') base += '&factura=CON'
+      else if (this.filtroFactura === 'SIN') base += '&factura=SIN'
+      return base
+    }
     },
     props: {
       // INDEPENDIENTE, DEPENDIENTE, OR
