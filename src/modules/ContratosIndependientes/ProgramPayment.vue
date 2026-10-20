@@ -32,7 +32,7 @@
               </div>
             </div>
 
-            <!-- ADD THIS NEW SECTION - PERSISTENT CONTEXT -->
+            
             <div v-if="currentStep > 1" class="context-header">
               <div class="context-item">
                 <i class="fa fa-building"></i>
@@ -108,9 +108,9 @@
                     <label>Nombre del servicio <span style="color: red;">*</span></label>
                     <input type="text" class="form-control" v-model="form.nombrePlantilla"
                       @input="form.nombrePlantilla = $event.target.value.toUpperCase()" placeholder="Ej: DOC TH 2026"
-                      maxlength="45" required>
+                      maxlength="40" required>
                     <small class="text-muted">
-                      {{ form.nombrePlantilla.length }}/45 caracteres
+                      {{ form.nombrePlantilla.length }}/40 caracteres
                     </small>
                     <small class="help-block" v-if="form.nombrePlantilla.trim() === ''" style="color: #d9534f;">
                       Este campo es obligatorio

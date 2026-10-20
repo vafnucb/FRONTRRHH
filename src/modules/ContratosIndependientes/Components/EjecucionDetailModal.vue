@@ -403,18 +403,18 @@
   
               <div class="row">
                 <div class="col-md-4">
-                  <label>Nombre_del_Servicio:</label>
+                  <label>Nombre del Servicio:</label>
                   <p>{{ valoresExcel.NombreDelServicio || '-' }}</p>
                 </div>
-                <div class="col-md-2">
-                  <label>Periodo_Academico:</label>
+                <div class="col-md-4">
+                  <label>Periodo Academico:</label>
                   <p>{{ valoresExcel.PeriodoAcademico }}</p>
                 </div>
-                <div class="col-md-2">
-                  <label>Sigla_Asignatura:</label>
+                <div class="col-md-4">
+                  <label>Sigla Asignatura:</label>
                   <p>{{ valoresExcel.SiglaAsignatura }}</p>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                   <label>Paralelo:</label>
                   <p>{{ valoresExcel.Paralelo }}</p>
                 </div>
@@ -429,12 +429,12 @@
                   <label>Cuenta_Asignada:</label>
                   <p>{{ valoresExcel.CuentaAsignada }}</p>
                 </div>
-                <div class="col-md-2">
-                  <label>Monto_Contrato:</label>
+                <div class="col-md-3">
+                  <label>Monto Contrato:</label>
                   <p class="excel-amount">Bs. {{ formatMoney(valoresExcel.MontoContrato) }}</p>
                 </div>
                 <div class="col-md-2">
-                  <label>Monto_IUE:</label>
+                  <label>Monto IUE:</label>
                   <p class="excel-amount">Bs. {{ formatMoney(valoresExcel.MontoIUE) }}</p>
                 </div>
                 <div class="col-md-2">
@@ -449,7 +449,7 @@
   
               <div class="row">
                 <div class="col-md-3">
-                  <label>Monto_a_Pagar:</label>
+                  <label>Monto a Pagar:</label>
                   <p class="excel-amount-final">Bs. {{ formatMoney(valoresExcel.MontoAPagar) }}</p>
                 </div>
                 <div class="col-md-9">

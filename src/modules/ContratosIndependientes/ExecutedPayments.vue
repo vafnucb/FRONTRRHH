@@ -164,6 +164,15 @@
                                   </div>
                               </div>
 
+                              <div class="col-md-3" v-if="filters.tipoDocente === 'INDEPENDIENTE_CON_FACTURA'" style="margin-bottom: 10px;">
+  <label>Factura</label>
+  <el-select v-model="filtroFactura" placeholder="Factura" style="width: 100%;">
+    <el-option label="Todos" value="TODOS"></el-option>
+    <el-option label="Con Factura" value="CON"></el-option>
+    <el-option label="Sin Factura" value="SIN"></el-option>
+  </el-select>
+</div>
+
                               <!-- TABLE -->
                               <div class="table-wrapper">
                                 <el-table ref="pendientesTable" :key="filters.tipoDocente || 'none'" :data="filteredPagos" v-loading="loading" border style="width: 100%"
@@ -595,6 +604,7 @@ data () {
     searchQueryHistorico: '',
     searchHistoricoTimeout: null,
     showFacturaModal: false,
+    filtroFactura: 'TODOS',   // TODOS | CON | SIN
     facturaForm: {
       RazonSocial: '',
       NIT: '',
@@ -677,6 +687,11 @@ computed: {
       })
     }
 
+    if (this.filtroFactura === 'CON') {
+      result = result.filter(p => p.TieneFactura === true)
+    } else if (this.filtroFactura === 'SIN') {
+      result = result.filter(p => !p.TieneFactura)
+    }
     return result
   },
 
@@ -720,7 +735,13 @@ watch: {
       this.paginationHistorico.currentPage = 1
       this.loadHistorico()
     }.bind(this), 500)
-  }
+  },
+  filtroFactura () {
+      this.selectedPagos = []
+      if (this.$refs.pendientesTable && this.$refs.pendientesTable.clearSelection) {
+        this.$refs.pendientesTable.clearSelection()
+      }
+    },
 },
 
 methods: {
