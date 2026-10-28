@@ -211,7 +211,7 @@
           branches: [],
           modalidades: [],
           tipoTarea: [],
-          dependiente: false,
+          dependiente: true,
           or: false,
           Deduccion: 0,
           teacherIdentifier: '',

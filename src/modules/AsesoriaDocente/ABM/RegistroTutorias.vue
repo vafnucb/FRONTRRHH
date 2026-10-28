@@ -246,7 +246,7 @@
         tipoTarea: [],
         alumnos: [],
         tipoPago: [],
-        dependiente: false,
+        dependiente: true,
         or: false,
         Deduccion: 0,
         teacherIdentifier: '',
@@ -255,7 +255,7 @@
         IUEExterior: 0,
         IT: 0,
         acta: true,
-        porHora: false,
+        porHora: true,
         monto: null,
         teachers: [],
         tipoDoc: [

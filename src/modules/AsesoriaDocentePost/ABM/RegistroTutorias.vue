@@ -308,7 +308,7 @@
         modalidades: [],
         tipoTarea: [],
         tipoPago: [],
-        dependiente: false,
+        dependiente: true,
         estudiante: false,
         or: false,
         Deduccion: 0,
@@ -318,7 +318,7 @@
         IUEExterior: 0,
         IT: 0,
         acta: true,
-        porHora: false,
+        porHora: true,
         monto: null,
         teachers: [],
         tutoria: {
