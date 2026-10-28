@@ -624,6 +624,7 @@
                 vm.factura.RazonSocial = response.data.RazonSocial || ''
                 vm.factura.CodigoAutorizacion = response.data.CodigoAutorizacion || ''
                 vm.factura.Monto = response.data.Monto
+                vm.factura.CreditoFiscal = response.data.CreditoFiscal
                 if (fechaSap) vm.factura.FechaFactura = fechaSap
                 vm.facturaEncontradaEnSap = true
                 swal({ title: 'Factura encontrada en SAP', type: 'success', confirmButtonClass: 'btn btn-success btn-fill', buttonsStyling: false })
@@ -672,7 +673,6 @@
           .catch(function (error) {
             vm.buscandoFactura = false
             vm.facturaEncontradaEnSap = false
-            vm.factura.CreditoFiscal = response.data.CreditoFiscal
             swal({
               title: 'Ups!',
               text: (error.response && error.response.data && error.response.data.Message) ? error.response.data.Message : 'Error al buscar la factura en SAP',
